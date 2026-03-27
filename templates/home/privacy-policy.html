@@ -1,0 +1,595 @@
+﻿{% extends "home/base.html" %}
+{% block title %}Privacy Policy — Pathforge{% endblock %}
+
+
+{% block extra_styles %}
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: #050510;
+  color: #f2f0ff;
+  line-height: 1.6;
+  overflow-x: hidden;
+}
+a { text-decoration: none; color: inherit; }
+ul { list-style: none; }
+button { cursor: pointer; border: none; background: none; font-family: inherit; }
+
+:root {
+  --bg: #050510;
+  --bg2: #080818;
+  --surface: #0c0c20;
+  --card: #111127;
+  --card2: #161634;
+  --border: rgba(255,255,255,0.06);
+  --border-h: rgba(255,255,255,0.14);
+  --t1: #f2f0ff;
+  --t2: #9794b8;
+  --t3: #5a5780;
+  --teal: #00F2C3;
+  --blue: #3D7EFF;
+  --purple: #BF5AF2;
+  --coral: #FF6B6B;
+  --gold: #FFD166;
+  --green: #06D6A0;
+  --ease: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 4px; }
+::selection { background: rgba(0,242,195,0.2); }
+
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 9999;
+  opacity: 0.4;
+}
+
+/* NAV */
+.nav {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 100;
+  height: 70px;
+  display: flex;
+  align-items: center;
+}
+.nav-inner {
+  max-width: 1300px;
+  margin: 0 auto;
+  padding: 0 36px;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.nav-glass {
+  position: absolute;
+  inset: 0;
+  background: rgba(5,5,16,0.85);
+  backdrop-filter: blur(24px) saturate(180%);
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+}
+.nav-logo { position: relative; z-index: 1; display: flex; align-items: center; gap: 10px; cursor: pointer; }
+.nav-logo-mark {
+  width: 34px; height: 34px;
+  border-radius: 9px;
+  background: linear-gradient(135deg, #00F2C3, #3D7EFF);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 15px; font-weight: 900; color: #000;
+  font-family: 'Syne', sans-serif;
+  box-shadow: 0 4px 20px rgba(0,242,195,0.3);
+}
+.nav-logo-text {
+  font-family: 'Syne', sans-serif;
+  font-size: 1.25rem; font-weight: 800;
+  background: linear-gradient(90deg, #f2f0ff, #9794b8);
+  background-clip: text;
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+}
+.nav-links { position: relative; z-index: 1; display: flex; align-items: center; gap: 2px; }
+.nav-link {
+  padding: 8px 18px; border-radius: 8px;
+  font-size: 0.85rem; font-weight: 500; color: var(--t2);
+  cursor: pointer; transition: all 0.2s; position: relative;
+}
+.nav-link:hover { color: var(--t1); }
+.nav-cta { position: relative; z-index: 1; }
+.btn-primary {
+  background: linear-gradient(135deg, #00F2C3, #3D7EFF);
+  color: #000; padding: 9px 22px; border-radius: 9px;
+  font-weight: 700; font-size: 0.85rem; font-family: 'Syne', sans-serif;
+  transition: all 0.3s var(--ease);
+  display: inline-flex; align-items: center; gap: 6px;
+  cursor: pointer; border: none;
+}
+.btn-primary:hover { transform: translateY(-2px); box-shadow: 0 10px 30px rgba(0,242,195,0.3); }
+
+/* HERO BANNER */
+.page-hero {
+  position: relative;
+  padding-top: 70px;
+  min-height: 340px;
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+}
+.page-hero-orb-1 {
+  position: absolute; top: -100px; right: -80px;
+  width: 600px; height: 600px; border-radius: 50%;
+  background: radial-gradient(circle, rgba(0,242,195,0.07) 0%, transparent 70%);
+  pointer-events: none;
+  animation: orbDrift 20s ease-in-out infinite alternate;
+}
+.page-hero-orb-2 {
+  position: absolute; bottom: -60px; left: -60px;
+  width: 400px; height: 400px; border-radius: 50%;
+  background: radial-gradient(circle, rgba(61,126,255,0.06) 0%, transparent 70%);
+  pointer-events: none;
+  animation: orbDrift 15s ease-in-out infinite alternate-reverse;
+}
+@keyframes orbDrift { 0%{transform:translate(0,0)} 100%{transform:translate(30px,40px)} }
+.page-hero-grid {
+  position: absolute; inset: 0;
+  background-image: linear-gradient(rgba(255,255,255,0.018) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.018) 1px, transparent 1px);
+  background-size: 52px 52px;
+  mask-image: radial-gradient(ellipse 90% 80% at 50% 50%, black 30%, transparent 100%);
+  pointer-events: none;
+}
+.page-hero-content {
+  max-width: 1300px;
+  margin: 0 auto;
+  padding: 80px 36px 70px;
+  position: relative;
+  z-index: 2;
+  width: 100%;
+}
+.page-eyebrow {
+  display: inline-flex; align-items: center; gap: 8px;
+  border: 1px solid rgba(0,242,195,0.22); background: rgba(0,242,195,0.04);
+  border-radius: 100px; padding: 5px 14px;
+  font-family: 'Space Mono', monospace; font-size: 0.68rem; color: var(--teal);
+  letter-spacing: 0.08em; margin-bottom: 22px;
+  opacity: 0; animation: fadeUp 0.6s 0.1s var(--ease) forwards;
+}
+.eyebrow-dot { width: 6px; height: 6px; background: var(--teal); border-radius: 50%; animation: pulse 2s infinite; }
+@keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.4;transform:scale(0.6)} }
+.page-title {
+  font-family: 'Syne', sans-serif;
+  font-size: clamp(2.6rem, 4.5vw, 4rem);
+  font-weight: 800; line-height: 1.05; letter-spacing: -0.04em;
+  margin-bottom: 16px;
+  opacity: 0; animation: fadeUp 0.7s 0.2s var(--ease) forwards;
+}
+.page-title em {
+  font-style: normal;
+  background: linear-gradient(135deg, var(--teal) 0%, var(--blue) 100%);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+}
+.page-meta-row {
+  display: flex; align-items: center; gap: 20px; flex-wrap: wrap;
+  opacity: 0; animation: fadeUp 0.7s 0.3s var(--ease) forwards;
+}
+.page-meta-chip {
+  font-family: 'Space Mono', monospace; font-size: 0.62rem; color: var(--t3);
+  letter-spacing: 0.06em; display: flex; align-items: center; gap: 6px;
+}
+.page-meta-chip::before { content: ''; width: 4px; height: 4px; border-radius: 50%; background: var(--t3); }
+
+/* MAIN LAYOUT */
+.page-layout {
+  max-width: 1300px;
+  margin: 0 auto;
+  padding: 0 36px 100px;
+  display: grid;
+  grid-template-columns: 260px 1fr;
+  gap: 60px;
+  align-items: start;
+}
+
+/* SIDEBAR TOC */
+.sidebar {
+  position: sticky;
+  top: 90px;
+  opacity: 0;
+  animation: fadeUp 0.7s 0.4s var(--ease) forwards;
+}
+.sidebar-label {
+  font-family: 'Space Mono', monospace;
+  font-size: 0.58rem; letter-spacing: 0.18em;
+  text-transform: uppercase; color: var(--t3);
+  margin-bottom: 14px; padding-left: 16px;
+}
+.toc-list { display: flex; flex-direction: column; gap: 2px; }
+.toc-item {
+  display: flex; align-items: center; gap: 10px;
+  padding: 9px 16px; border-radius: 9px;
+  font-size: 0.8rem; color: var(--t3); cursor: pointer;
+  transition: all 0.2s; border: 1px solid transparent;
+  text-decoration: none;
+}
+.toc-item:hover { color: var(--t1); background: rgba(255,255,255,0.03); border-color: var(--border); }
+.toc-item.active { color: var(--teal); background: rgba(0,242,195,0.04); border-color: rgba(0,242,195,0.14); }
+.toc-num {
+  font-family: 'Space Mono', monospace; font-size: 0.55rem; color: var(--t3);
+  opacity: 0.6; min-width: 18px;
+}
+.toc-item.active .toc-num { color: var(--teal); opacity: 1; }
+
+/* CONTENT */
+.content {
+  opacity: 0;
+  animation: fadeUp 0.7s 0.35s var(--ease) forwards;
+}
+.content-section {
+  margin-bottom: 56px;
+  padding-bottom: 56px;
+  border-bottom: 1px solid var(--border);
+  scroll-margin-top: 100px;
+}
+.content-section:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+
+.section-num {
+  font-family: 'Space Mono', monospace;
+  font-size: 0.6rem; letter-spacing: 0.14em; color: var(--teal);
+  margin-bottom: 10px; display: flex; align-items: center; gap: 8px;
+}
+.section-num::before { content: ''; width: 16px; height: 1px; background: var(--teal); }
+
+.section-heading {
+  font-family: 'Syne', sans-serif;
+  font-size: 1.5rem; font-weight: 800; letter-spacing: -0.025em;
+  color: var(--t1); margin-bottom: 20px; line-height: 1.2;
+}
+
+.content-text {
+  font-size: 0.9rem; color: var(--t2); line-height: 1.82;
+  margin-bottom: 16px;
+}
+.content-text:last-child { margin-bottom: 0; }
+
+.content-list {
+  display: flex; flex-direction: column; gap: 10px;
+  margin: 18px 0;
+}
+.content-list-item {
+  display: flex; align-items: flex-start; gap: 12px;
+  font-size: 0.88rem; color: var(--t2); line-height: 1.65;
+  padding: 12px 16px;
+  background: rgba(255,255,255,0.018);
+  border: 1px solid rgba(255,255,255,0.05);
+  border-radius: 10px;
+  transition: border-color 0.2s, background 0.2s;
+}
+.content-list-item:hover { border-color: rgba(0,242,195,0.14); background: rgba(0,242,195,0.025); }
+.list-dot {
+  width: 6px; height: 6px; border-radius: 50%;
+  background: var(--teal); flex-shrink: 0; margin-top: 7px;
+}
+
+/* HIGHLIGHT CARD */
+.highlight-card {
+  background: linear-gradient(135deg, rgba(0,242,195,0.04) 0%, rgba(61,126,255,0.04) 100%);
+  border: 1px solid rgba(0,242,195,0.14);
+  border-radius: 14px;
+  padding: 22px 24px;
+  margin: 22px 0;
+  display: flex; gap: 16px; align-items: flex-start;
+}
+.highlight-icon { font-size: 22px; flex-shrink: 0; margin-top: 1px; }
+.highlight-text { font-size: 0.88rem; color: var(--t2); line-height: 1.72; }
+.highlight-text strong { color: var(--teal); font-weight: 600; }
+
+/* TABLE */
+.data-table {
+  width: 100%; border-collapse: collapse;
+  margin: 20px 0; font-size: 0.82rem;
+}
+.data-table th {
+  font-family: 'Space Mono', monospace;
+  font-size: 0.58rem; letter-spacing: 0.1em;
+  color: var(--t3); text-transform: uppercase;
+  padding: 10px 16px; text-align: left;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+}
+.data-table td {
+  padding: 12px 16px; color: var(--t2);
+  border-bottom: 1px solid rgba(255,255,255,0.03);
+  line-height: 1.55;
+}
+.data-table tr:hover td { background: rgba(255,255,255,0.018); }
+.data-table td:first-child { color: var(--t1); font-weight: 500; }
+
+/* CONTACT CARD */
+.contact-callout {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 28px 28px;
+  display: flex; align-items: center; justify-content: space-between; gap: 24px;
+  flex-wrap: wrap;
+  margin-top: 24px;
+}
+.contact-callout-left h4 {
+  font-family: 'Syne', sans-serif;
+  font-size: 1rem; font-weight: 700; margin-bottom: 6px;
+}
+.contact-callout-left p { font-size: 0.82rem; color: var(--t2); }
+.contact-callout-btn {
+  background: linear-gradient(135deg, var(--teal), var(--blue));
+  color: #000; padding: 10px 22px; border-radius: 9px;
+  font-weight: 700; font-size: 0.82rem; font-family: 'Syne', sans-serif;
+  border: none; cursor: pointer; white-space: nowrap;
+  transition: all 0.3s var(--ease);
+  text-decoration: none; display: inline-block;
+}
+.contact-callout-btn:hover { transform: translateY(-2px); box-shadow: 0 10px 28px rgba(0,242,195,0.28); }
+
+/* FOOTER */
+footer { background: var(--bg); border-top: 1px solid var(--border); }
+.footer-strip { max-width: 1300px; margin: 0 auto; padding: 36px 36px; display: flex; align-items: center; justify-content: space-between; gap: 20px; flex-wrap: wrap; }
+.footer-copy { font-size: 0.78rem; color: var(--t3); }
+.footer-copy span { color: var(--t2); }
+.footer-links-row { display: flex; gap: 24px; }
+.footer-links-row a { font-size: 0.78rem; color: var(--t3); transition: color 0.2s; }
+.footer-links-row a:hover { color: var(--t1); }
+.footer-madewith { font-size: 0.75rem; color: var(--t3); display: flex; align-items: center; gap: 5px; }
+.footer-madewith .heart { color: var(--coral); animation: heartbeat 2s ease-in-out infinite; }
+@keyframes heartbeat { 0%,100%{transform:scale(1)} 50%{transform:scale(1.25)} }
+
+/* ANIMATIONS */
+@keyframes fadeUp { from{opacity:0;transform:translateY(24px)} to{opacity:1;transform:translateY(0)} }
+@keyframes fadeIn { from{opacity:0} to{opacity:1} }
+
+/* RESPONSIVE */
+@media(max-width:900px) {
+  .page-layout { grid-template-columns: 1fr; }
+  .sidebar { position: static; }
+}
+@media(max-width:640px) {
+  .nav-links { display: none; }
+  .page-hero-content, .page-layout { padding-left: 20px; padding-right: 20px; }
+  .contact-callout { flex-direction: column; }
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- PAGE HERO -->
+<section class="page-hero">
+  <div class="page-hero-orb-1"></div>
+  <div class="page-hero-orb-2"></div>
+  <div class="page-hero-grid"></div>
+  <div class="page-hero-content">
+    <div class="page-eyebrow">
+      <div class="eyebrow-dot"></div>
+      LEGAL &nbsp;&middot;&nbsp; PRIVACY
+    </div>
+    <h1 class="page-title">&#128274; Privacy <em>Policy</em></h1>
+    <div class="page-meta-row">
+      <div class="page-meta-chip">Last updated: 25 March 2025</div>
+      <div class="page-meta-chip">Effective: 25 March 2025</div>
+      <div class="page-meta-chip">Jurisdiction: India</div>
+    </div>
+  </div>
+</section>
+
+<!-- MAIN -->
+<div class="page-layout">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sidebar-label">On this page</div>
+    <nav class="toc-list">
+      <a class="toc-item active" href="#s1"><span class="toc-num">01</span> Overview</a>
+      <a class="toc-item" href="#s2"><span class="toc-num">02</span> Data We Collect</a>
+      <a class="toc-item" href="#s3"><span class="toc-num">03</span> How We Use Data</a>
+      <a class="toc-item" href="#s4"><span class="toc-num">04</span> Gemini AI Processing</a>
+      <a class="toc-item" href="#s5"><span class="toc-num">05</span> Cookies</a>
+      <a class="toc-item" href="#s6"><span class="toc-num">06</span> Data Retention</a>
+      <a class="toc-item" href="#s7"><span class="toc-num">07</span> Third-Party Services</a>
+      <a class="toc-item" href="#s8"><span class="toc-num">08</span> Your Rights</a>
+      <a class="toc-item" href="#s9"><span class="toc-num">09</span> Security</a>
+      <a class="toc-item" href="#s10"><span class="toc-num">10</span> Children</a>
+      <a class="toc-item" href="#s11"><span class="toc-num">11</span> Changes</a>
+      <a class="toc-item" href="#s12"><span class="toc-num">12</span> Contact</a>
+    </nav>
+  </aside>
+
+  <!-- CONTENT -->
+  <main class="content">
+
+    <div class="content-section" id="s1">
+      <div class="section-num">01 &mdash; OVERVIEW</div>
+      <h2 class="section-heading">Your Privacy Matters to Us</h2>
+      <p class="content-text">Welcome to Pathforge ("we", "our", "us"). This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you visit and use our AI-powered growth platform &mdash; including all four modules: CrackAI, VentureIQ, CampusPath, and MindMate.</p>
+      <p class="content-text">We are committed to building a platform that students can trust. We do not sell your data. We do not use your data for advertising. We collect only what we need to make Pathforge work for you.</p>
+      <div class="highlight-card">
+        <div class="highlight-icon">&#128737;</div>
+        <div class="highlight-text"><strong>Privacy by Design:</strong> All four Pathforge modules &mdash; especially MindMate &mdash; are engineered with a zero-retention approach for sensitive inputs. Your mood entries and journal data are processed in-session and never stored on our servers in personally identifiable form.</div>
+      </div>
+    </div>
+
+    <div class="content-section" id="s2">
+      <div class="section-num">02 &mdash; DATA WE COLLECT</div>
+      <h2 class="section-heading">Information We Collect</h2>
+      <p class="content-text">Depending on which module you use, we may collect the following categories of information:</p>
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Category</th>
+            <th>Examples</th>
+            <th>Module</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>Account Info</td><td>Name, email address, username</td><td>All modules</td></tr>
+          <tr><td>Profile Data</td><td>Target role, skills, goals, GitHub username</td><td>CrackAI, CampusPath</td></tr>
+          <tr><td>Session Input</td><td>Interview Q&A transcripts, startup idea text</td><td>CrackAI, VentureIQ</td></tr>
+          <tr><td>Wellness Input</td><td>Mood ratings, journal entries (anonymised)</td><td>MindMate</td></tr>
+          <tr><td>Usage Data</td><td>Pages visited, features used, session duration</td><td>All modules</td></tr>
+          <tr><td>Device/Technical</td><td>Browser type, IP address, OS</td><td>All modules</td></tr>
+          <tr><td>Communications</td><td>Support emails, contact form messages</td><td>N/A</td></tr>
+        </tbody>
+      </table>
+      <p class="content-text">We do not intentionally collect sensitive personal data such as financial information, government IDs, or biometric data.</p>
+    </div>
+
+    <div class="content-section" id="s3">
+      <div class="section-num">03 &mdash; HOW WE USE DATA</div>
+      <h2 class="section-heading">How We Use Your Information</h2>
+      <p class="content-text">We use the information we collect for the following purposes:</p>
+      <div class="content-list">
+        <div class="content-list-item"><div class="list-dot"></div>To provide, operate, and improve the Pathforge platform and its four AI modules.</div>
+        <div class="content-list-item"><div class="list-dot"></div>To personalise your experience &mdash; tailoring interview questions, career roadmaps, and wellness prompts to your stated goals.</div>
+        <div class="content-list-item"><div class="list-dot"></div>To transmit your session inputs to Google Gemini for real-time AI processing and return results to you.</div>
+        <div class="content-list-item"><div class="list-dot"></div>To track your progress across sessions when you opt into session history features.</div>
+        <div class="content-list-item"><div class="list-dot"></div>To send transactional communications (account confirmations, password resets) &mdash; never unsolicited marketing without consent.</div>
+        <div class="content-list-item"><div class="list-dot"></div>To monitor platform security and prevent fraud or misuse.</div>
+        <div class="content-list-item"><div class="list-dot"></div>To comply with legal obligations under applicable Indian law.</div>
+      </div>
+    </div>
+
+    <div class="content-section" id="s4">
+      <div class="section-num">04 &mdash; GEMINI AI PROCESSING</div>
+      <h2 class="section-heading">How We Use Google Gemini</h2>
+      <p class="content-text">Pathforge is powered by Google Gemini, Google's large language model API. When you use any module, your text inputs are sent to Google's Gemini API to generate responses. This processing is governed by Google's API data-use policies.</p>
+      <div class="highlight-card">
+        <div class="highlight-icon">&#9889;</div>
+        <div class="highlight-text"><strong>Important:</strong> Google does not use data sent to the Gemini API to train or improve their models by default. We have configured our API usage in accordance with Google's enterprise data-protection terms. Please review <a href="https://ai.google.dev/terms" style="color:var(--teal)">Google's terms</a> for more detail.</div>
+      </div>
+      <p class="content-text">We do not share any personally identifiable information beyond what is necessary to generate the AI response. Wherever possible, we strip or anonymise user identifiers before transmission.</p>
+    </div>
+
+    <div class="content-section" id="s5">
+      <div class="section-num">05 &mdash; COOKIES</div>
+      <h2 class="section-heading">Cookies &amp; Tracking</h2>
+      <p class="content-text">We use cookies and similar tracking technologies to maintain your session and improve your experience. We use the following types:</p>
+      <div class="content-list">
+        <div class="content-list-item"><div class="list-dot"></div><strong style="color:var(--t1)">Essential cookies:</strong> Required for the platform to function &mdash; session authentication, CSRF protection, preference storage.</div>
+        <div class="content-list-item"><div class="list-dot"></div><strong style="color:var(--t1)">Analytics cookies:</strong> Anonymous usage statistics to understand how features are used. We do not use Google Analytics or Meta Pixel.</div>
+        <div class="content-list-item"><div class="list-dot"></div><strong style="color:var(--t1)">No advertising cookies:</strong> We do not serve ads and do not use advertising-network trackers of any kind.</div>
+      </div>
+      <p class="content-text">You can control or delete cookies via your browser settings. Disabling essential cookies may prevent some features from working correctly.</p>
+    </div>
+
+    <div class="content-section" id="s6">
+      <div class="section-num">06 &mdash; DATA RETENTION</div>
+      <h2 class="section-heading">How Long We Keep Your Data</h2>
+      <p class="content-text">We retain your data only for as long as necessary to provide our services or comply with legal requirements:</p>
+      <table class="data-table">
+        <thead>
+          <tr><th>Data Type</th><th>Retention Period</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Account data</td><td>Until account deletion + 30 days</td></tr>
+          <tr><td>Interview session transcripts</td><td>90 days (opt-in history only)</td></tr>
+          <tr><td>Startup idea inputs</td><td>Session only &mdash; not persisted</td></tr>
+          <tr><td>Mood / wellness entries</td><td>Anonymised aggregate only; raw entries deleted within 24 hours</td></tr>
+          <tr><td>Usage logs</td><td>90 days rolling</td></tr>
+          <tr><td>Support communications</td><td>2 years</td></tr>
+        </tbody>
+      </table>
+      <p class="content-text">You may request deletion of your data at any time. See Section 8 for your rights.</p>
+    </div>
+
+    <div class="content-section" id="s7">
+      <div class="section-num">07 &mdash; THIRD-PARTY SERVICES</div>
+      <h2 class="section-heading">Third-Party Services We Use</h2>
+      <p class="content-text">Pathforge integrates with the following third-party services. Each has its own privacy policy:</p>
+      <div class="content-list">
+        <div class="content-list-item"><div class="list-dot"></div><strong style="color:var(--t1)">Google Gemini API</strong> &mdash; AI language model processing for all four modules.</div>
+        <div class="content-list-item"><div class="list-dot"></div><strong style="color:var(--t1)">GitHub API</strong> &mdash; Optional integration for CampusPath to analyse your public repository activity. Only data you explicitly authorise is accessed.</div>
+        <div class="content-list-item"><div class="list-dot"></div><strong style="color:var(--t1)">Django / Python backend</strong> &mdash; Our server infrastructure hosted in India.</div>
+      </div>
+      <p class="content-text">We do not sell, trade, or rent your personal information to any third party for commercial purposes.</p>
+    </div>
+
+    <div class="content-section" id="s8">
+      <div class="section-num">08 &mdash; YOUR RIGHTS</div>
+      <h2 class="section-heading">Your Rights Over Your Data</h2>
+      <p class="content-text">Under applicable law (including India's Digital Personal Data Protection Act, 2023), you have the following rights:</p>
+      <div class="content-list">
+        <div class="content-list-item"><div class="list-dot"></div><strong style="color:var(--t1)">Access:</strong> Request a copy of all personal data we hold about you.</div>
+        <div class="content-list-item"><div class="list-dot"></div><strong style="color:var(--t1)">Correction:</strong> Ask us to correct inaccurate or incomplete data.</div>
+        <div class="content-list-item"><div class="list-dot"></div><strong style="color:var(--t1)">Deletion:</strong> Request erasure of your personal data ("right to be forgotten").</div>
+        <div class="content-list-item"><div class="list-dot"></div><strong style="color:var(--t1)">Portability:</strong> Receive your data in a structured, machine-readable format.</div>
+        <div class="content-list-item"><div class="list-dot"></div><strong style="color:var(--t1)">Withdraw consent:</strong> Opt out of non-essential data processing at any time.</div>
+        <div class="content-list-item"><div class="list-dot"></div><strong style="color:var(--t1)">Grievance:</strong> Lodge a complaint with us or with the relevant Data Protection Board.</div>
+      </div>
+      <p class="content-text">To exercise any of these rights, contact us at the details in Section 12. We will respond within 30 days.</p>
+    </div>
+
+    <div class="content-section" id="s9">
+      <div class="section-num">09 &mdash; SECURITY</div>
+      <h2 class="section-heading">How We Protect Your Data</h2>
+      <p class="content-text">We implement appropriate technical and organisational measures to protect your personal information against unauthorised access, alteration, disclosure, or destruction:</p>
+      <div class="content-list">
+        <div class="content-list-item"><div class="list-dot"></div>All data in transit is encrypted using TLS 1.2+.</div>
+        <div class="content-list-item"><div class="list-dot"></div>Passwords are hashed using industry-standard algorithms (bcrypt/Argon2). We never store plain-text passwords.</div>
+        <div class="content-list-item"><div class="list-dot"></div>Access to production systems is restricted to authorised personnel only.</div>
+        <div class="content-list-item"><div class="list-dot"></div>We perform regular security reviews and dependency audits.</div>
+      </div>
+      <p class="content-text">No method of transmission over the internet is 100% secure. While we strive to protect your data, we cannot guarantee absolute security. If a breach occurs that affects you, we will notify you in accordance with applicable law.</p>
+    </div>
+
+    <div class="content-section" id="s10">
+      <div class="section-num">10 &mdash; CHILDREN</div>
+      <h2 class="section-heading">Children's Privacy</h2>
+      <p class="content-text">Pathforge is intended for students aged 13 and older. We do not knowingly collect personal data from children under 13. If you are a parent or guardian and believe your child has provided us with personal information, please contact us immediately and we will delete such data promptly.</p>
+    </div>
+
+    <div class="content-section" id="s11">
+      <div class="section-num">11 &mdash; CHANGES</div>
+      <h2 class="section-heading">Changes to This Policy</h2>
+      <p class="content-text">We may update this Privacy Policy from time to time. When we do, we will update the "Last updated" date at the top of this page. For material changes, we will provide a prominent notice via email or an in-platform notification at least 14 days before the change takes effect.</p>
+      <p class="content-text">Your continued use of Pathforge after any change constitutes acceptance of the updated policy.</p>
+    </div>
+
+    <div class="content-section" id="s12">
+      <div class="section-num">12 &mdash; CONTACT</div>
+      <h2 class="section-heading">Contact Us</h2>
+      <p class="content-text">If you have any questions about this Privacy Policy or wish to exercise your rights, please reach out:</p>
+      <div class="contact-callout">
+        <div class="contact-callout-left">
+          <h4>Pathforge Privacy Team</h4>
+          <p>We aim to respond to all privacy enquiries within 30 days.</p>
+        </div>
+        <a class="contact-callout-btn" href="{% url 'contact' %}">Contact Us &rarr;</a>
+      </div>
+    </div>
+
+  </main>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+// NAV SCROLL
+window.addEventListener('scroll', () => {
+  document.getElementById('mainNav').classList.toggle('scrolled', window.scrollY > 20);
+});
+
+// TOC ACTIVE STATE
+const sections = document.querySelectorAll('.content-section');
+const tocItems = document.querySelectorAll('.toc-item');
+const obs = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      tocItems.forEach(t => t.classList.remove('active'));
+      const active = document.querySelector(`.toc-item[href="#${e.target.id}"]`);
+      if (active) active.classList.add('active');
+    }
+  });
+}, { rootMargin: '-20% 0px -70% 0px' });
+sections.forEach(s => obs.observe(s));
+</script>
+{% endblock %}
+

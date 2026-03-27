@@ -1,0 +1,794 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pathforge — {% block title %}Dashboard{% endblock %}</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+
+/* =====================================================================
+   PATHFORGE — BASE STYLESHEET
+   Contains: Reset · Variables · Layout · Sidebar · Topbar ·
+             Typography · Cards · Buttons · Modals · Toast · Utilities
+   ===================================================================== */
+
+/* ── Reset ─────────────────────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--bg);
+  color: var(--t1);
+  line-height: 1.6;
+  overflow-x: hidden;
+  min-height: 100vh;
+  transition: background 0.35s ease, color 0.35s ease;
+}
+a { text-decoration: none; color: inherit; }
+ul { list-style: none; }
+button { cursor: pointer; border: none; font-family: inherit; }
+input, textarea, select {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--card);
+  border: 1px solid var(--border);
+  color: var(--t1);
+  border-radius: 10px;
+  padding: 11px 14px;
+  width: 100%;
+  outline: none;
+  transition: border 0.2s, box-shadow 0.2s;
+  font-size: 0.875rem;
+}
+input:focus, textarea:focus, select:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(6,214,160,0.1);
+}
+
+/* ── CSS Variables — DARK (default) ────────────────────────────────── */
+:root,
+[data-theme="dark"] {
+  --bg:        #070711;
+  --bg2:       #0d0d1f;
+  --surface:   #131326;
+  --card:      #1a1a35;
+  --card2:     #20203f;
+  --border:    rgba(255,255,255,0.07);
+  --border-h:  rgba(255,255,255,0.15);
+  --t1: #f0eeff;
+  --t2: #a09ec0;
+  --t3: #6a6888;
+  --shadow:    0 4px 24px rgba(0,0,0,0.45);
+  --topbar-bg: rgba(7,7,17,0.88);
+}
+
+/* ── CSS Variables — LIGHT ──────────────────────────────────────────── */
+[data-theme="light"] {
+  --bg:        #f4f3ff;
+  --bg2:       #eceaff;
+  --surface:   #ffffff;
+  --card:      #ffffff;
+  --card2:     #f0eeff;
+  --border:    rgba(0,0,0,0.08);
+  --border-h:  rgba(0,0,0,0.18);
+  --t1: #0f0e1a;
+  --t2: #4a4868;
+  --t3: #9a98b8;
+  --shadow:    0 4px 24px rgba(80,60,180,0.10);
+  --topbar-bg: rgba(244,243,255,0.92);
+}
+
+/* ── Palette (theme-independent) ───────────────────────────────────── */
+:root {
+  --green:   #06D6A0;
+  --blue:    #3B9EFF;
+  --coral:   #FF6B35;
+  --mauve:   #B084CC;
+  --gold:    #FFD166;
+  --accent:  #06D6A0;
+  --accent2: #3B9EFF;
+  --ease:    cubic-bezier(0.16, 1, 0.3, 1);
+  --sidebar-w: 260px;
+  --topbar-h:  62px;
+}
+
+/* ── Accent colour variants ─────────────────────────────────────────── */
+body.theme-fire    { --accent: #FF6B35; --accent2: #FFD166; }
+body.theme-digital { --accent: #3B9EFF; --accent2: #B084CC; }
+
+/* ── Scrollbar ──────────────────────────────────────────────────────── */
+::-webkit-scrollbar { width: 5px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(128,128,200,0.18); border-radius: 4px; }
+::selection { background: rgba(6,214,160,0.2); }
+
+/* =====================================================================
+   LAYOUT
+   ===================================================================== */
+.app-layout {
+  display: grid;
+  grid-template-columns: var(--sidebar-w) 1fr;
+  min-height: 100vh;
+}
+
+/* =====================================================================
+   SIDEBAR
+   ===================================================================== */
+.sidebar {
+  background: var(--surface);
+  border-right: 1px solid var(--border);
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  z-index: 50;
+  transition: background 0.35s ease, border-color 0.35s ease;
+}
+.sidebar::-webkit-scrollbar { width: 3px; }
+.sidebar::-webkit-scrollbar-thumb { background: rgba(128,128,200,0.12); }
+
+/* Logo */
+.sidebar-logo {
+  padding: 24px 22px 20px;
+  display: flex; align-items: center; gap: 10px;
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+}
+.sidebar-logo-mark {
+  width: 36px; height: 36px;
+  border-radius: 10px;
+  background: linear-gradient(135deg, var(--accent), var(--accent2));
+  display: flex; align-items: center; justify-content: center;
+  font-size: 16px; font-weight: 900; color: #000;
+  font-family: 'Syne', sans-serif;
+  box-shadow: 0 4px 16px rgba(6,214,160,0.25);
+  flex-shrink: 0;
+}
+.sidebar-logo-text {
+  font-family: 'Syne', sans-serif;
+  font-size: 1.2rem; font-weight: 800;
+  background: linear-gradient(90deg, var(--t1), var(--t2));
+  background-clip: text; -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+}
+
+/* Mini User */
+.sidebar-user-mini {
+  padding: 16px 18px;
+  display: flex; align-items: center; gap: 12px;
+  border-bottom: 1px solid var(--border);
+  cursor: pointer; transition: background 0.2s; flex-shrink: 0;
+}
+.sidebar-user-mini:hover { background: rgba(128,128,200,0.05); }
+
+.sidebar-avatar-sm {
+  width: 38px; height: 38px; border-radius: 50%;
+  background: linear-gradient(135deg, var(--accent), var(--accent2));
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'Syne', sans-serif; font-weight: 800; font-size: 15px; color: #000;
+  flex-shrink: 0; position: relative; overflow: hidden;
+}
+.sidebar-avatar-sm img { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; }
+
+.sidebar-user-info { flex: 1; min-width: 0; }
+.sidebar-user-name { font-weight: 600; font-size: 0.875rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: var(--t1); }
+.sidebar-user-status { font-size: 0.7rem; color: var(--accent); display: flex; align-items: center; gap: 4px; }
+.status-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--accent); animation: pulse-status 2s infinite; }
+@keyframes pulse-status { 0%,100%{opacity:1} 50%{opacity:0.4} }
+
+/* Nav */
+.sidebar-section { padding: 14px 10px 4px; }
+.sidebar-section-label {
+  font-family: 'Space Mono', monospace; font-size: 0.6rem;
+  letter-spacing: 0.14em; text-transform: uppercase; color: var(--t3); padding: 0 10px 8px;
+}
+.sidebar-item {
+  display: flex; align-items: center; gap: 11px;
+  padding: 10px 12px; border-radius: 10px; cursor: pointer;
+  transition: all 0.2s; color: var(--t2); font-size: 0.85rem; font-weight: 500;
+  border: 1px solid transparent; margin-bottom: 2px; user-select: none;
+}
+.sidebar-item:hover { background: var(--card2); color: var(--t1); }
+.sidebar-item.active { background: var(--card2); color: var(--t1); border-color: var(--border); }
+.sidebar-item.active .si-icon { color: var(--accent); }
+.si-icon { font-size: 15px; width: 20px; text-align: center; flex-shrink: 0; }
+.si-badge {
+  margin-left: auto; background: var(--accent); color: #000;
+  font-size: 0.6rem; font-weight: 700; padding: 1px 7px;
+  border-radius: 100px; font-family: 'Space Mono', monospace;
+}
+.sidebar-bottom { margin-top: auto; padding: 16px 10px; border-top: 1px solid var(--border); flex-shrink: 0; }
+
+/* =====================================================================
+   MAIN CONTENT AREA
+   ===================================================================== */
+.main { background: var(--bg); min-height: 100vh; display: flex; flex-direction: column; transition: background 0.35s ease; }
+
+/* ── Topbar ─────────────────────────────────────────────────────────── */
+.topbar {
+  position: sticky; top: 0; z-index: 40;
+  background: var(--topbar-bg);
+  backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px);
+  border-bottom: 1px solid var(--border);
+  padding: 0 28px; height: var(--topbar-h);
+  display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  flex-shrink: 0;
+  transition: background 0.35s ease, border-color 0.35s ease;
+}
+.topbar-left { display: flex; align-items: center; gap: 12px; min-width: 0; }
+.topbar-breadcrumb {
+  display: flex; align-items: center; gap: 8px;
+  font-size: 0.8rem; color: var(--t3);
+  font-family: 'Space Mono', monospace; white-space: nowrap;
+}
+.topbar-breadcrumb span { color: var(--t2); }
+.topbar-breadcrumb .sep { color: var(--t3); }
+.topbar-right { display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
+
+/* ── Hi, Student greeting chip ──────────────────────────────────────── */
+.topbar-greeting {
+  display: flex; align-items: center; gap: 9px;
+  padding: 5px 14px 5px 6px;
+  border-radius: 100px;
+  border: 1px solid var(--border);
+  background: var(--card2);
+  transition: border-color 0.2s, background 0.35s;
+}
+.topbar-greeting:hover { border-color: var(--border-h); }
+.topbar-greeting-avatar {
+  width: 28px; height: 28px; border-radius: 50%;
+  background: linear-gradient(135deg, var(--accent), var(--accent2));
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'Syne', sans-serif; font-weight: 800; font-size: 11px; color: #000;
+  flex-shrink: 0; overflow: hidden;
+}
+.topbar-greeting-avatar img { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; display: none; }
+.topbar-greeting-text { font-size: 0.8rem; color: var(--t2); font-weight: 500; white-space: nowrap; }
+.topbar-greeting-text strong { color: var(--t1); font-weight: 700; }
+
+/* ── Theme Toggle ───────────────────────────────────────────────────── */
+.theme-toggle-btn {
+  position: relative;
+  width: 68px; height: 34px;
+  border-radius: 100px;
+  border: 1.5px solid var(--border-h);
+  background: var(--card2);
+  cursor: pointer;
+  transition: border-color 0.3s var(--ease), box-shadow 0.3s, background 0.35s;
+  flex-shrink: 0;
+  overflow: hidden;
+}
+.theme-toggle-btn:hover {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(6,214,160,0.12);
+}
+.tt-icons {
+  position: absolute; inset: 0;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 9px; pointer-events: none;
+}
+.tt-icon-moon, .tt-icon-sun { font-size: 14px; transition: opacity 0.25s; line-height: 1; }
+
+/* Sliding pill */
+.tt-pill {
+  position: absolute; top: 3px;
+  width: 26px; height: 26px; border-radius: 50%;
+  background: linear-gradient(135deg, var(--accent), var(--accent2));
+  box-shadow: 0 2px 8px rgba(6,214,160,0.4);
+  transition: left 0.35s var(--ease), background 0.3s, box-shadow 0.3s;
+  pointer-events: none;
+}
+
+/* Dark → pill left (moon exposed) */
+[data-theme="dark"] .tt-pill        { left: 3px; }
+[data-theme="dark"] .tt-icon-moon   { opacity: 1; }
+[data-theme="dark"] .tt-icon-sun    { opacity: 0.3; }
+
+/* Light → pill right (sun exposed) */
+[data-theme="light"] .tt-pill       { left: 37px; background: linear-gradient(135deg, #FFD166, #FF8C42); box-shadow: 0 2px 8px rgba(255,209,102,0.5); }
+[data-theme="light"] .tt-icon-sun   { opacity: 1; }
+[data-theme="light"] .tt-icon-moon  { opacity: 0.3; }
+
+/* Mobile hamburger */
+.topbar-hamburger {
+  display: none; width: 36px; height: 36px; border-radius: 9px;
+  background: var(--card); border: 1px solid var(--border); color: var(--t1);
+  font-size: 18px; align-items: center; justify-content: center; cursor: pointer; flex-shrink: 0;
+}
+
+/* Page body */
+.page-body { padding: 32px 36px 64px; max-width: 1200px; width: 100%; flex: 1; }
+
+/* =====================================================================
+   BUTTONS
+   ===================================================================== */
+.topbar-btn {
+  padding: 7px 16px; border-radius: 9px; font-size: 0.8rem; font-weight: 600;
+  border: 1px solid var(--border); color: var(--t2); background: transparent;
+  transition: all 0.2s; display: inline-flex; align-items: center; gap: 6px;
+}
+.topbar-btn:hover { border-color: var(--border-h); color: var(--t1); background: var(--card2); }
+.topbar-btn.primary {
+  background: linear-gradient(135deg, var(--accent), var(--accent2));
+  color: #000; border-color: transparent; font-weight: 700;
+}
+.topbar-btn.primary:hover { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(6,214,160,0.25); }
+
+.btn-accent {
+  background: linear-gradient(135deg, var(--accent), var(--accent2));
+  color: #000; padding: 9px 22px; border-radius: 10px; font-weight: 700;
+  font-size: 0.85rem; border: none; display: inline-flex; align-items: center; gap: 7px;
+  transition: all 0.25s var(--ease); cursor: pointer;
+}
+.btn-accent:hover { transform: translateY(-1px); box-shadow: 0 8px 22px rgba(6,214,160,0.28); }
+
+.btn-ghost {
+  background: transparent; border: 1px solid var(--border-h); color: var(--t1);
+  padding: 9px 20px; border-radius: 10px; font-weight: 600; font-size: 0.85rem;
+  display: inline-flex; align-items: center; gap: 7px; transition: all 0.2s; cursor: pointer;
+}
+.btn-ghost:hover { background: var(--card2); }
+
+.btn-danger {
+  background: rgba(255,107,53,0.1); border: 1px solid rgba(255,107,53,0.3); color: var(--coral);
+  padding: 9px 20px; border-radius: 10px; font-weight: 600; font-size: 0.85rem;
+  display: inline-flex; align-items: center; gap: 7px; transition: all 0.2s; cursor: pointer;
+}
+.btn-danger:hover { background: rgba(255,107,53,0.18); border-color: var(--coral); }
+
+/* =====================================================================
+   CARDS
+   ===================================================================== */
+.card {
+  background: var(--card); border: 1px solid var(--border); border-radius: 18px;
+  overflow: hidden; transition: border-color 0.25s, box-shadow 0.25s, background 0.35s;
+}
+.card:hover { border-color: var(--border-h); box-shadow: var(--shadow); }
+.card-body    { padding: 24px; }
+.card-body-sm { padding: 18px 20px; }
+
+/* =====================================================================
+   SECTION HELPERS
+   ===================================================================== */
+.sec-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; gap: 16px; }
+.sec-title { font-family: 'Syne', sans-serif; font-size: 1.05rem; font-weight: 700; display: flex; align-items: center; gap: 9px; color: var(--t1); }
+.sec-title-icon { width: 30px; height: 30px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 14px; background: var(--card2); border: 1px solid var(--border); }
+.sec-divider { height: 1px; background: linear-gradient(90deg, var(--border), transparent); margin: 32px 0; }
+
+/* =====================================================================
+   GRID UTILITIES
+   ===================================================================== */
+.grid-2    { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+.grid-3    { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+.grid-4    { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+.grid-auto { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 16px; }
+
+/* =====================================================================
+   CHIPS
+   ===================================================================== */
+.chip { display: inline-flex; align-items: center; gap: 5px; padding: 3px 10px; border-radius: 100px; font-size: 0.7rem; font-weight: 600; }
+.chip-green { background: rgba(6,214,160,0.1);   color: var(--green); border: 1px solid rgba(6,214,160,0.2); }
+.chip-blue  { background: rgba(59,158,255,0.1);  color: var(--blue);  border: 1px solid rgba(59,158,255,0.2); }
+.chip-coral { background: rgba(255,107,53,0.1);  color: var(--coral); border: 1px solid rgba(255,107,53,0.2); }
+.chip-mauve { background: rgba(176,132,204,0.1); color: var(--mauve); border: 1px solid rgba(176,132,204,0.2); }
+.chip-gold  { background: rgba(255,209,102,0.1); color: var(--gold);  border: 1px solid rgba(255,209,102,0.2); }
+
+/* =====================================================================
+   FORM ELEMENTS
+   ===================================================================== */
+.form-field { margin-bottom: 16px; }
+.form-label { font-size: 0.76rem; color: var(--t3); margin-bottom: 7px; display: block; letter-spacing: 0.04em; }
+
+/* Toggle switch */
+.toggle { position: relative; width: 44px; height: 24px; cursor: pointer; }
+.toggle input { opacity: 0; width: 0; height: 0; }
+.toggle-track { position: absolute; inset: 0; background: var(--card2); border-radius: 100px; border: 1px solid var(--border); transition: background 0.25s; }
+.toggle input:checked + .toggle-track { background: var(--accent); border-color: var(--accent); }
+.toggle-thumb { position: absolute; top: 3px; left: 3px; width: 16px; height: 16px; background: rgba(255,255,255,0.5); border-radius: 50%; transition: transform 0.25s var(--ease), background 0.25s; }
+.toggle input:checked ~ .toggle-thumb { transform: translateX(20px); background: #000; }
+
+/* =====================================================================
+   MODAL
+   ===================================================================== */
+.modal-overlay {
+  position: fixed; inset: 0; background: rgba(0,0,0,0.55);
+  backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+  z-index: 1000; display: flex; align-items: center; justify-content: center;
+  opacity: 0; pointer-events: none; transition: opacity 0.25s;
+}
+.modal-overlay.open { opacity: 1; pointer-events: all; }
+.modal {
+  background: var(--surface); border: 1px solid var(--border-h); border-radius: 20px;
+  padding: 30px; width: 520px; max-width: calc(100vw - 32px); max-height: 85vh; overflow-y: auto;
+  transform: translateY(20px) scale(0.97); transition: transform 0.3s var(--ease), background 0.35s;
+}
+.modal-overlay.open .modal { transform: translateY(0) scale(1); }
+.modal-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px; }
+.modal-title { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 1.1rem; }
+.modal-close {
+  width: 32px; height: 32px; border-radius: 8px; background: var(--card2);
+  border: 1px solid var(--border); color: var(--t2);
+  display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 16px; transition: all 0.2s;
+}
+.modal-close:hover { background: rgba(255,107,53,0.1); border-color: rgba(255,107,53,0.3); color: var(--coral); }
+.modal-actions { display: flex; gap: 10px; justify-content: flex-end; margin-top: 8px; }
+
+/* =====================================================================
+   TOAST
+   ===================================================================== */
+.toast {
+  position: fixed; bottom: 24px; right: 24px;
+  background: var(--surface); border: 1px solid rgba(6,214,160,0.25);
+  border-radius: 12px; padding: 13px 18px; font-size: 0.85rem;
+  display: flex; align-items: center; gap: 10px;
+  box-shadow: 0 20px 50px rgba(0,0,0,0.25); z-index: 9999;
+  transform: translateY(80px); opacity: 0;
+  transition: all 0.4s var(--ease); max-width: 320px; pointer-events: none;
+}
+.toast.show { transform: translateY(0); opacity: 1; pointer-events: all; }
+.toast-icon { font-size: 18px; flex-shrink: 0; }
+.toast-msg  { font-weight: 500; }
+
+/* =====================================================================
+   REVEAL ANIMATION
+   ===================================================================== */
+.reveal { opacity: 0; transform: translateY(20px); transition: opacity 0.6s var(--ease), transform 0.6s var(--ease); }
+.reveal.vis { opacity: 1; transform: none; }
+
+/* =====================================================================
+   MOBILE SIDEBAR OVERLAY
+   ===================================================================== */
+.sidebar-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 45; backdrop-filter: blur(4px); }
+.sidebar-overlay.open { display: block; }
+
+/* =====================================================================
+   RESPONSIVE
+   ===================================================================== */
+@media (max-width: 1100px) {
+  .grid-4 { grid-template-columns: repeat(2, 1fr); }
+  .grid-3 { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 900px) {
+  .app-layout { grid-template-columns: 1fr; }
+  .sidebar { position: fixed; top: 0; left: 0; height: 100vh; width: var(--sidebar-w); transform: translateX(-100%); transition: transform 0.35s var(--ease); z-index: 46; }
+  .sidebar.open { transform: translateX(0); }
+  .topbar-hamburger { display: flex; }
+  .page-body { padding: 20px; }
+  .grid-2 { grid-template-columns: 1fr; }
+}
+@media (max-width: 640px) {
+  .topbar { padding: 0 14px; gap: 8px; }
+  .topbar-breadcrumb { display: none; }
+  .topbar-greeting-text { display: none; }
+  .grid-4, .grid-3 { grid-template-columns: repeat(2, 1fr); }
+}
+
+</style>
+{% block page_styles %}<style></style>{% endblock %}
+{% block page_head_extras %}{% endblock %}
+</head>
+<body>
+
+<!-- ── TOAST ─────────────────────────────────────────────────────────── -->
+<div class="toast" id="toast" role="alert" aria-live="polite">
+  <span class="toast-icon" id="toastIcon">✓</span>
+  <span class="toast-msg"  id="toastMsg">Done!</span>
+</div>
+
+<!-- ── MOBILE SIDEBAR OVERLAY ─────────────────────────────────────────── -->
+<div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
+
+{% block page_modals %}{% endblock %}
+
+<!-- ═══════════════════════════════════════════════════════════════════════
+     APP LAYOUT
+     ═══════════════════════════════════════════════════════════════════════ -->
+<div class="app-layout">
+
+  <!-- ==================================================================
+       SIDEBAR
+       ================================================================== -->
+  <aside class="sidebar" id="sidebar">
+
+    <!-- Logo -->
+    <a href="{% url 'home' %}" class="sidebar-logo">
+      <div class="sidebar-logo-mark">✦</div>
+      <div class="sidebar-logo-text">Pathforge</div>
+    </a>
+
+    <!-- Mini User Card -->
+    <a href="{% url 'dashboard' %}" class="sidebar-user-mini" id="sidebarUserMini">
+      <div class="sidebar-avatar-sm" id="sbAvatar">
+        A
+        <img id="sbAvatarImg" src="" alt="User avatar">
+      </div>
+      <div class="sidebar-user-info">
+        <div class="sidebar-user-name" id="sbUserName">{{ user.first_name }} {{ user.last_name }}</div>
+        <div class="sidebar-user-status">
+          <div class="status-dot"></div>
+          <span>Online</span>
+        </div>
+      </div>
+    </a>
+
+    <!-- Nav: Tools -->
+    <div class="sidebar-section">
+      <div class="sidebar-section-label">Tools</div>
+      <a class="sidebar-item{% if request.resolver_match.url_name == 'crackAI' %} active{% endif %}" href="{% url 'crackAI' %}"><span class="si-icon">🎙️</span> CrackAI</a>
+      <a class="sidebar-item{% if request.resolver_match.url_name == 'ventureIQ' %} active{% endif %}" href="{% url 'ventureIQ' %}"><span class="si-icon">🚀</span> VentureIQ</a>
+      <a class="sidebar-item{% if request.resolver_match.url_name == 'campuspathAI' %} active{% endif %}" href="{% url 'campuspathAI' %}"><span class="si-icon">🗺️</span> CampusPath</a>
+      <a class="sidebar-item{% if request.resolver_match.url_name == 'mindmateAI' %} active{% endif %}" href="{% url 'mindmateAI' %}"><span class="si-icon">🌱</span> MindMate</a>
+    </div>
+
+    <!-- Nav: Help Desk -->
+    <div class="sidebar-section">
+      <div class="sidebar-section-label">Help Desk</div>
+      <a class="sidebar-item" href="{% url 'feedback' %}"><span class="si-icon">💬</span> Feedback</a>
+      <a class="sidebar-item" href="{% url 'profile' %}"><span class="si-icon">👤</span> My Profile</a>
+    </div>
+
+    <!-- Bottom: Logout -->
+    <div class="sidebar-bottom">
+      <div class="sidebar-item" style="color:var(--coral)" onclick="logoutConfirm()">
+        <span class="si-icon">↩</span> Logout
+      </div>
+    </div>
+
+  </aside>
+
+  <!-- ==================================================================
+       MAIN CONTENT
+       ================================================================== -->
+  <div class="main">
+
+    <!-- TOPBAR -->
+    <div class="topbar">
+
+      <!-- Left: hamburger + breadcrumb -->
+      <div class="topbar-left">
+        <button class="topbar-hamburger" onclick="openSidebar()" aria-label="Open menu">☰</button>
+        <div class="topbar-breadcrumb">
+          Dashboard
+          <span class="sep">/</span>
+          <span id="topbarPage">{% block page_label %}Page{% endblock %}</span>
+        </div>
+      </div>
+
+      <!-- Right: page-specific actions · theme toggle · greeting -->
+      <div class="topbar-right" id="topbarActions">
+
+        {% block topbar_actions %}{% endblock %}
+
+        <!-- Light / Dark toggle -->
+        <button
+          class="theme-toggle-btn"
+          id="themeToggleBtn"
+          onclick="toggleTheme()"
+          aria-label="Toggle light/dark mode"
+          title="Toggle light / dark mode"
+        >
+          <div class="tt-icons">
+            <span class="tt-icon-moon">🌙</span>
+            <span class="tt-icon-sun">☀️</span>
+          </div>
+          <div class="tt-pill"></div>
+        </button>
+
+        <!-- Hi, Student greeting -->
+        <div class="topbar-greeting" id="topbarGreeting">
+          <div class="topbar-greeting-avatar" id="greetingAvatar">
+            A
+            <img id="greetingAvatarImg" src="" alt="">
+          </div>
+          <div class="topbar-greeting-text">
+            Hi, <strong id="greetingName">{{ user.first_name }}</strong> 👋
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- PAGE BODY -->
+    <div class="page-body" id="pageBody">
+      {% block page_content %}
+      <!-- Default placeholder — override this block in child pages -->
+      <div class="reveal" style="text-align:center;padding:80px 20px 60px">
+        <div style="font-size:56px;margin-bottom:20px">🧩</div>
+        <div style="font-family:'Syne',sans-serif;font-size:1.6rem;font-weight:800;margin-bottom:10px">base.html loaded</div>
+        <p style="color:var(--t2);max-width:420px;margin:0 auto 28px">
+          This is your shared base template. Replace the content inside
+          <code style="background:var(--card2);padding:2px 8px;border-radius:6px;font-size:0.8rem">#pageBody</code>
+          with your page-specific markup.
+        </p>
+        <button class="btn-accent" onclick="showToast('Ready to build! 🚀','🚀')">Get Started →</button>
+      </div>
+      {% endblock %}
+    </div>
+
+  </div><!-- /main -->
+</div><!-- /app-layout -->
+
+<!-- ==================================================================
+     BASE JAVASCRIPT  —  shared across all pages
+     ================================================================== -->
+<script>
+
+/* ── TOAST ──────────────────────────────────────────────────────────────
+   showToast('Your message', '✅')
+   ─────────────────────────────────────────────────────────────────── */
+function showToast(msg, icon = '✓') {
+  const el = document.getElementById('toast');
+  document.getElementById('toastMsg').textContent  = msg;
+  document.getElementById('toastIcon').textContent = icon;
+  el.classList.add('show');
+  clearTimeout(el._tid);
+  el._tid = setTimeout(() => el.classList.remove('show'), 3200);
+}
+
+/* ── LIGHT / DARK MODE ──────────────────────────────────────────────────
+   Toggles data-theme on <html>. Persists in sessionStorage.
+   ─────────────────────────────────────────────────────────────────── */
+function toggleTheme() {
+  const html  = document.documentElement;
+  const isDark = html.getAttribute('data-theme') === 'dark';
+  const next   = isDark ? 'light' : 'dark';
+  html.setAttribute('data-theme', next);
+  try { sessionStorage.setItem('nx-mode', next); } catch(_) {}
+  showToast(next === 'light' ? 'Light mode on' : 'Dark mode on', next === 'light' ? '☀️' : '🌙');
+}
+
+/* Restore saved light/dark preference */
+(function restoreMode() {
+  try {
+    const saved = sessionStorage.getItem('nx-mode');
+    if (saved) document.documentElement.setAttribute('data-theme', saved);
+  } catch(_) {}
+})();
+
+/* ── SIDEBAR (mobile) ───────────────────────────────────────────────── */
+function openSidebar() {
+  document.getElementById('sidebar').classList.add('open');
+  document.getElementById('sidebarOverlay').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+function closeSidebar() {
+  document.getElementById('sidebar').classList.remove('open');
+  document.getElementById('sidebarOverlay').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+/* ── SIDEBAR NAV ────────────────────────────────────────────────────────
+   Usage: onclick="sideNav(this)"  or  sideNav(el, '#section-id')
+   ─────────────────────────────────────────────────────────────────── */
+function sideNav(el, scrollTarget) {
+  document.querySelectorAll('.sidebar-item').forEach(i => i.classList.remove('active'));
+  el.classList.add('active');
+  if (scrollTarget) {
+    const t = document.querySelector(scrollTarget);
+    if (t) window.scrollTo({ top: t.getBoundingClientRect().top + window.scrollY - 80, behavior: 'smooth' });
+  }
+  closeSidebar();
+}
+
+/* ── ACCENT THEME SWITCHER ──────────────────────────────────────────────
+   Usage: setAccentTheme('default'|'fire'|'digital', optionalEl)
+   ─────────────────────────────────────────────────────────────────── */
+function setAccentTheme(theme, el) {
+  const names = { default: 'Digital Green', fire: 'Fiery Orange', digital: 'Electric Blue' };
+  const stripped = document.body.className.replace(/theme-\S+/g, '').trim();
+  document.body.className = (stripped + (theme !== 'default' ? ` theme-${theme}` : '')).trim();
+  if (el) {
+    document.querySelectorAll('.theme-option').forEach(o => o.classList.remove('active'));
+    el.classList.add('active');
+  }
+  showToast(`Accent: ${names[theme] || theme}`, '🎨');
+  try { sessionStorage.setItem('nx-accent', theme); } catch(_) {}
+}
+
+/* Restore saved accent theme */
+(function restoreAccent() {
+  try {
+    const saved = sessionStorage.getItem('nx-accent');
+    if (saved && saved !== 'default') document.body.classList.add(`theme-${saved}`);
+  } catch(_) {}
+})();
+
+/* ── LOGOUT ─────────────────────────────────────────────────────────── */
+function logoutConfirm() {
+  if (confirm('Log out of Pathforge?')) {
+    showToast('Logging out…', '👋');
+    setTimeout(() => { window.location.href = "{% url 'logout' %}"; }, 250);
+  }
+}
+
+/* ── AVATAR UPLOAD ──────────────────────────────────────────────────────
+   Attach to: <input type="file" accept="image/*" onchange="uploadAvatar(this)">
+   Updates sidebar mini-avatar, topbar greeting avatar, and main profile avatar.
+   ─────────────────────────────────────────────────────────────────── */
+function uploadAvatar(input) {
+  const file = input.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    const src = e.target.result;
+    // Sidebar
+    const sbImg = document.getElementById('sbAvatarImg');
+    if (sbImg) { sbImg.src = src; sbImg.style.display = 'block'; }
+    // Topbar greeting
+    const gImg = document.getElementById('greetingAvatarImg');
+    if (gImg) {
+      gImg.src = src; gImg.style.display = 'block';
+      const gAvatar = document.getElementById('greetingAvatar');
+      if (gAvatar) gAvatar.style.fontSize = '0';
+    }
+    // Main profile avatar (if present on page)
+    const mainImg = document.getElementById('mainAvatarImg');
+    if (mainImg) { mainImg.src = src; mainImg.style.display = 'block'; }
+    showToast('Profile photo updated!', '📷');
+  };
+  reader.readAsDataURL(file);
+}
+
+/* ── GREETING NAME SYNC ─────────────────────────────────────────────────
+   Call after saving a profile name update: syncGreeting('Arjun Sharma')
+   ─────────────────────────────────────────────────────────────────── */
+function syncGreeting(fullName) {
+  const first = fullName ? fullName.trim().split(' ')[0] : 'Student';
+  const gEl = document.getElementById('greetingName');
+  if (gEl) gEl.textContent = first;
+  const sbEl = document.getElementById('sbUserName');
+  if (sbEl) sbEl.textContent = fullName;
+}
+
+/* ── MODAL HELPERS ──────────────────────────────────────────────────────
+   openModal('myModalId')  /  closeModal('myModalId')
+   ─────────────────────────────────────────────────────────────────── */
+function openModal(id)  { const el = document.getElementById(id); if (el) el.classList.add('open');    }
+function closeModal(id) { const el = document.getElementById(id); if (el) el.classList.remove('open'); }
+
+/* Close modals on backdrop click */
+document.querySelectorAll('.modal-overlay').forEach(overlay => {
+  overlay.addEventListener('click', e => { if (e.target === overlay) overlay.classList.remove('open'); });
+});
+
+/* Escape key: close sidebar + any open modal */
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') {
+    closeSidebar();
+    document.querySelectorAll('.modal-overlay.open').forEach(m => m.classList.remove('open'));
+  }
+});
+
+/* ── TOGGLE SWITCH FEEDBACK ─────────────────────────────────────────── */
+document.querySelectorAll('.toggle input').forEach(toggle => {
+  toggle.addEventListener('change', () => {
+    showToast(toggle.checked ? 'Setting enabled' : 'Setting disabled', toggle.checked ? '✅' : '○');
+  });
+});
+
+/* ── SCROLL REVEAL ──────────────────────────────────────────────────────
+   Add class="reveal" to any element; it fades + slides in when visible.
+   ─────────────────────────────────────────────────────────────────── */
+(function initReveal() {
+  const obs = new IntersectionObserver(entries => {
+    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('vis'); obs.unobserve(e.target); } });
+  }, { threshold: 0.07 });
+  document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
+})();
+
+/* ── PAGE INIT HOOK ─────────────────────────────────────────────────────
+   Child pages may define:  window.pageInit = function() { ... }
+   It will be called after the DOM is ready.
+   ─────────────────────────────────────────────────────────────────── */
+document.addEventListener('DOMContentLoaded', () => {
+  if (typeof window.pageInit === 'function') window.pageInit();
+});
+
+</script>
+
+{% block page_scripts %}{% endblock %}
+
+</body>
+</html>

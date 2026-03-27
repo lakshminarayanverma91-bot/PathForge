@@ -1,0 +1,372 @@
+{% extends "dashboard/base.html" %}
+
+{% block title %}Profile — Pathforge{% endblock %}
+{% block page_label %}My Profile{% endblock %}
+
+{% block page_styles %}
+<style>
+.profile-page { max-width: 1060px; }
+
+.page-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 30px;
+  opacity: 0;
+  animation: fadeUp 0.5s 0.1s var(--ease) forwards;
+}
+.page-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  border: 1px solid rgba(6,214,160,0.2);
+  background: rgba(6,214,160,0.04);
+  border-radius: 100px;
+  padding: 5px 14px;
+  font-family: 'Space Mono', monospace;
+  font-size: 0.66rem;
+  color: var(--accent);
+  letter-spacing: 0.1em;
+}
+.eyebrow-dot { width: 6px; height: 6px; background: var(--accent); border-radius: 50%; animation: pulseD 2s infinite; }
+
+.profile-grid { display: grid; grid-template-columns: 290px 1fr; gap: 20px; align-items: start; }
+
+.avatar-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  overflow: hidden;
+  opacity: 0;
+  animation: fadeUp 0.6s 0.2s var(--ease) forwards;
+}
+.card-top-line { height: 1px; background: linear-gradient(90deg, transparent, var(--accent), transparent); opacity: 0.45; }
+.avatar-section { padding: 28px 20px 20px; text-align: center; border-bottom: 1px solid var(--border); }
+.avatar-ring-wrap { position: relative; width: 170px; height: 170px; margin: 0 auto 16px; }
+.avatar-ring {
+  width: 170px;
+  height: 170px;
+  border-radius: 50%;
+  background: var(--card2);
+  border: 2px solid var(--border);
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.avatar-ring img { width: 100%; height: 100%; object-fit: cover; object-position: center 14%; border-radius: 50%; display: none; }
+.avatar-ring-emoji { font-size: 68px; line-height: 1; }
+.avatar-edit-btn {
+  position: absolute;
+  bottom: 6px;
+  right: 6px;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--accent), var(--accent2));
+  border: 2px solid var(--surface);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #000;
+}
+.avatar-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 12px;
+  border-radius: 100px;
+  background: rgba(6,214,160,0.07);
+  border: 1px solid rgba(6,214,160,0.16);
+  font-family: 'Space Mono', monospace;
+  font-size: 0.58rem;
+  color: var(--green);
+  letter-spacing: 0.08em;
+  margin-bottom: 12px;
+}
+.status-pulse { width: 5px; height: 5px; background: var(--green); border-radius: 50%; animation: pulseD 1.8s infinite; }
+.avatar-name { font-family: 'Syne', sans-serif; font-size: 1.15rem; font-weight: 800; margin-bottom: 4px; }
+.avatar-role { font-family: 'Space Mono', monospace; font-size: 0.6rem; color: var(--t3); letter-spacing: 0.08em; }
+
+.avatar-actions { padding: 16px 18px; display: flex; flex-direction: column; gap: 9px; }
+.action-btn {
+  width: 100%;
+  padding: 10px 16px;
+  border-radius: 10px;
+  font-family: 'Syne', sans-serif;
+  font-size: 0.79rem;
+  font-weight: 700;
+  border: 1px solid;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+.btn-photo { color: var(--t1); border-color: var(--border-h); background: var(--card2); }
+.btn-password { color: #000; border-color: transparent; background: linear-gradient(135deg, var(--accent), var(--accent2)); }
+.btn-delete { color: var(--coral); border-color: rgba(255,107,53,0.22); background: rgba(255,107,53,0.04); }
+
+.info-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  overflow: hidden;
+  opacity: 0;
+  animation: fadeUp 0.6s 0.3s var(--ease) forwards;
+}
+.card-top-line-blue { height: 1px; background: linear-gradient(90deg, transparent, var(--blue), transparent); opacity: 0.35; }
+.info-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 22px 26px 18px;
+  border-bottom: 1px solid var(--border);
+}
+.info-header-left { display: flex; flex-direction: column; gap: 3px; }
+.info-kicker { font-family: 'Space Mono', monospace; font-size: 0.58rem; color: var(--blue); letter-spacing: 0.14em; text-transform: uppercase; }
+.info-title { font-family: 'Syne', sans-serif; font-size: 1.02rem; font-weight: 800; }
+.info-sub { font-size: 0.75rem; color: var(--t3); }
+
+.edit-btn-group { display: flex; gap: 8px; }
+.edit-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: 'Syne', sans-serif;
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 7px 15px;
+  border-radius: 9px;
+  border: 1px solid;
+}
+.btn-edit { color: var(--blue); border-color: rgba(59,158,255,0.25); background: rgba(59,158,255,0.05); }
+.btn-save { color: #000; border-color: transparent; background: linear-gradient(135deg, var(--accent), var(--accent2)); display: none; }
+.btn-cancel { color: var(--t2); border-color: var(--border-h); background: transparent; display: none; }
+
+.info-fields { padding: 4px 0; }
+.field-row {
+  display: grid;
+  grid-template-columns: 150px 1fr;
+  align-items: center;
+  gap: 12px;
+  padding: 13px 26px;
+  border-bottom: 1px solid var(--border);
+}
+.field-row:last-child { border-bottom: none; }
+.field-label {
+  font-family: 'Space Mono', monospace;
+  font-size: 0.67rem;
+  color: var(--t3);
+  letter-spacing: 0.06em;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.field-icon {
+  width: 26px;
+  height: 26px;
+  border-radius: 7px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  background: var(--card2);
+  border: 1px solid var(--border);
+}
+.field-display {
+  font-size: 0.86rem;
+  color: var(--t1);
+  padding: 9px 13px;
+  background: rgba(255,255,255,0.02);
+  border: 1px solid var(--border);
+  border-radius: 9px;
+  min-height: 40px;
+}
+.field-input, .field-select {
+  display: none;
+  background: var(--card2);
+  border: 1px solid rgba(59,158,255,0.28);
+  color: var(--t1);
+  border-radius: 9px;
+  padding: 9px 13px;
+  font-size: 0.86rem;
+  width: 100%;
+}
+.field-select option { background: var(--surface); }
+
+.gender-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 3px 10px;
+  border-radius: 100px;
+  font-size: 0.7rem;
+  font-family: 'Space Mono', monospace;
+  background: rgba(59,158,255,0.1);
+  color: var(--blue);
+  border: 1px solid rgba(59,158,255,0.2);
+}
+.link-val { color: var(--blue); font-size: 0.83rem; word-break: break-all; }
+.none-tag {
+  font-family: 'Space Mono', monospace;
+  font-size: 0.67rem;
+  color: var(--t3);
+  background: var(--card2);
+  border: 1px solid var(--border);
+  padding: 2px 9px;
+  border-radius: 6px;
+}
+
+.info-footer {
+  padding: 14px 26px;
+  border-top: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.footer-chips { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
+.footer-chip { display: flex; align-items: center; gap: 5px; font-family: 'Space Mono', monospace; font-size: 0.57rem; color: var(--t3); }
+.footer-dot { width: 5px; height: 5px; border-radius: 50%; }
+.footer-id { font-family: 'Space Mono', monospace; font-size: 0.57rem; color: var(--t3); }
+
+@keyframes fadeUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes pulseD { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.35; transform: scale(0.6); } }
+
+@media (max-width: 900px) {
+  .profile-grid { grid-template-columns: 1fr; }
+  .avatar-card { max-width: 420px; margin: 0 auto; }
+}
+@media (max-width: 640px) {
+  .info-header { flex-direction: column; align-items: flex-start; gap: 12px; padding: 18px 18px; }
+  .field-row { grid-template-columns: 1fr; gap: 5px; padding: 11px 18px; }
+  .info-footer { padding: 12px 18px; }
+}
+</style>
+{% endblock %}
+
+{% block page_modals %}
+<div class="modal-overlay" id="deleteModal">
+  <div class="modal" style="width:420px;max-width:calc(100vw - 32px);text-align:center;border:1px solid rgba(255,107,53,0.22)">
+    <div style="font-size:2.4rem;margin-bottom:12px">⚠️</div>
+    <div class="modal-title" style="color:var(--coral)">Delete Account</div>
+    <div style="font-size:0.83rem;color:var(--t3);line-height:1.7;margin-bottom:22px">
+      This action is permanent and cannot be undone.<br>
+      All your data, sessions and progress will be erased forever.
+    </div>
+    <div class="modal-actions" style="justify-content:center">
+      <button class="btn-danger">Yes, Delete</button>
+      <button class="btn-ghost">Keep Account</button>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block page_content %}
+{% for user in all_users %}
+
+<div class="profile-page">
+  <div class="page-header">
+    <div class="page-eyebrow"><div class="eyebrow-dot"></div>USER PROFILE</div>
+  </div>
+
+  <div class="profile-grid">
+    <div class="avatar-card">
+      <div class="card-top-line"></div>
+      <div class="avatar-section">
+        <div class="avatar-ring-wrap">
+          <div class="avatar-ring" id="avatarRing">
+            <img id="avatarImg" src="{% if user.image %}{{ user.image.url }}{% endif %}" alt="Avatar" {% if user.image %}style="display:block"{% endif %}>
+            <div class="avatar-ring-emoji" id="avatarEmoji" {% if user.image %}style="display:none"{% endif %}>{{ user.first_name|default:user.username|slice:":1"|upper }}</div>
+          </div>
+        </div>
+        <div class="avatar-status"><div class="status-pulse"></div>ACTIVE MEMBER</div>
+        <div class="avatar-name" id="profileName">{{ user.get_full_name|default:user.username }}</div>
+        <div class="avatar-role">{{ user.role|default:'-' }}</div>
+      </div>
+      <div class="avatar-actions">
+        <button class="action-btn btn-photo">📸 Change Profile Photo</button>
+        <button class="action-btn btn-password">🔑 Change Password</button>
+        <button class="action-btn btn-delete">🗑️ Delete Account</button>
+      </div>
+    </div>
+
+    <div class="info-card">
+      <div class="card-top-line-blue"></div>
+      <div class="info-header">
+        <div class="info-header-left">
+          <div class="info-kicker">Personal Information</div>
+          <div class="info-title">Profile Details</div>
+          <div class="info-sub">Manage your personal data and preferences</div>
+        </div>
+        <div class="edit-btn-group">
+          <button class="edit-btn btn-edit" id="editBtn">✏️ Edit Profile</button>
+          <button class="edit-btn btn-save" id="saveBtn">✦ Save Changes</button>
+          <button class="edit-btn btn-cancel" id="cancelBtn">✕ Cancel</button>
+        </div>
+      </div>
+
+      <div class="info-fields">
+        <div class="field-row">
+          <div class="field-label"><span class="field-icon">👤</span>Name</div>
+          <div>
+            <div class="field-display" id="dv-name">{{ user.first_name }} {{ user.last_name }}</div>
+            <input class="field-input" id="inp-name" value="{{ user.get_full_name|default:user.username }}">
+          </div>
+        </div>
+        <div class="field-row">
+          <div class="field-label"><span class="field-icon">@</span>Email</div>
+          <div>
+            <div class="field-display" id="dv-email">{{ user.email }}</div>
+            <input class="field-input" id="inp-email" value="{{ user.email|default:'' }}">
+          </div>
+        </div>
+        <div class="field-row">
+          <div class="field-label"><span class="field-icon">📞</span>Phone</div>
+          <div>
+            <div class="field-display" id="dv-phone">{{ user.phone_no }}</div>
+            <input class="field-input" id="inp-phone" value="{{ user.phone_no|default:'' }}">
+          </div>
+        </div>
+        <div class="field-row">
+          <div class="field-label"><span class="field-icon" aria-label="LinkedIn">
+            <svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true">
+              <path fill="currentColor" d="M20.45 20.45h-3.56v-5.57c0-1.33-.03-3.04-1.85-3.04-1.86 0-2.15 1.45-2.15 2.95v5.66H9.33V9h3.41v1.56h.05c.47-.9 1.63-1.85 3.36-1.85 3.6 0 4.27 2.37 4.27 5.45v6.29ZM5.31 7.43a2.07 2.07 0 1 1 0-4.14 2.07 2.07 0 0 1 0 4.14Zm1.78 13.02H3.53V9h3.56v11.45Z"/>
+            </svg>
+          </span>LinkedIn</div>
+          <div>
+            <div class="field-display" id="dv-linkedin">{% if user.linkedin %}<a class="link-val" href="{{ user.linkedin }}" target="_blank">{{ user.linkedin }}</a>{% else %}<span class="none-tag">None</span>{% endif %}</div>
+            <input class="field-input" id="inp-linkedin" value="{{ user.linkedin|default:'' }}">
+          </div>
+        </div>
+        <div class="field-row">
+          <div class="field-label"><span class="field-icon" aria-label="GitHub">
+            <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true">
+              <path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8a8 8 0 0 0 5.47 7.59c.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.5-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.5 7.5 0 0 1 4 0c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8 8 0 0 0 16 8c0-4.42-3.58-8-8-8z"/>
+            </svg>
+          </span>GitHub</div>
+          <div>
+            <div class="field-display" id="dv-github">{% if user.github %}<a class="link-val" href="{{ user.github }}" target="_blank">{{ user.github }}</a>{% else %}<span class="none-tag">None</span>{% endif %}</div>
+            <input class="field-input" id="inp-github" value="{{ user.github|default:'' }}">
+          </div>
+        </div>
+        <div class="field-row">
+          <div class="field-label"><span class="field-icon">⚥</span>Gender</div>
+          <div>
+            <div class="field-display"><span class="gender-pill" id="gender-pill">{{ user.gender|default:'Prefer not to say' }}</span></div>
+            <select class="field-select" id="inp-gender">
+              <option value="Male" {% if user.gender == 'Male' %}selected{% endif %}>Male</option>
+              <option value="Female" {% if user.gender == 'Female' %}selected{% endif %}>Female</option>
+              <option value="Non-binary" {% if user.gender == 'Non-binary' %}selected{% endif %}>Non-binary</option>
+              <option value="Prefer not to say" {% if not user.gender or user.gender == 'Prefer not to say' %}selected{% endif %}>Prefer not to say</option>
+            </select>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endfor %}
+{% endblock %}
+

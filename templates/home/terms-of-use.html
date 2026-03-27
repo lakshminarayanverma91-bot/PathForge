@@ -1,0 +1,642 @@
+﻿{% extends "home/base.html" %}
+{% block title %}Terms of Use — Pathforge{% endblock %}
+
+
+{% block extra_styles %}
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: #050510;
+  color: #f2f0ff;
+  line-height: 1.6;
+  overflow-x: hidden;
+}
+a { text-decoration: none; color: inherit; }
+ul { list-style: none; }
+button { cursor: pointer; border: none; background: none; font-family: inherit; }
+
+:root {
+  --bg: #050510;
+  --bg2: #080818;
+  --surface: #0c0c20;
+  --card: #111127;
+  --card2: #161634;
+  --border: rgba(255,255,255,0.06);
+  --border-h: rgba(255,255,255,0.14);
+  --t1: #f2f0ff;
+  --t2: #9794b8;
+  --t3: #5a5780;
+  --teal: #00F2C3;
+  --blue: #3D7EFF;
+  --purple: #BF5AF2;
+  --coral: #FF6B6B;
+  --gold: #FFD166;
+  --green: #06D6A0;
+  --ease: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 4px; }
+::selection { background: rgba(0,242,195,0.2); }
+
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 9999;
+  opacity: 0.4;
+}
+
+/* NAV */
+.nav {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 100;
+  height: 70px;
+  display: flex;
+  align-items: center;
+}
+.nav-inner {
+  max-width: 1300px;
+  margin: 0 auto;
+  padding: 0 36px;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.nav-glass {
+  position: absolute;
+  inset: 0;
+  background: rgba(5,5,16,0.85);
+  backdrop-filter: blur(24px) saturate(180%);
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+}
+.nav-logo { position: relative; z-index: 1; display: flex; align-items: center; gap: 10px; cursor: pointer; }
+.nav-logo-mark {
+  width: 34px; height: 34px;
+  border-radius: 9px;
+  background: linear-gradient(135deg, #00F2C3, #3D7EFF);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 15px; font-weight: 900; color: #000;
+  font-family: 'Syne', sans-serif;
+  box-shadow: 0 4px 20px rgba(0,242,195,0.3);
+}
+.nav-logo-text {
+  font-family: 'Syne', sans-serif;
+  font-size: 1.25rem; font-weight: 800;
+  background: linear-gradient(90deg, #f2f0ff, #9794b8);
+  background-clip: text;
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+}
+.nav-links { position: relative; z-index: 1; display: flex; align-items: center; gap: 2px; }
+.nav-link {
+  padding: 8px 18px; border-radius: 8px;
+  font-size: 0.85rem; font-weight: 500; color: var(--t2);
+  cursor: pointer; transition: all 0.2s; position: relative;
+}
+.nav-link:hover { color: var(--t1); }
+.nav-cta { position: relative; z-index: 1; }
+.btn-primary {
+  background: linear-gradient(135deg, #00F2C3, #3D7EFF);
+  color: #000; padding: 9px 22px; border-radius: 9px;
+  font-weight: 700; font-size: 0.85rem; font-family: 'Syne', sans-serif;
+  transition: all 0.3s var(--ease);
+  display: inline-flex; align-items: center; gap: 6px;
+  cursor: pointer; border: none;
+}
+.btn-primary:hover { transform: translateY(-2px); box-shadow: 0 10px 30px rgba(0,242,195,0.3); }
+
+/* HERO BANNER */
+.page-hero {
+  position: relative;
+  padding-top: 70px;
+  min-height: 340px;
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+}
+.page-hero-orb-1 {
+  position: absolute; top: -100px; left: -80px;
+  width: 600px; height: 600px; border-radius: 50%;
+  background: radial-gradient(circle, rgba(191,90,242,0.07) 0%, transparent 70%);
+  pointer-events: none;
+  animation: orbDrift 22s ease-in-out infinite alternate;
+}
+.page-hero-orb-2 {
+  position: absolute; bottom: -80px; right: -60px;
+  width: 500px; height: 500px; border-radius: 50%;
+  background: radial-gradient(circle, rgba(61,126,255,0.06) 0%, transparent 70%);
+  pointer-events: none;
+  animation: orbDrift 17s ease-in-out infinite alternate-reverse;
+}
+@keyframes orbDrift { 0%{transform:translate(0,0)} 100%{transform:translate(30px,40px)} }
+.page-hero-grid {
+  position: absolute; inset: 0;
+  background-image: linear-gradient(rgba(255,255,255,0.018) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.018) 1px, transparent 1px);
+  background-size: 52px 52px;
+  mask-image: radial-gradient(ellipse 90% 80% at 50% 50%, black 30%, transparent 100%);
+  pointer-events: none;
+}
+.page-hero-content {
+  max-width: 1300px;
+  margin: 0 auto;
+  padding: 80px 36px 70px;
+  position: relative;
+  z-index: 2;
+  width: 100%;
+}
+.page-eyebrow {
+  display: inline-flex; align-items: center; gap: 8px;
+  border: 1px solid rgba(191,90,242,0.22); background: rgba(191,90,242,0.04);
+  border-radius: 100px; padding: 5px 14px;
+  font-family: 'Space Mono', monospace; font-size: 0.68rem; color: var(--purple);
+  letter-spacing: 0.08em; margin-bottom: 22px;
+  opacity: 0; animation: fadeUp 0.6s 0.1s var(--ease) forwards;
+}
+.eyebrow-dot { width: 6px; height: 6px; background: var(--purple); border-radius: 50%; animation: pulse 2s infinite; }
+@keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.4;transform:scale(0.6)} }
+.page-title {
+  font-family: 'Syne', sans-serif;
+  font-size: clamp(2.6rem, 4.5vw, 4rem);
+  font-weight: 800; line-height: 1.05; letter-spacing: -0.04em;
+  margin-bottom: 16px;
+  opacity: 0; animation: fadeUp 0.7s 0.2s var(--ease) forwards;
+}
+.page-title em {
+  font-style: normal;
+  background: linear-gradient(135deg, var(--purple) 0%, var(--blue) 100%);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+}
+.page-meta-row {
+  display: flex; align-items: center; gap: 20px; flex-wrap: wrap;
+  opacity: 0; animation: fadeUp 0.7s 0.3s var(--ease) forwards;
+}
+.page-meta-chip {
+  font-family: 'Space Mono', monospace; font-size: 0.62rem; color: var(--t3);
+  letter-spacing: 0.06em; display: flex; align-items: center; gap: 6px;
+}
+.page-meta-chip::before { content: ''; width: 4px; height: 4px; border-radius: 50%; background: var(--t3); }
+
+/* AGREEMENT BANNER */
+.agree-banner {
+  max-width: 1300px; margin: 0 auto 0;
+  padding: 0 36px;
+}
+.agree-inner {
+  background: linear-gradient(135deg, rgba(191,90,242,0.06) 0%, rgba(61,126,255,0.06) 100%);
+  border: 1px solid rgba(191,90,242,0.18);
+  border-radius: 14px; padding: 18px 24px;
+  display: flex; align-items: center; gap: 14px;
+  font-size: 0.85rem; color: var(--t2); line-height: 1.6;
+  opacity: 0; animation: fadeUp 0.6s 0.45s var(--ease) forwards;
+}
+.agree-icon { font-size: 20px; flex-shrink: 0; }
+.agree-inner strong { color: var(--t1); }
+
+/* MAIN LAYOUT */
+.page-layout {
+  max-width: 1300px;
+  margin: 0 auto;
+  padding: 50px 36px 100px;
+  display: grid;
+  grid-template-columns: 260px 1fr;
+  gap: 60px;
+  align-items: start;
+}
+
+/* SIDEBAR TOC */
+.sidebar {
+  position: sticky;
+  top: 90px;
+  opacity: 0;
+  animation: fadeUp 0.7s 0.5s var(--ease) forwards;
+}
+.sidebar-label {
+  font-family: 'Space Mono', monospace;
+  font-size: 0.58rem; letter-spacing: 0.18em;
+  text-transform: uppercase; color: var(--t3);
+  margin-bottom: 14px; padding-left: 16px;
+}
+.toc-list { display: flex; flex-direction: column; gap: 2px; }
+.toc-item {
+  display: flex; align-items: center; gap: 10px;
+  padding: 9px 16px; border-radius: 9px;
+  font-size: 0.8rem; color: var(--t3); cursor: pointer;
+  transition: all 0.2s; border: 1px solid transparent;
+  text-decoration: none;
+}
+.toc-item:hover { color: var(--t1); background: rgba(255,255,255,0.03); border-color: var(--border); }
+.toc-item.active { color: var(--purple); background: rgba(191,90,242,0.04); border-color: rgba(191,90,242,0.16); }
+.toc-num {
+  font-family: 'Space Mono', monospace; font-size: 0.55rem; color: var(--t3);
+  opacity: 0.6; min-width: 18px;
+}
+.toc-item.active .toc-num { color: var(--purple); opacity: 1; }
+
+/* CONTENT */
+.content {
+  opacity: 0;
+  animation: fadeUp 0.7s 0.45s var(--ease) forwards;
+}
+.content-section {
+  margin-bottom: 56px;
+  padding-bottom: 56px;
+  border-bottom: 1px solid var(--border);
+  scroll-margin-top: 100px;
+}
+.content-section:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+
+.section-num {
+  font-family: 'Space Mono', monospace;
+  font-size: 0.6rem; letter-spacing: 0.14em; color: var(--purple);
+  margin-bottom: 10px; display: flex; align-items: center; gap: 8px;
+}
+.section-num::before { content: ''; width: 16px; height: 1px; background: var(--purple); }
+
+.section-heading {
+  font-family: 'Syne', sans-serif;
+  font-size: 1.5rem; font-weight: 800; letter-spacing: -0.025em;
+  color: var(--t1); margin-bottom: 20px; line-height: 1.2;
+}
+
+.content-text {
+  font-size: 0.9rem; color: var(--t2); line-height: 1.82;
+  margin-bottom: 16px;
+}
+.content-text:last-child { margin-bottom: 0; }
+
+.content-list {
+  display: flex; flex-direction: column; gap: 10px;
+  margin: 18px 0;
+}
+.content-list-item {
+  display: flex; align-items: flex-start; gap: 12px;
+  font-size: 0.88rem; color: var(--t2); line-height: 1.65;
+  padding: 12px 16px;
+  background: rgba(255,255,255,0.018);
+  border: 1px solid rgba(255,255,255,0.05);
+  border-radius: 10px;
+  transition: border-color 0.2s, background 0.2s;
+}
+.content-list-item:hover { border-color: rgba(191,90,242,0.14); background: rgba(191,90,242,0.025); }
+.list-dot {
+  width: 6px; height: 6px; border-radius: 50%;
+  background: var(--purple); flex-shrink: 0; margin-top: 7px;
+}
+.list-dot-red { background: var(--coral); }
+
+/* PROHIBITED CARD */
+.prohibited-card {
+  background: linear-gradient(135deg, rgba(255,107,107,0.04) 0%, rgba(255,107,107,0.02) 100%);
+  border: 1px solid rgba(255,107,107,0.16);
+  border-radius: 14px; padding: 22px 24px; margin: 22px 0;
+}
+.prohibited-title {
+  font-family: 'Syne', sans-serif; font-size: 0.82rem; font-weight: 700;
+  color: var(--coral); margin-bottom: 14px;
+  display: flex; align-items: center; gap: 8px;
+}
+
+/* HIGHLIGHT CARD */
+.highlight-card {
+  background: linear-gradient(135deg, rgba(191,90,242,0.04) 0%, rgba(61,126,255,0.04) 100%);
+  border: 1px solid rgba(191,90,242,0.14);
+  border-radius: 14px;
+  padding: 22px 24px;
+  margin: 22px 0;
+  display: flex; gap: 16px; align-items: flex-start;
+}
+.highlight-icon { font-size: 22px; flex-shrink: 0; margin-top: 1px; }
+.highlight-text { font-size: 0.88rem; color: var(--t2); line-height: 1.72; }
+.highlight-text strong { color: var(--purple); font-weight: 600; }
+
+/* MODULE GRID */
+.module-grid {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 12px; margin: 20px 0;
+}
+.module-card {
+  background: rgba(255,255,255,0.018);
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 12px; padding: 16px 18px;
+  transition: border-color 0.2s, background 0.2s;
+}
+.module-card:hover { border-color: rgba(191,90,242,0.2); background: rgba(191,90,242,0.03); }
+.module-card-name {
+  font-family: 'Syne', sans-serif; font-size: 0.88rem; font-weight: 700;
+  margin-bottom: 5px;
+}
+.module-card-desc { font-size: 0.78rem; color: var(--t2); line-height: 1.55; }
+
+/* CONTACT CARD */
+.contact-callout {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 28px 28px;
+  display: flex; align-items: center; justify-content: space-between; gap: 24px;
+  flex-wrap: wrap;
+  margin-top: 24px;
+}
+.contact-callout-left h4 {
+  font-family: 'Syne', sans-serif;
+  font-size: 1rem; font-weight: 700; margin-bottom: 6px;
+}
+.contact-callout-left p { font-size: 0.82rem; color: var(--t2); }
+.contact-callout-btn {
+  background: linear-gradient(135deg, var(--purple), var(--blue));
+  color: #fff; padding: 10px 22px; border-radius: 9px;
+  font-weight: 700; font-size: 0.82rem; font-family: 'Syne', sans-serif;
+  border: none; cursor: pointer; white-space: nowrap;
+  transition: all 0.3s var(--ease);
+  text-decoration: none; display: inline-block;
+}
+.contact-callout-btn:hover { transform: translateY(-2px); box-shadow: 0 10px 28px rgba(191,90,242,0.28); }
+
+/* FOOTER */
+footer { background: var(--bg); border-top: 1px solid var(--border); }
+.footer-strip { max-width: 1300px; margin: 0 auto; padding: 36px 36px; display: flex; align-items: center; justify-content: space-between; gap: 20px; flex-wrap: wrap; }
+.footer-copy { font-size: 0.78rem; color: var(--t3); }
+.footer-copy span { color: var(--t2); }
+.footer-links-row { display: flex; gap: 24px; }
+.footer-links-row a { font-size: 0.78rem; color: var(--t3); transition: color 0.2s; }
+.footer-links-row a:hover { color: var(--t1); }
+.footer-madewith { font-size: 0.75rem; color: var(--t3); display: flex; align-items: center; gap: 5px; }
+.footer-madewith .heart { color: var(--coral); animation: heartbeat 2s ease-in-out infinite; }
+@keyframes heartbeat { 0%,100%{transform:scale(1)} 50%{transform:scale(1.25)} }
+
+/* ANIMATIONS */
+@keyframes fadeUp { from{opacity:0;transform:translateY(24px)} to{opacity:1;transform:translateY(0)} }
+
+/* RESPONSIVE */
+@media(max-width:900px) {
+  .page-layout { grid-template-columns: 1fr; }
+  .sidebar { position: static; }
+  .module-grid { grid-template-columns: 1fr; }
+  .agree-inner { flex-direction: column; }
+}
+@media(max-width:640px) {
+  .nav-links { display: none; }
+  .page-hero-content, .page-layout, .agree-banner { padding-left: 20px; padding-right: 20px; }
+  .contact-callout { flex-direction: column; }
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- PAGE HERO -->
+<section class="page-hero">
+  <div class="page-hero-orb-1"></div>
+  <div class="page-hero-orb-2"></div>
+  <div class="page-hero-grid"></div>
+  <div class="page-hero-content">
+    <div class="page-eyebrow">
+      <div class="eyebrow-dot"></div>
+      LEGAL &nbsp;&middot;&nbsp; TERMS
+    </div>
+    <h1 class="page-title">&#128203; Terms of <em>Use</em></h1>
+    <div class="page-meta-row">
+      <div class="page-meta-chip">Last updated: 25 March 2025</div>
+      <div class="page-meta-chip">Effective: 25 March 2025</div>
+      <div class="page-meta-chip">Jurisdiction: India</div>
+    </div>
+  </div>
+</section>
+
+<!-- AGREEMENT BANNER -->
+<div class="agree-banner">
+  <div class="agree-inner">
+    <div class="agree-icon">&#128204;</div>
+    <div><strong>Please read these Terms carefully.</strong> By accessing or using Pathforge &mdash; including CrackAI, VentureIQ, CampusPath, and MindMate &mdash; you agree to be bound by these Terms of Use. If you do not agree, please do not use the platform.</div>
+  </div>
+</div>
+
+<!-- MAIN -->
+<div class="page-layout">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sidebar-label">On this page</div>
+    <nav class="toc-list">
+      <a class="toc-item active" href="#t1"><span class="toc-num">01</span> Acceptance</a>
+      <a class="toc-item" href="#t2"><span class="toc-num">02</span> About Pathforge</a>
+      <a class="toc-item" href="#t3"><span class="toc-num">03</span> Eligibility</a>
+      <a class="toc-item" href="#t4"><span class="toc-num">04</span> Accounts</a>
+      <a class="toc-item" href="#t5"><span class="toc-num">05</span> Permitted Use</a>
+      <a class="toc-item" href="#t6"><span class="toc-num">06</span> Prohibited Conduct</a>
+      <a class="toc-item" href="#t7"><span class="toc-num">07</span> AI-Generated Content</a>
+      <a class="toc-item" href="#t8"><span class="toc-num">08</span> Intellectual Property</a>
+      <a class="toc-item" href="#t9"><span class="toc-num">09</span> Disclaimers</a>
+      <a class="toc-item" href="#t10"><span class="toc-num">10</span> Limitation of Liability</a>
+      <a class="toc-item" href="#t11"><span class="toc-num">11</span> Termination</a>
+      <a class="toc-item" href="#t12"><span class="toc-num">12</span> Governing Law</a>
+      <a class="toc-item" href="#t13"><span class="toc-num">13</span> Changes</a>
+      <a class="toc-item" href="#t14"><span class="toc-num">14</span> Contact</a>
+    </nav>
+  </aside>
+
+  <!-- CONTENT -->
+  <main class="content">
+
+    <div class="content-section" id="t1">
+      <div class="section-num">01 &mdash; ACCEPTANCE</div>
+      <h2 class="section-heading">Acceptance of Terms</h2>
+      <p class="content-text">These Terms of Use ("Terms") constitute a legally binding agreement between you ("User", "you") and Pathforge ("we", "us", "our") governing your access to and use of the Pathforge platform, website, and all associated AI-powered modules.</p>
+      <p class="content-text">By creating an account, accessing any feature, or using any part of the platform, you represent that you have read, understood, and agree to be bound by these Terms and our Privacy Policy, which is incorporated herein by reference.</p>
+    </div>
+
+    <div class="content-section" id="t2">
+      <div class="section-num">02 &mdash; ABOUT PATHFORGE</div>
+      <h2 class="section-heading">What Pathforge Offers</h2>
+      <p class="content-text">Pathforge is an AI-powered growth ecosystem for students and early-career professionals. The platform currently comprises four modules:</p>
+      <div class="module-grid">
+        <div class="module-card">
+          <div class="module-card-name">&#127897; CrackAI</div>
+          <div class="module-card-desc">AI mock interview coaching with real-time feedback on communication, technical depth, and confidence.</div>
+        </div>
+        <div class="module-card">
+          <div class="module-card-name">&#128640; VentureIQ</div>
+          <div class="module-card-desc">AI startup idea validator with SWOT analysis, market sizing, and viability scoring.</div>
+        </div>
+        <div class="module-card">
+          <div class="module-card-name">&#128506; CampusPath</div>
+          <div class="module-card-desc">Personalised 6-month career roadmap with GitHub integration and adaptive weekly tasks.</div>
+        </div>
+        <div class="module-card">
+          <div class="module-card-name">&#127793; MindMate</div>
+          <div class="module-card-desc">Student mental wellness AI with mood tracking, burnout detection, and anonymous journaling.</div>
+        </div>
+      </div>
+      <p class="content-text">All modules are powered by Google Gemini and are intended to supplement &mdash; not replace &mdash; professional career coaching, business advisory, or mental health services.</p>
+    </div>
+
+    <div class="content-section" id="t3">
+      <div class="section-num">03 &mdash; ELIGIBILITY</div>
+      <h2 class="section-heading">Who Can Use Pathforge</h2>
+      <p class="content-text">To use Pathforge, you must:</p>
+      <div class="content-list">
+        <div class="content-list-item"><div class="list-dot"></div>Be at least 13 years of age. Users under 18 must have parental or guardian consent.</div>
+        <div class="content-list-item"><div class="list-dot"></div>Have the legal capacity to enter into a binding agreement in your jurisdiction.</div>
+        <div class="content-list-item"><div class="list-dot"></div>Not be prohibited from using the platform under applicable law.</div>
+        <div class="content-list-item"><div class="list-dot"></div>Provide accurate and truthful information during registration.</div>
+      </div>
+      <p class="content-text">By using the platform, you represent and warrant that you meet all of the above eligibility requirements.</p>
+    </div>
+
+    <div class="content-section" id="t4">
+      <div class="section-num">04 &mdash; ACCOUNTS</div>
+      <h2 class="section-heading">User Accounts &amp; Responsibilities</h2>
+      <p class="content-text">When you create an account on Pathforge, you agree to:</p>
+      <div class="content-list">
+        <div class="content-list-item"><div class="list-dot"></div>Provide accurate, current, and complete registration information and keep it up to date.</div>
+        <div class="content-list-item"><div class="list-dot"></div>Maintain the confidentiality of your account credentials and not share your password with any third party.</div>
+        <div class="content-list-item"><div class="list-dot"></div>Accept responsibility for all activities that occur under your account.</div>
+        <div class="content-list-item"><div class="list-dot"></div>Notify us immediately of any unauthorised use of your account or any other security breach.</div>
+        <div class="content-list-item"><div class="list-dot"></div>Ensure you log out of your account at the end of each session if using a shared device.</div>
+      </div>
+      <p class="content-text">We reserve the right to suspend or terminate accounts that contain false information or that we determine, at our sole discretion, to be in violation of these Terms.</p>
+    </div>
+
+    <div class="content-section" id="t5">
+      <div class="section-num">05 &mdash; PERMITTED USE</div>
+      <h2 class="section-heading">How You May Use the Platform</h2>
+      <p class="content-text">Subject to these Terms, Pathforge grants you a limited, non-exclusive, non-transferable, revocable licence to access and use the platform for your personal, non-commercial educational and career-development purposes.</p>
+      <div class="highlight-card">
+        <div class="highlight-icon">&#9989;</div>
+        <div class="highlight-text"><strong>You may:</strong> Use all four modules for personal practice, learning, and self-improvement. Download AI-generated reports for personal use (e.g., VentureIQ PDF briefs). Connect your GitHub account to CampusPath for personalised roadmap generation. Share insights or results with your peers, mentors, or prospective employers for your own career purposes.</div>
+      </div>
+    </div>
+
+    <div class="content-section" id="t6">
+      <div class="section-num">06 &mdash; PROHIBITED CONDUCT</div>
+      <h2 class="section-heading">What You Must Not Do</h2>
+      <p class="content-text">You agree not to engage in any of the following prohibited activities:</p>
+      <div class="prohibited-card">
+        <div class="prohibited-title">&#9940; Strictly Prohibited</div>
+        <div class="content-list" style="margin:0">
+          <div class="content-list-item" style="border-color:rgba(255,107,107,0.1)"><div class="list-dot list-dot-red"></div>Use the platform for any unlawful, harmful, fraudulent, or abusive purpose.</div>
+          <div class="content-list-item" style="border-color:rgba(255,107,107,0.1)"><div class="list-dot list-dot-red"></div>Scrape, crawl, or otherwise extract data from the platform using automated tools without our prior written consent.</div>
+          <div class="content-list-item" style="border-color:rgba(255,107,107,0.1)"><div class="list-dot list-dot-red"></div>Reverse-engineer, decompile, or attempt to derive the source code of any component of the platform.</div>
+          <div class="content-list-item" style="border-color:rgba(255,107,107,0.1)"><div class="list-dot list-dot-red"></div>Attempt to gain unauthorised access to any part of the platform, its servers, or connected systems.</div>
+          <div class="content-list-item" style="border-color:rgba(255,107,107,0.1)"><div class="list-dot list-dot-red"></div>Resell, sublicence, or commercially exploit any part of the platform or its AI-generated outputs without our written permission.</div>
+          <div class="content-list-item" style="border-color:rgba(255,107,107,0.1)"><div class="list-dot list-dot-red"></div>Transmit any content that is hateful, defamatory, sexually explicit, or violates the rights of any third party.</div>
+          <div class="content-list-item" style="border-color:rgba(255,107,107,0.1)"><div class="list-dot list-dot-red"></div>Impersonate any person or entity, or misrepresent your affiliation with any person or entity.</div>
+          <div class="content-list-item" style="border-color:rgba(255,107,107,0.1)"><div class="list-dot list-dot-red"></div>Deliberately overload, flood, or spam the platform's servers or APIs.</div>
+        </div>
+      </div>
+      <p class="content-text">Violation of these prohibitions may result in immediate account termination and, where appropriate, referral to law enforcement.</p>
+    </div>
+
+    <div class="content-section" id="t7">
+      <div class="section-num">07 &mdash; AI-GENERATED CONTENT</div>
+      <h2 class="section-heading">Understanding AI Output</h2>
+      <p class="content-text">All four Pathforge modules use Google Gemini to generate responses. You acknowledge and agree to the following regarding AI-generated content:</p>
+      <div class="content-list">
+        <div class="content-list-item"><div class="list-dot"></div><strong style="color:var(--t1)">Educational purpose only:</strong> AI outputs from CrackAI, VentureIQ, CampusPath, and MindMate are for informational and educational purposes and do not constitute professional career, business, financial, legal, or mental health advice.</div>
+        <div class="content-list-item"><div class="list-dot"></div><strong style="color:var(--t1)">No guarantee of accuracy:</strong> AI-generated content may contain errors, biases, or outdated information. Always verify critical information independently.</div>
+        <div class="content-list-item"><div class="list-dot"></div><strong style="color:var(--t1)">MindMate is not therapy:</strong> MindMate's wellness features are not a substitute for professional mental health care. If you are experiencing a mental health crisis, please contact a qualified professional or emergency service immediately.</div>
+        <div class="content-list-item"><div class="list-dot"></div><strong style="color:var(--t1)">Ownership:</strong> You retain ownership of any content you input. AI-generated outputs based on your inputs are granted to you for personal use. Pathforge retains rights to aggregate, anonymised insights derived from platform usage.</div>
+      </div>
+      <div class="highlight-card">
+        <div class="highlight-icon">&#9888;</div>
+        <div class="highlight-text"><strong>Important:</strong> The AI outputs produced by Pathforge reflect the capabilities and limitations of Google Gemini at the time of processing. We are not responsible for decisions you make based on AI-generated content.</div>
+      </div>
+    </div>
+
+    <div class="content-section" id="t8">
+      <div class="section-num">08 &mdash; INTELLECTUAL PROPERTY</div>
+      <h2 class="section-heading">Intellectual Property Rights</h2>
+      <p class="content-text">The Pathforge platform &mdash; including its design, code, branding, module names (CrackAI, VentureIQ, CampusPath, MindMate), graphics, and all non-user-generated content &mdash; is the exclusive property of Pathforge and is protected by applicable intellectual property laws.</p>
+      <div class="content-list">
+        <div class="content-list-item"><div class="list-dot"></div>You may not reproduce, distribute, or create derivative works from any part of the platform without our express written permission.</div>
+        <div class="content-list-item"><div class="list-dot"></div>The Pathforge name, logo, and module names are trademarks of Pathforge. You may not use them without prior written consent.</div>
+        <div class="content-list-item"><div class="list-dot"></div>Any feedback or suggestions you provide to us about the platform may be used by us freely without any obligation to you.</div>
+      </div>
+      <p class="content-text">Pathforge is open source at heart and portions of the codebase are available on GitHub under their respective open source licences. This does not affect our rights to the platform's branding and proprietary modules.</p>
+    </div>
+
+    <div class="content-section" id="t9">
+      <div class="section-num">09 &mdash; DISCLAIMERS</div>
+      <h2 class="section-heading">Disclaimers of Warranty</h2>
+      <p class="content-text">TO THE MAXIMUM EXTENT PERMITTED BY APPLICABLE LAW, PATHFORGE IS PROVIDED "AS IS" AND "AS AVAILABLE" WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO IMPLIED WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, OR NON-INFRINGEMENT.</p>
+      <div class="content-list">
+        <div class="content-list-item"><div class="list-dot"></div>We do not warrant that the platform will be uninterrupted, error-free, or free of viruses or other harmful components.</div>
+        <div class="content-list-item"><div class="list-dot"></div>We do not warrant that AI-generated results will be accurate, complete, reliable, or suitable for your specific purposes.</div>
+        <div class="content-list-item"><div class="list-dot"></div>We do not guarantee employment outcomes, business success, academic results, or mental health improvements as a result of using the platform.</div>
+      </div>
+    </div>
+
+    <div class="content-section" id="t10">
+      <div class="section-num">10 &mdash; LIMITATION OF LIABILITY</div>
+      <h2 class="section-heading">Limitation of Liability</h2>
+      <p class="content-text">TO THE MAXIMUM EXTENT PERMITTED BY APPLICABLE LAW, IN NO EVENT SHALL PATHFORGE, ITS FOUNDERS, CONTRIBUTORS, OR AFFILIATES BE LIABLE FOR ANY INDIRECT, INCIDENTAL, SPECIAL, CONSEQUENTIAL, OR PUNITIVE DAMAGES &mdash; INCLUDING LOSS OF PROFITS, DATA, GOODWILL, OR OTHER INTANGIBLE LOSSES &mdash; ARISING OUT OF OR RELATED TO YOUR USE OR INABILITY TO USE THE PLATFORM.</p>
+      <p class="content-text">In jurisdictions that do not allow the exclusion or limitation of liability for consequential or incidental damages, our liability shall be limited to the maximum extent permitted by law. In any case, our aggregate liability to you shall not exceed INR 1,000 (or the equivalent in your local currency).</p>
+    </div>
+
+    <div class="content-section" id="t11">
+      <div class="section-num">11 &mdash; TERMINATION</div>
+      <h2 class="section-heading">Termination of Access</h2>
+      <p class="content-text">We reserve the right to suspend or terminate your account and access to the platform at any time, with or without notice, if we believe you have violated these Terms or for any other reason at our sole discretion.</p>
+      <p class="content-text">You may delete your account at any time through your account settings or by contacting us. Upon termination, your right to use the platform ceases immediately. Provisions of these Terms that by their nature should survive termination &mdash; including intellectual property, disclaimers, and limitation of liability &mdash; shall survive.</p>
+    </div>
+
+    <div class="content-section" id="t12">
+      <div class="section-num">12 &mdash; GOVERNING LAW</div>
+      <h2 class="section-heading">Governing Law &amp; Disputes</h2>
+      <p class="content-text">These Terms shall be governed by and construed in accordance with the laws of India, without regard to its conflict of law principles. Any disputes arising under these Terms shall be subject to the exclusive jurisdiction of the courts located in India.</p>
+      <p class="content-text">Before initiating any formal legal proceedings, we encourage you to contact us directly at the details in Section 14 to attempt an informal resolution. We will make good-faith efforts to resolve any dispute within 30 days of receiving written notice.</p>
+    </div>
+
+    <div class="content-section" id="t13">
+      <div class="section-num">13 &mdash; CHANGES</div>
+      <h2 class="section-heading">Changes to These Terms</h2>
+      <p class="content-text">We may update these Terms from time to time to reflect changes in our services, legal requirements, or for other operational reasons. When we do, we will update the "Last updated" date at the top of this page.</p>
+      <p class="content-text">For material changes, we will provide notice via email or an in-platform notification at least 14 days before the changes take effect. Your continued use of Pathforge after any change constitutes your acceptance of the updated Terms.</p>
+    </div>
+
+    <div class="content-section" id="t14">
+      <div class="section-num">14 &mdash; CONTACT</div>
+      <h2 class="section-heading">Questions &amp; Contact</h2>
+      <p class="content-text">If you have any questions about these Terms of Use or need to report a violation, please contact us:</p>
+      <div class="contact-callout">
+        <div class="contact-callout-left">
+          <h4>Pathforge Legal Team</h4>
+          <p>We aim to respond to all legal enquiries within 14 business days.</p>
+        </div>
+        <a class="contact-callout-btn" href="{% url 'contact' %}">Contact Us &rarr;</a>
+      </div>
+    </div>
+
+  </main>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+// NAV SCROLL
+window.addEventListener('scroll', () => {
+  document.getElementById('mainNav').classList.toggle('scrolled', window.scrollY > 20);
+});
+
+// TOC ACTIVE STATE
+const sections = document.querySelectorAll('.content-section');
+const tocItems = document.querySelectorAll('.toc-item');
+const obs = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      tocItems.forEach(t => t.classList.remove('active'));
+      const active = document.querySelector(`.toc-item[href="#${e.target.id}"]`);
+      if (active) active.classList.add('active');
+    }
+  });
+}, { rootMargin: '-20% 0px -70% 0px' });
+sections.forEach(s => obs.observe(s));
+</script>
+{% endblock %}
+

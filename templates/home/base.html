@@ -1,0 +1,555 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{% block title %}Pathforge — Intelligent Growth Platform{% endblock %}</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,300&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+
+{% block extra_head %}{% endblock %}
+
+<style>
+/* ============================================================
+   PATHFORGE BASE STYLES — shared across all pages
+   ============================================================ */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: #050510;
+  color: #f2f0ff;
+  line-height: 1.6;
+  overflow-x: hidden;
+}
+a { text-decoration: none; color: inherit; }
+ul { list-style: none; }
+button { cursor: pointer; border: none; background: none; font-family: inherit; }
+input, textarea, select {
+  font-family: 'DM Sans', sans-serif;
+  background: #111127;
+  border: 1px solid rgba(255,255,255,0.08);
+  color: #f2f0ff;
+  border-radius: 10px;
+  padding: 12px 16px;
+  width: 100%;
+  outline: none;
+  transition: border 0.2s, box-shadow 0.2s;
+  font-size: 0.9rem;
+}
+input:focus, textarea:focus, select:focus {
+  border-color: #00F2C3;
+  box-shadow: 0 0 0 3px rgba(0,242,195,0.1);
+}
+
+/* ── CSS VARIABLES ── */
+:root {
+  --bg:       #050510;
+  --bg2:      #080818;
+  --surface:  #0c0c20;
+  --card:     #111127;
+  --card2:    #161634;
+  --border:   rgba(255,255,255,0.06);
+  --border-h: rgba(255,255,255,0.14);
+  --t1:    #f2f0ff;
+  --t2:    #9794b8;
+  --t3:    #5a5780;
+  --teal:  #00F2C3;
+  --blue:  #3D7EFF;
+  --purple:#BF5AF2;
+  --coral: #FF6B6B;
+  --gold:  #FFD166;
+  --green: #06D6A0;
+  --ease:  cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* ── SCROLLBAR ── */
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 4px; }
+::selection { background: rgba(0,242,195,0.2); }
+
+/* ── NOISE TEXTURE OVERLAY ── */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 9999;
+  opacity: 0.4;
+}
+
+/* ════════════════════════════════════
+   NAVIGATION
+   ════════════════════════════════════ */
+.nav {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 100;
+  height: 70px;
+  display: flex;
+  align-items: center;
+}
+.nav-inner {
+  max-width: 1300px;
+  margin: 0 auto;
+  padding: 0 36px;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.nav-glass {
+  position: absolute;
+  inset: 0;
+  background: rgba(5,5,16,0.7);
+  backdrop-filter: blur(24px) saturate(180%);
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+  transition: background 0.3s;
+}
+.nav.scrolled .nav-glass { background: rgba(5,5,16,0.92); }
+
+/* Logo */
+.nav-logo {
+  position: relative; z-index: 1;
+  display: flex; align-items: center; gap: 10px;
+  cursor: pointer;
+}
+.nav-logo-mark {
+  width: 34px; height: 34px;
+  border-radius: 9px;
+  background: linear-gradient(135deg, #00F2C3, #3D7EFF);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 15px; font-weight: 900; color: #000;
+  font-family: 'Syne', sans-serif;
+  box-shadow: 0 4px 20px rgba(0,242,195,0.3);
+}
+.nav-logo-text {
+  font-family: 'Syne', sans-serif;
+  font-size: 1.25rem; font-weight: 800;
+  background: linear-gradient(90deg, #f2f0ff, #9794b8);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* Links */
+.nav-links {
+  position: relative; z-index: 1;
+  display: flex; align-items: center; gap: 2px;
+}
+.nav-link {
+  padding: 8px 18px; border-radius: 8px;
+  font-size: 0.85rem; font-weight: 500; color: var(--t2);
+  cursor: pointer; transition: all 0.2s; position: relative;
+}
+.nav-link::after {
+  content: ''; position: absolute;
+  bottom: 4px; left: 50%; transform: translateX(-50%);
+  width: 0; height: 2px;
+  background: var(--teal); border-radius: 2px;
+  transition: width 0.3s var(--ease);
+}
+.nav-link:hover        { color: var(--t1); }
+.nav-link:hover::after { width: 20px; }
+.nav-link.active        { color: var(--t1); }
+.nav-link.active::after { width: 20px; }
+
+/* CTA */
+.nav-cta { position: relative; z-index: 1; }
+
+/* Mobile hamburger (hidden by default, shown on mobile) */
+.nav-hamburger {
+  display: none;
+  position: relative; z-index: 1;
+  flex-direction: column; gap: 5px;
+  cursor: pointer; padding: 6px;
+}
+.nav-hamburger span {
+  display: block; width: 22px; height: 2px;
+  background: var(--t2); border-radius: 2px;
+  transition: all 0.3s var(--ease);
+}
+.nav-hamburger.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); background: var(--teal); }
+.nav-hamburger.open span:nth-child(2) { opacity: 0; transform: scaleX(0); }
+.nav-hamburger.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); background: var(--teal); }
+
+/* Mobile nav drawer */
+.nav-mobile-drawer {
+  display: none;
+  position: fixed;
+  top: 70px; left: 0; right: 0;
+  background: rgba(5,5,16,0.97);
+  backdrop-filter: blur(24px);
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+  padding: 20px 36px 28px;
+  flex-direction: column; gap: 4px;
+  z-index: 99;
+  transform: translateY(-10px); opacity: 0;
+  transition: all 0.3s var(--ease);
+}
+.nav-mobile-drawer.open {
+  transform: translateY(0); opacity: 1;
+}
+.nav-mobile-link {
+  padding: 12px 16px; border-radius: 10px;
+  font-size: 0.9rem; font-weight: 500; color: var(--t2);
+  transition: all 0.2s; display: flex; align-items: center; gap: 10px;
+}
+.nav-mobile-link:hover { color: var(--t1); background: rgba(255,255,255,0.03); }
+.nav-mobile-link.active { color: var(--teal); }
+.nav-mobile-divider { height: 1px; background: var(--border); margin: 8px 0; }
+.nav-mobile-cta {
+  margin-top: 8px;
+  background: linear-gradient(135deg, var(--teal), var(--blue));
+  color: #000; padding: 12px 22px; border-radius: 9px;
+  font-weight: 700; font-size: 0.9rem; font-family: 'Syne', sans-serif;
+  display: flex; align-items: center; justify-content: center;
+  transition: all 0.3s var(--ease);
+}
+.nav-mobile-cta:hover { box-shadow: 0 10px 30px rgba(0,242,195,0.3); }
+
+/* ════════════════════════════════════
+   COMMON BUTTONS
+   ════════════════════════════════════ */
+.btn-primary {
+  background: linear-gradient(135deg, #00F2C3, #3D7EFF);
+  color: #000; padding: 9px 22px; border-radius: 9px;
+  font-weight: 700; font-size: 0.85rem; font-family: 'Syne', sans-serif;
+  transition: all 0.3s var(--ease);
+  display: inline-flex; align-items: center; gap: 6px;
+  cursor: pointer; border: none;
+}
+.btn-primary:hover { transform: translateY(-2px); box-shadow: 0 10px 30px rgba(0,242,195,0.3); }
+
+.btn-outline {
+  background: transparent; color: var(--t1); padding: 9px 22px; border-radius: 9px;
+  font-weight: 600; font-size: 0.85rem;
+  border: 1px solid rgba(255,255,255,0.12);
+  transition: all 0.2s; display: inline-flex; align-items: center; gap: 6px; cursor: pointer;
+}
+.btn-outline:hover { border-color: rgba(255,255,255,0.3); background: rgba(255,255,255,0.04); }
+
+/* ════════════════════════════════════
+   SECTION COMMONS
+   ════════════════════════════════════ */
+.section { max-width: 1300px; margin: 0 auto; padding: 100px 36px; }
+
+.section-tag {
+  display: inline-flex; align-items: center; gap: 8px;
+  font-family: 'Space Mono', monospace; font-size: 0.68rem;
+  letter-spacing: 0.14em; text-transform: uppercase; color: var(--teal); margin-bottom: 18px;
+}
+.section-tag::before { content: ''; width: 20px; height: 1px; background: var(--teal); }
+
+.section-title {
+  font-family: 'Syne', sans-serif;
+  font-size: clamp(2.2rem, 3.5vw, 3.2rem);
+  font-weight: 800; letter-spacing: -0.03em; line-height: 1.08; margin-bottom: 18px;
+}
+.section-sub { font-size: 1rem; color: var(--t2); max-width: 540px; line-height: 1.75; }
+
+/* ════════════════════════════════════
+   FOOTER
+   ════════════════════════════════════ */
+footer { position: relative; overflow: hidden; background: var(--bg); }
+
+/* Footer body */
+.footer-body {
+  max-width: 1300px; margin: 0 auto;
+  padding: 60px 36px 0;
+  display: grid; grid-template-columns: 1.6fr 1fr 1fr; gap: 40px;
+}
+.footer-brand-logo { display: flex; align-items: center; gap: 10px; margin-bottom: 18px; }
+.footer-brand-mark {
+  width: 36px; height: 36px; border-radius: 10px;
+  background: linear-gradient(135deg, var(--teal), var(--blue));
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'Syne', sans-serif; font-size: 16px; font-weight: 900; color: #000;
+  box-shadow: 0 4px 16px rgba(0,242,195,0.2);
+}
+.footer-brand-name {
+  font-family: 'Syne', sans-serif; font-size: 1.15rem; font-weight: 800;
+  background: linear-gradient(90deg, var(--t1), var(--t2));
+  background-clip: text; -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+}
+.footer-brand-desc { font-size: 0.84rem; color: var(--t3); line-height: 1.7; margin-bottom: 24px; max-width: 260px; }
+
+/* Social buttons */
+.footer-socials { display: flex; gap: 8px; }
+.footer-social-btn {
+  width: 36px; height: 36px; border-radius: 9px;
+  background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 15px; cursor: pointer; transition: all 0.2s; color: var(--t2);
+}
+.footer-social-btn:hover {
+  background: rgba(0,242,195,0.08); border-color: rgba(0,242,195,0.2);
+  color: var(--teal); transform: translateY(-2px);
+}
+.footer-social-icon { width: 16px; height: 16px; display: block; }
+
+/* Footer link columns */
+.footer-col-title {
+  font-family: 'Syne', sans-serif; font-size: 0.8rem; font-weight: 700;
+  letter-spacing: 0.06em; text-transform: uppercase; color: var(--t1); margin-bottom: 20px;
+}
+.footer-links { display: flex; flex-direction: column; gap: 11px; }
+.footer-link {
+  font-size: 0.84rem; color: var(--t3); cursor: pointer;
+  transition: color 0.2s, transform 0.2s;
+  display: inline-flex; align-items: center; gap: 6px; width: fit-content;
+}
+.footer-link:hover { color: var(--t1); transform: translateX(3px); }
+.footer-link-new {
+  font-size: 0.55rem; padding: 1px 5px; border-radius: 4px;
+  background: rgba(0,242,195,0.12); color: var(--teal);
+  font-family: 'Space Mono', monospace; font-weight: 700;
+}
+
+/* Footer strip */
+.footer-strip {
+  max-width: 1300px; margin: 48px auto 0;
+  padding: 28px 36px 40px;
+  border-top: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: space-between; gap: 20px; flex-wrap: wrap;
+}
+.footer-copy { font-size: 0.78rem; color: var(--t3); }
+.footer-copy span { color: var(--t2); }
+
+.footer-tech-badges { display: flex; align-items: center; gap: 8px; }
+.tech-badge {
+  display: flex; align-items: center; gap: 5px;
+  padding: 4px 10px; border-radius: 6px;
+  background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06);
+  font-size: 0.7rem; color: var(--t3); font-family: 'Space Mono', monospace;
+  transition: all 0.2s;
+}
+.tech-badge:hover { border-color: rgba(255,255,255,0.12); color: var(--t2); }
+
+.footer-madewith { font-size: 0.75rem; color: var(--t3); display: flex; align-items: center; gap: 5px; }
+.footer-madewith .heart { color: var(--coral); animation: heartbeat 2s ease-in-out infinite; }
+
+/* ════════════════════════════════════
+   TOAST
+   ════════════════════════════════════ */
+.toast {
+  position: fixed; bottom: 28px; right: 28px;
+  background: var(--surface); border: 1px solid rgba(0,242,195,0.25);
+  border-radius: 12px; padding: 12px 20px; font-size: 0.85rem;
+  display: flex; align-items: center; gap: 10px;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+  z-index: 10000; transform: translateY(80px); opacity: 0;
+  transition: all 0.4s var(--ease);
+}
+.toast.show { transform: translateY(0); opacity: 1; }
+
+/* ════════════════════════════════════
+   SCROLL REVEAL
+   ════════════════════════════════════ */
+.reveal {
+  opacity: 0; transform: translateY(28px);
+  transition: opacity 0.7s var(--ease), transform 0.7s var(--ease);
+}
+.reveal.vis { opacity: 1; transform: none; }
+
+/* ════════════════════════════════════
+   ANIMATIONS
+   ════════════════════════════════════ */
+@keyframes fadeUp   { from{opacity:0;transform:translateY(24px)} to{opacity:1;transform:translateY(0)} }
+@keyframes fadeIn   { from{opacity:0} to{opacity:1} }
+@keyframes pulse    { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.4;transform:scale(0.6)} }
+@keyframes orbDrift { 0%{transform:translate(0,0)} 100%{transform:translate(30px,40px)} }
+@keyframes heartbeat{ 0%,100%{transform:scale(1)} 50%{transform:scale(1.25)} }
+@keyframes spin     { to { transform: translate(-50%,-50%) rotate(360deg); } }
+
+/* ════════════════════════════════════
+   RESPONSIVE
+   ════════════════════════════════════ */
+@media(max-width:1024px) {
+  .footer-body { grid-template-columns: 1fr 1fr; }
+}
+@media(max-width:640px) {
+  .nav-links, .nav-cta { display: none; }
+  .nav-hamburger { display: flex; }
+  .nav-mobile-drawer { display: flex; }
+  .footer-body { grid-template-columns: 1fr; }
+  .footer-strip { flex-direction: column; text-align: center; }
+  .footer-tech-badges { flex-wrap: wrap; justify-content: center; }
+  .section { padding: 70px 20px; }
+}
+
+/* ════════════════════════════════════
+   PAGE-SPECIFIC EXTRA STYLES SLOT
+   ════════════════════════════════════ */
+</style>
+{% block extra_styles %}{% endblock %}
+</head>
+<body>
+
+<!-- ════════════ TOAST ════════════ -->
+<div class="toast" id="toast">
+  <span id="toastIcon">✓</span>
+  <span id="toastMsg">Done!</span>
+</div>
+
+<!-- ════════════════════════════════
+     NAVIGATION
+     ════════════════════════════════ -->
+<nav class="nav" id="mainNav">
+  <div class="nav-glass"></div>
+  <div class="nav-inner">
+
+    <a class="nav-logo" href="{% url 'home' %}">
+      <div class="nav-logo-mark">✦</div>
+      <div class="nav-logo-text">Pathforge</div>
+    </a>
+
+    <div class="nav-links">
+      <a class="nav-link {% block nav_home %}{% endblock %}"        href="{% url 'home' %}">Home</a>
+      <a class="nav-link {% block nav_about %}{% endblock %}"       href="{% url 'about' %}">About</a>
+      <a class="nav-link {% block nav_offer %}{% endblock %}"       href="{% url 'home' %}#what-we-offer">What We Offer</a>
+      <a class="nav-link {% block nav_how %}{% endblock %}"         href="{% url 'home' %}#how-it-works">How It Works</a>
+      <a class="nav-link {% block nav_contact %}{% endblock %}"     href="{% url 'contact' %}">Contact</a>
+    </div>
+
+    <div class="nav-cta">
+      <a class="btn-primary" href="{% url 'dashboard' %}">Get Started &rarr;</a>
+    </div>
+
+    <!-- Mobile hamburger -->
+    <div class="nav-hamburger" id="hamburger" onclick="toggleMobileNav()" aria-label="Toggle menu">
+      <span></span><span></span><span></span>
+    </div>
+
+  </div>
+</nav>
+
+<!-- Mobile nav drawer -->
+<div class="nav-mobile-drawer" id="mobileDrawer">
+  <a class="nav-mobile-link {% block mnav_home %}{% endblock %}"    href="{% url 'home' %}">🏠 Home</a>
+  <a class="nav-mobile-link {% block mnav_about %}{% endblock %}"   href="{% url 'about' %}">👋 About</a>
+  <a class="nav-mobile-link {% block mnav_offer %}{% endblock %}"   href="{% url 'home' %}#what-we-offer">✦ What We Offer</a>
+  <a class="nav-mobile-link {% block mnav_how %}{% endblock %}"     href="{% url 'home' %}#how-it-works">⚙️ How It Works</a>
+  <a class="nav-mobile-link {% block mnav_contact %}{% endblock %}" href="{% url 'contact' %}">✉️ Contact</a>
+  <div class="nav-mobile-divider"></div>
+  <a class="nav-mobile-cta" href="{% url 'dashboard' %}">Get Started →</a>
+</div>
+
+<!-- ════════════════════════════════
+     MAIN CONTENT BLOCK
+     ════════════════════════════════ -->
+{% block content %}{% endblock %}
+
+<!-- ════════════════════════════════
+     FOOTER
+     ════════════════════════════════ -->
+
+{% block footer %}
+<footer>
+
+  {# ── Footer body ── #}
+  <div class="footer-body">
+    <div>
+      <div class="footer-brand-logo">
+        <div class="footer-brand-mark">✦</div>
+        <div class="footer-brand-name">Pathforge</div>
+      </div>
+      <div class="footer-brand-desc">An AI-powered growth ecosystem for ambitious students. Built on Google Gemini. Open source at heart.</div>
+      <div class="footer-socials">
+        <a class="footer-social-btn" title="GitHub" href="https://github.com/lakshminarayanverma91-bot/PathForge" target="_blank" rel="noopener noreferrer" aria-label="GitHub">
+          <img class="footer-social-icon" src="https://cdn.simpleicons.org/github/9794b8" alt="GitHub">
+        </a>
+        <a class="footer-social-btn" title="Twitter" href="https://x.com" target="_blank" rel="noopener noreferrer" aria-label="Twitter">𝕏</a>
+        <a class="footer-social-btn" title="LinkedIn" href="https://www.linkedin.com" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn">
+          <img class="footer-social-icon" src="https://cdn.simpleicons.org/linkedin/0A66C2" alt="LinkedIn"
+               onerror="this.onerror=null;this.src='https://upload.wikimedia.org/wikipedia/commons/c/ca/LinkedIn_logo_initials.png';">
+        </a>
+      </div>
+    </div>
+
+    <div>
+      <div class="footer-col-title">Platform</div>
+      <div class="footer-links">
+        <a class="footer-link" href="{% url 'crackAI' %}">🎙️ CrackAI</a>
+        <a class="footer-link" href="{% url 'ventureIQ' %}">🚀 VentureIQ</a>
+        <a class="footer-link" href="{% url 'campuspathAI' %}">🗺️ CampusPath <span class="footer-link-new">NEW</span></a>
+        <a class="footer-link" href="{% url 'mindmateAI' %}">🌱 MindMate</a>
+      </div>
+    </div>
+
+    <div>
+      <div class="footer-col-title">Company</div>
+      <div class="footer-links">
+        <a class="footer-link" href="{% url 'about' %}">👋 About</a>
+        <a class="footer-link" href="{% url 'contact' %}">✉️ Contact</a>
+        <a class="footer-link" href="{% url 'privacy' %}">🔒 Privacy Policy</a>
+        <a class="footer-link" href="{% url 'terms' %}">📋 Terms of Use</a>
+      </div>
+    </div>
+  </div>
+
+  {# ── Footer strip ── #}
+  <div class="footer-strip">
+    <div class="footer-copy">© 2025 <span>Pathforge</span> — All rights reserved.</div>
+    <div class="footer-tech-badges">
+      <div class="tech-badge">⚡ Google Gemini</div>
+      <div class="tech-badge">🔓 Open Source</div>
+      <div class="tech-badge">🌏 India</div>
+    </div>
+    <div class="footer-madewith">Made with <span class="heart">♥</span> for students everywhere</div>
+  </div>
+
+</footer>
+{% endblock footer %}
+
+<!-- ════════════════════════════════
+     BASE JAVASCRIPT
+     ════════════════════════════════ -->
+<script>
+/* ── Nav scroll effect ── */
+window.addEventListener('scroll', () => {
+  document.getElementById('mainNav').classList.toggle('scrolled', window.scrollY > 20);
+});
+
+/* ── Mobile nav toggle ── */
+function toggleMobileNav() {
+  const hamburger = document.getElementById('hamburger');
+  const drawer    = document.getElementById('mobileDrawer');
+  hamburger.classList.toggle('open');
+  drawer.classList.toggle('open');
+}
+/* Close drawer on outside click */
+document.addEventListener('click', e => {
+  const hamburger = document.getElementById('hamburger');
+  const drawer    = document.getElementById('mobileDrawer');
+  if (!hamburger.contains(e.target) && !drawer.contains(e.target)) {
+    hamburger.classList.remove('open');
+    drawer.classList.remove('open');
+  }
+});
+
+/* ── Toast helper ── */
+function showToast(msg, icon = '✓') {
+  const t = document.getElementById('toast');
+  document.getElementById('toastMsg').textContent  = msg;
+  document.getElementById('toastIcon').textContent = icon;
+  t.classList.add('show');
+  clearTimeout(t._timeout);
+  t._timeout = setTimeout(() => t.classList.remove('show'), 3000);
+}
+
+/* ── Scroll reveal ── */
+const revealObs = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (e.isIntersecting) { e.target.classList.add('vis'); revealObs.unobserve(e.target); }
+  });
+}, { threshold: 0.08 });
+document.querySelectorAll('.reveal').forEach(el => revealObs.observe(el));
+</script>
+
+{% block extra_scripts %}{% endblock %}
+
+</body>
+</html>

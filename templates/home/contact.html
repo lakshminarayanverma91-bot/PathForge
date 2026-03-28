@@ -44,7 +44,6 @@ button { cursor: pointer; border: none; background: none; font-family: inherit; 
 ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 4px; }
 ::selection { background: rgba(0,242,195,0.2); }
 
-/* Noise overlay */
 body::before {
   content: '';
   position: fixed; inset: 0;
@@ -160,18 +159,14 @@ body::before {
   max-width: 1300px; margin: 0 auto; padding: 20px 36px 100px;
   position: relative;
 }
-
-/* --- CONTACT GRID --- */
 .contact-grid {
   display: grid; grid-template-columns: 1fr 1.1fr;
   gap: 50px; align-items: start;
 }
 
-/* Left column -- info cards */
+/* Left column -- info cards (unchanged) */
 .contact-left { display: flex; flex-direction: column; gap: 16px; }
-.section-kicker {
-  display: inline-flex; align-items: center; gap: 10px; margin-bottom: 12px;
-}
+.section-kicker { display: inline-flex; align-items: center; gap: 10px; margin-bottom: 12px; }
 .section-kicker-line { width: 24px; height: 1.5px; background: linear-gradient(90deg, var(--teal), transparent); }
 .section-kicker-text {
   font-family: 'Space Mono', monospace; font-size: 0.65rem;
@@ -182,7 +177,6 @@ body::before {
   letter-spacing: -0.03em; line-height: 1.15; margin-bottom: 12px;
 }
 .contact-left-desc { font-size: 0.88rem; color: var(--t2); line-height: 1.78; margin-bottom: 28px; }
-
 .info-card {
   display: flex; gap: 16px; align-items: flex-start;
   padding: 20px; background: #111127;
@@ -197,16 +191,12 @@ body::before {
 }
 .info-card:hover::after { opacity: 1; }
 .info-card:hover { border-color: rgba(0,242,195,0.22); transform: translateY(-3px); box-shadow: 0 20px 50px rgba(0,0,0,0.4); }
-.info-card.blue:hover { border-color: rgba(61,126,255,0.3); }
-.info-card.purple:hover { border-color: rgba(191,90,242,0.3); }
 .info-card.coral:hover { border-color: rgba(255,107,107,0.3); }
 .ci-icon-wrap {
   width: 46px; height: 46px; border-radius: 12px; flex-shrink: 0;
   display: flex; align-items: center; justify-content: center; font-size: 20px;
 }
 .ci-icon-wrap.teal { background: rgba(0,242,195,0.08); border: 1px solid rgba(0,242,195,0.15); }
-.ci-icon-wrap.blue { background: rgba(61,126,255,0.08); border: 1px solid rgba(61,126,255,0.15); }
-.ci-icon-wrap.purple { background: rgba(191,90,242,0.08); border: 1px solid rgba(191,90,242,0.15); }
 .ci-icon-wrap.coral { background: rgba(255,107,107,0.08); border: 1px solid rgba(255,107,107,0.15); }
 .ci-body { flex: 1; }
 .ci-label {
@@ -216,8 +206,6 @@ body::before {
 .ci-title { font-family: 'Syne', sans-serif; font-size: 0.95rem; font-weight: 700; margin-bottom: 3px; }
 .ci-val { font-size: 0.82rem; color: var(--t2); line-height: 1.5; }
 .ci-sub { font-size: 0.73rem; color: var(--t3); margin-top: 2px; }
-
-/* Response time widget */
 .response-widget {
   background: #111127; border: 1px solid rgba(0,242,195,0.1);
   border-radius: 16px; padding: 20px 22px; margin-top: 4px;
@@ -227,8 +215,7 @@ body::before {
 .rw-bar {
   width: 7px; border-radius: 3px;
   background: linear-gradient(180deg, var(--teal), rgba(0,242,195,0.2));
-  animation: barGrow 1.2s var(--ease) forwards;
-  transform-origin: bottom;
+  animation: barGrow 1.2s var(--ease) forwards; transform-origin: bottom;
 }
 @keyframes barGrow { from { transform: scaleY(0); } to { transform: scaleY(1); } }
 .rw-info { flex: 1; }
@@ -239,13 +226,18 @@ body::before {
   color: var(--green); background: rgba(6,214,160,0.08);
   border: 1px solid rgba(6,214,160,0.18); padding: 3px 10px; border-radius: 100px;
 }
-
-/* Social row */
 .social-row { display: flex; gap: 10px; flex-wrap: wrap; }
 .social-pill {
   display: flex; align-items: center; gap: 8px; padding: 9px 16px;
   border-radius: 100px; font-size: 0.78rem; font-weight: 600; cursor: pointer;
   border: 1px solid; transition: all 0.25s var(--ease);
+}
+.social-pill svg {
+  width: 14px;
+  height: 14px;
+  display: block;
+  fill: currentColor;
+  flex-shrink: 0;
 }
 .social-pill:hover { transform: translateY(-2px); }
 .sp-twitter { color: var(--t1); border-color: rgba(255,255,255,0.1); background: rgba(255,255,255,0.03); }
@@ -255,95 +247,296 @@ body::before {
 .sp-github { color: var(--t2); border-color: rgba(255,255,255,0.1); background: rgba(255,255,255,0.03); }
 .sp-github:hover { border-color: rgba(255,255,255,0.22); background: rgba(255,255,255,0.07); }
 
-/* Right column -- form */
-.contact-form-wrap {
-  background: #111127; border: 1px solid rgba(255,255,255,0.06);
-  border-radius: 24px; padding: 40px 38px;
-  position: relative; overflow: hidden;
-}
-.contact-form-wrap::before {
-  content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px;
-  background: linear-gradient(90deg, transparent 5%, var(--teal) 50%, transparent 95%);
-  opacity: 0.35;
-}
-.form-header { margin-bottom: 32px; }
-.form-title { font-family: 'Syne', sans-serif; font-size: 1.45rem; font-weight: 800; letter-spacing: -0.02em; margin-bottom: 8px; }
-.form-subtitle { font-size: 0.84rem; color: var(--t2); line-height: 1.6; }
+/* ========================================
+   TRANSMISSION CONSOLE (replaces form)
+   ======================================== */
 
-.form-group { margin-bottom: 18px; }
-.form-row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
-.form-label {
-  display: block; font-size: 0.75rem; color: var(--t3);
-  margin-bottom: 8px; letter-spacing: 0.07em; font-family: 'Space Mono', monospace;
-  text-transform: uppercase;
-}
-.form-label span { color: var(--teal); }
-.form-input, .form-select, .form-textarea {
-  font-family: 'DM Sans', sans-serif;
-  background: rgba(255,255,255,0.03);
+.tx-console {
+  background: #0d0d22;
   border: 1px solid rgba(255,255,255,0.07);
-  color: var(--t1); border-radius: 12px; padding: 13px 16px;
-  width: 100%; outline: none;
-  transition: border 0.25s, box-shadow 0.25s, background 0.25s;
-  font-size: 0.88rem;
-}
-.form-input:focus, .form-select:focus, .form-textarea:focus {
-  border-color: rgba(0,242,195,0.4);
-  box-shadow: 0 0 0 3px rgba(0,242,195,0.08);
-  background: rgba(0,242,195,0.02);
-}
-.form-input::placeholder, .form-textarea::placeholder { color: var(--t3); }
-.form-select { appearance: none; cursor: pointer; }
-.form-select option { background: #111127; }
-.form-textarea { resize: vertical; min-height: 130px; line-height: 1.6; }
-.char-count { font-size: 0.65rem; color: var(--t3); font-family: 'Space Mono', monospace; text-align: right; margin-top: 5px; }
-
-/* Topic chips */
-.topic-chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 4px; }
-.topic-chip {
-  padding: 7px 16px; border-radius: 100px; font-size: 0.75rem; font-weight: 500;
-  border: 1px solid rgba(255,255,255,0.08); background: rgba(255,255,255,0.02);
-  color: var(--t3); cursor: pointer; transition: all 0.2s var(--ease);
-}
-.topic-chip:hover { border-color: rgba(0,242,195,0.3); color: var(--t1); }
-.topic-chip.active {
-  border-color: rgba(0,242,195,0.4); background: rgba(0,242,195,0.08); color: var(--teal);
+  border-radius: 24px;
+  overflow: hidden;
+  position: relative;
 }
 
-/* Priority toggle */
-.priority-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; }
-.priority-label { font-size: 0.78rem; color: var(--t2); }
-.priority-toggle { display: flex; gap: 6px; }
-.p-opt {
-  padding: 5px 13px; border-radius: 8px; font-size: 0.7rem;
-  font-family: 'Space Mono', monospace; letter-spacing: 0.04em;
-  border: 1px solid rgba(255,255,255,0.07); background: rgba(255,255,255,0.02);
-  color: var(--t3); cursor: pointer; transition: all 0.2s;
+/* Top glowing line */
+.tx-console::before {
+  content: '';
+  position: absolute; top: 0; left: 0; right: 0; height: 1px;
+  background: linear-gradient(90deg, transparent 5%, var(--teal) 40%, var(--blue) 60%, transparent 95%);
+  opacity: 0.5;
 }
-.p-opt.active-low { border-color: rgba(6,214,160,0.3); background: rgba(6,214,160,0.07); color: var(--green); }
-.p-opt.active-med { border-color: rgba(255,209,102,0.3); background: rgba(255,209,102,0.07); color: var(--gold); }
-.p-opt.active-hi { border-color: rgba(255,107,107,0.3); background: rgba(255,107,107,0.07); color: var(--coral); }
 
-/* Submit button */
-.form-submit-btn {
-  width: 100%; background: linear-gradient(135deg, var(--teal), var(--blue));
-  color: #000; padding: 14px; border-radius: 12px;
-  font-weight: 800; font-size: 0.92rem; font-family: 'Syne', sans-serif;
-  cursor: pointer; border: none; margin-top: 8px;
-  transition: all 0.35s var(--ease); display: flex; align-items: center; justify-content: center; gap: 9px;
-  letter-spacing: 0.01em;
+/* Corner scan-line decoration */
+.tx-console::after {
+  content: '';
+  position: absolute; inset: 0; pointer-events: none;
+  background: repeating-linear-gradient(
+    0deg, transparent, transparent 3px,
+    rgba(255,255,255,0.008) 3px, rgba(255,255,255,0.008) 4px
+  );
 }
-.form-submit-btn:hover { transform: translateY(-3px); box-shadow: 0 16px 44px rgba(0,242,195,0.3); }
-.form-submit-btn:active { transform: translateY(0); }
-.form-submit-btn.loading { pointer-events: none; opacity: 0.8; }
-.submit-arrow { font-size: 1rem; transition: transform 0.3s var(--ease); }
-.form-submit-btn:hover .submit-arrow { transform: translateX(5px); }
 
-.form-footer-note {
-  display: flex; align-items: center; gap: 7px;
-  font-size: 0.72rem; color: var(--t3); margin-top: 14px; justify-content: center;
+/* --- CONSOLE TOPBAR --- */
+.tx-topbar {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 16px 22px;
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+  background: rgba(0,0,0,0.25);
+  position: relative; z-index: 2;
 }
-.form-footer-note .lock-icon { color: var(--teal); }
+.tx-topbar-left { display: flex; align-items: center; gap: 14px; }
+.tx-dots { display: flex; gap: 7px; }
+.tx-dot {
+  width: 11px; height: 11px; border-radius: 50%;
+}
+.tx-dot-r { background: rgba(255,107,107,0.7); box-shadow: 0 0 6px rgba(255,107,107,0.4); }
+.tx-dot-y { background: rgba(255,209,102,0.7); box-shadow: 0 0 6px rgba(255,209,102,0.4); }
+.tx-dot-g { background: rgba(6,214,160,0.7); box-shadow: 0 0 6px rgba(6,214,160,0.4); }
+.tx-console-title {
+  font-family: 'Space Mono', monospace; font-size: 0.65rem;
+  letter-spacing: 0.14em; color: var(--t3); text-transform: uppercase;
+}
+.tx-live-badge {
+  display: flex; align-items: center; gap: 6px;
+  font-family: 'Space Mono', monospace; font-size: 0.6rem;
+  letter-spacing: 0.08em; color: var(--green);
+  background: rgba(6,214,160,0.07);
+  border: 1px solid rgba(6,214,160,0.2);
+  padding: 4px 10px; border-radius: 100px;
+}
+.tx-live-dot {
+  width: 5px; height: 5px; border-radius: 50%;
+  background: var(--green); animation: pulse 1.5s infinite;
+}
+
+/* --- WAVEFORM VISUALIZER --- */
+.tx-wave-section {
+  padding: 20px 22px 10px;
+  position: relative; z-index: 2;
+}
+.tx-wave-label {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 10px;
+}
+.tx-wave-title {
+  font-family: 'Space Mono', monospace; font-size: 0.6rem;
+  color: var(--teal); letter-spacing: 0.15em; text-transform: uppercase;
+}
+.tx-wave-freq {
+  font-family: 'Space Mono', monospace; font-size: 0.6rem;
+  color: var(--t3); letter-spacing: 0.06em;
+}
+.tx-waveform {
+  display: flex; align-items: center; gap: 2px;
+  height: 52px; width: 100%;
+}
+.tx-wave-bar {
+  flex: 1; border-radius: 2px;
+  background: linear-gradient(180deg, var(--teal), rgba(0,242,195,0.15));
+  animation: waveAnim var(--dur, 1.2s) ease-in-out infinite alternate;
+  transform-origin: center;
+  min-width: 0;
+}
+@keyframes waveAnim {
+  0%   { transform: scaleY(var(--lo, 0.15)); opacity: 0.5; }
+  100% { transform: scaleY(var(--hi, 1));    opacity: 1; }
+}
+
+/* --- CHANNEL GRID --- */
+.tx-channels {
+  display: grid; grid-template-columns: 1fr;
+  gap: 10px; padding: 12px 22px 10px;
+  position: relative; z-index: 2;
+}
+.tx-channel {
+  background: rgba(255,255,255,0.02);
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 14px; padding: 16px;
+  cursor: pointer; transition: all 0.3s var(--ease);
+  position: relative; overflow: hidden;
+  display: flex; flex-direction: column; gap: 10px;
+}
+.tx-channel::before {
+  content: ''; position: absolute;
+  top: -40px; right: -40px;
+  width: 100px; height: 100px; border-radius: 50%;
+  background: var(--ch-glow, rgba(0,242,195,0.08));
+  filter: blur(30px);
+  transition: opacity 0.4s;
+  opacity: 0;
+}
+.tx-channel:hover::before { opacity: 1; }
+.tx-channel:hover {
+  border-color: var(--ch-border, rgba(0,242,195,0.3));
+  background: var(--ch-bg, rgba(0,242,195,0.04));
+  transform: translateY(-3px);
+  box-shadow: 0 16px 40px rgba(0,0,0,0.4);
+}
+/* Channel color themes */
+.tx-ch-email {
+  --ch-glow: rgba(0,242,195,0.12);
+  --ch-border: rgba(0,242,195,0.35);
+  --ch-bg: rgba(0,242,195,0.04);
+  --ch-accent: var(--teal);
+}
+.tx-ch-github {
+  --ch-glow: rgba(255,209,102,0.12);
+  --ch-border: rgba(255,209,102,0.3);
+  --ch-bg: rgba(255,209,102,0.04);
+  --ch-accent: var(--gold);
+}
+
+.tx-ch-top { display: flex; align-items: center; justify-content: space-between; }
+.tx-ch-icon {
+  width: 34px; height: 34px; border-radius: 9px;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.08);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 16px; flex-shrink: 0;
+  transition: all 0.3s;
+}
+.tx-channel:hover .tx-ch-icon {
+  background: rgba(var(--ch-icon-rgb, 0,242,195), 0.1);
+  border-color: var(--ch-accent);
+}
+.tx-ch-ping {
+  width: 8px; height: 8px; border-radius: 50%;
+  background: var(--ch-accent);
+  box-shadow: 0 0 8px var(--ch-accent);
+  flex-shrink: 0;
+  animation: pulse 2s infinite;
+}
+.tx-ch-label {
+  font-family: 'Space Mono', monospace; font-size: 0.56rem;
+  letter-spacing: 0.12em; text-transform: uppercase;
+  color: var(--ch-accent);
+}
+.tx-ch-name {
+  font-family: 'Syne', sans-serif; font-weight: 700;
+  font-size: 0.82rem; color: var(--t1);
+  line-height: 1.3;
+}
+.tx-ch-cta {
+  display: inline-flex; align-items: center; gap: 5px;
+  font-size: 0.7rem; font-weight: 600;
+  color: var(--ch-accent);
+  padding: 5px 11px; border-radius: 7px;
+  border: 1px solid var(--ch-accent);
+  background: transparent;
+  opacity: 0.75;
+  transition: all 0.25s var(--ease);
+  width: fit-content;
+  cursor: pointer;
+}
+.tx-channel:hover .tx-ch-cta { opacity: 1; background: rgba(255,255,255,0.04); }
+.tx-ch-cta-arrow { transition: transform 0.25s; }
+.tx-channel:hover .tx-ch-cta-arrow { transform: translateX(3px); }
+
+/* Copied state flash */
+.tx-channel.copied .tx-ch-cta { color: var(--green); border-color: var(--green); }
+
+/* --- RADAR SECTION --- */
+.tx-radar-section {
+  padding: 12px 22px 14px;
+  position: relative; z-index: 2;
+  display: grid; grid-template-columns: auto 1fr;
+  gap: 18px; align-items: center;
+}
+.tx-radar-wrap {
+  width: 100px; height: 100px; flex-shrink: 0; position: relative;
+}
+.tx-radar-ring {
+  position: absolute; border-radius: 50%;
+  border: 1px solid rgba(0,242,195,0.15);
+  inset: 0; transform: scale(var(--s));
+}
+.tx-radar-ring:nth-child(1) { --s: 1; }
+.tx-radar-ring:nth-child(2) { --s: 0.66; }
+.tx-radar-ring:nth-child(3) { --s: 0.33; }
+.tx-radar-sweep {
+  position: absolute; inset: 0; border-radius: 50%;
+  background: conic-gradient(from 0deg, rgba(0,242,195,0) 0deg, rgba(0,242,195,0.18) 60deg, rgba(0,242,195,0) 90deg);
+  animation: radarSpin 3s linear infinite;
+}
+@keyframes radarSpin { to { transform: rotate(360deg); } }
+.tx-radar-center {
+  position: absolute; top: 50%; left: 50%;
+  transform: translate(-50%,-50%);
+  width: 14px; height: 14px; border-radius: 50%;
+  background: var(--teal); box-shadow: 0 0 12px rgba(0,242,195,0.8);
+}
+.tx-radar-blip {
+  position: absolute; border-radius: 50%;
+  background: var(--teal); box-shadow: 0 0 5px var(--teal);
+  animation: blipPulse 2s ease-in-out infinite;
+}
+@keyframes blipPulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.4;transform:scale(1.6)} }
+
+.tx-team-panel { flex: 1; }
+.tx-team-title {
+  font-family: 'Space Mono', monospace; font-size: 0.58rem;
+  letter-spacing: 0.14em; text-transform: uppercase; color: var(--t3); margin-bottom: 10px;
+}
+.tx-members { display: flex; flex-direction: column; gap: 8px; }
+.tx-member { display: flex; align-items: center; gap: 10px; }
+.tx-member-avatar {
+  width: 30px; height: 30px; border-radius: 50%; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'Syne', sans-serif; font-weight: 800; font-size: 0.7rem;
+  color: #000; position: relative;
+}
+.tx-member-avatar::after {
+  content: '';
+  position: absolute; bottom: 0; right: 0;
+  width: 8px; height: 8px; border-radius: 50%;
+  border: 1.5px solid #0d0d22;
+  background: var(--m-dot, var(--green));
+}
+.tx-member-name { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 0.78rem; }
+.tx-member-role { font-size: 0.68rem; color: var(--t3); }
+.tx-member-time { font-family: 'Space Mono', monospace; font-size: 0.58rem; color: var(--t3); margin-left: auto; }
+
+/* --- HEATMAP SECTION --- */
+.tx-heatmap-section {
+  padding: 2px 22px 18px;
+  position: relative; z-index: 2;
+  border-top: 1px solid rgba(255,255,255,0.04);
+}
+.tx-heatmap-header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 12px 0 10px;
+}
+.tx-heatmap-title {
+  font-family: 'Space Mono', monospace; font-size: 0.58rem;
+  letter-spacing: 0.14em; text-transform: uppercase; color: var(--t3);
+}
+.tx-heatmap-legend {
+  display: flex; align-items: center; gap: 5px;
+  font-family: 'Space Mono', monospace; font-size: 0.52rem; color: var(--t3);
+}
+.tx-legend-swatch { width: 8px; height: 8px; border-radius: 2px; }
+.tx-heatmap-days { display: flex; justify-content: space-between; margin-bottom: 6px; }
+.tx-heatmap-day { font-family: 'Space Mono', monospace; font-size: 0.52rem; color: var(--t3); width: 24px; text-align: center; }
+.tx-heatmap-grid {
+  display: grid; grid-template-columns: repeat(7, 1fr);
+  gap: 4px;
+}
+.tx-hcell {
+  height: 22px; border-radius: 4px;
+  background: rgba(0,242,195, var(--op, 0.06));
+  border: 1px solid rgba(0,242,195, calc(var(--op, 0.06) + 0.04));
+  transition: all 0.2s;
+  cursor: default; position: relative;
+}
+.tx-hcell:hover::after {
+  content: attr(data-tip);
+  position: absolute; bottom: calc(100% + 6px); left: 50%; transform: translateX(-50%);
+  background: #0c0c20; border: 1px solid rgba(0,242,195,0.2);
+  color: var(--teal); font-family: 'Space Mono', monospace; font-size: 0.5rem;
+  padding: 3px 7px; border-radius: 5px; white-space: nowrap;
+  pointer-events: none; z-index: 10;
+}
 
 /* FAQ SECTION */
 .faq-section { max-width: 1300px; margin: 0 auto; padding: 0 36px 100px; }
@@ -359,7 +552,6 @@ body::before {
   font-weight: 800; letter-spacing: -0.03em; margin-bottom: 14px;
 }
 .section-sub { font-size: 0.95rem; color: var(--t2); line-height: 1.75; max-width: 500px; margin: 0 auto; }
-
 .faq-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
 .faq-item {
   background: #111127; border: 1px solid rgba(255,255,255,0.06);
@@ -382,20 +574,9 @@ body::before {
 .faq-a {
   max-height: 0; overflow: hidden;
   transition: max-height 0.4s var(--ease), padding 0.3s;
-  font-size: 0.84rem; color: var(--t2); line-height: 1.7;
-  padding: 0 22px;
+  font-size: 0.84rem; color: var(--t2); line-height: 1.7; padding: 0 22px;
 }
 .faq-item.open .faq-a { max-height: 200px; padding: 0 22px 20px; }
-
-/* FLOATING PARTICLES */
-.particles-canvas {
-  position: fixed; inset: 0; pointer-events: none; z-index: 0; opacity: 0.3;
-}
-
-/* ANIMATIONS */
-@keyframes fadeUp { from{opacity:0;transform:translateY(24px)} to{opacity:1;transform:translateY(0)} }
-.reveal { opacity: 0; transform: translateY(28px); transition: opacity 0.7s var(--ease), transform 0.7s var(--ease); }
-.reveal.vis { opacity: 1; transform: none; }
 
 /* TOAST */
 .toast {
@@ -424,6 +605,11 @@ body::before {
 .footer-back { display: flex; align-items: center; gap: 6px; font-size: 0.78rem; color: var(--t2); cursor: pointer; transition: color 0.2s; }
 .footer-back:hover { color: var(--teal); }
 
+/* ANIMATIONS */
+@keyframes fadeUp { from{opacity:0;transform:translateY(24px)} to{opacity:1;transform:translateY(0)} }
+.reveal { opacity: 0; transform: translateY(28px); transition: opacity 0.7s var(--ease), transform 0.7s var(--ease); }
+.reveal.vis { opacity: 1; transform: none; }
+
 /* RESPONSIVE */
 @media(max-width: 900px) {
   .contact-grid { grid-template-columns: 1fr; }
@@ -434,8 +620,9 @@ body::before {
   .page-hero { padding: 140px 20px 60px; }
   .contact-section { padding: 20px 20px 70px; }
   .faq-section { padding: 0 20px 70px; }
-  .contact-form-wrap { padding: 28px 22px; }
-  .form-row-2 { grid-template-columns: 1fr; }
+  .tx-channels { grid-template-columns: 1fr; }
+  .tx-radar-section { grid-template-columns: 1fr; }
+  .tx-radar-wrap { width: 80px; height: 80px; }
 }
 </style>
 {% endblock %}
@@ -460,9 +647,10 @@ body::before {
 
 <!-- CONTACT GRID -->
 <section class="contact-section">
+
   <div class="contact-grid">
 
-    <!-- LEFT: Info cards -->
+    <!-- LEFT: Info cards (unchanged) -->
     <div class="contact-left reveal">
       <div>
         <div class="section-kicker">
@@ -473,7 +661,7 @@ body::before {
         <p class="contact-left-desc">Pathforge is a small team of students and builders who care deeply about student growth. Don't hesitate to share what's on your mind &mdash; we promise we don't bite.</p>
       </div>
 
-      <div class="info-card teal" id="card-email" onmousemove="trackMouse(this,event)">
+      <div class="info-card teal" id="card-email" onmousemove="trackMouse(this,event)" onclick="openLink('https://mail.google.com/mail/?view=cm&fs=1&to=aipathforge@gmail.com', 'Opening Gmail compose...')">
         <div class="ci-icon-wrap teal">&#9993;</div>
         <div class="ci-body">
           <div class="ci-label">Email Us</div>
@@ -483,33 +671,13 @@ body::before {
         </div>
       </div>
 
-      <div class="info-card blue" id="card-collab" onmousemove="trackMouse(this,event)">
-        <div class="ci-icon-wrap blue">&#129309;</div>
-        <div class="ci-body">
-          <div class="ci-label">Partnerships</div>
-          <div class="ci-title">collab@pathforge.ai</div>
-          <div class="ci-val">University tie-ups, integrations, sponsorships</div>
-          <div class="ci-sub">Business proposals & B2B inquiries</div>
-        </div>
-      </div>
-
-      <div class="info-card purple" id="card-community" onmousemove="trackMouse(this,event)">
-        <div class="ci-icon-wrap purple">&#128172;</div>
-        <div class="ci-body">
-          <div class="ci-label">Community</div>
-          <div class="ci-title">Discord & Forum</div>
-          <div class="ci-val">Join 2,000+ students on our Discord</div>
-          <div class="ci-sub">Real-time support, Q&A, study groups</div>
-        </div>
-      </div>
-
       <div class="info-card coral" id="card-location" onmousemove="trackMouse(this,event)">
         <div class="ci-icon-wrap coral">&#127759;</div>
         <div class="ci-body">
           <div class="ci-label">Location</div>
           <div class="ci-title">India &mdash; Remote-first</div>
-          <div class="ci-val">Building from Bangalore &middot; Delhi &middot; Mumbai</div>
-          <div class="ci-sub">Open to global collaborations</div>
+          <div class="ci-val">Building from Agra &middot; Delhi</div>
+          <div class="ci-sub">Open to collaborations</div>
         </div>
       </div>
 
@@ -527,85 +695,145 @@ body::before {
       <div>
         <div class="ci-label" style="margin-bottom:12px;margin-top:4px">Find Us Online</div>
         <div class="social-row">
-          <div class="social-pill sp-twitter">X Twitter</div>
-          <div class="social-pill sp-linkedin">&#128188; LinkedIn</div>
-          <div class="social-pill sp-github">&#128049; GitHub</div>
+          <div class="social-pill sp-twitter">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M18.244 2H21.5l-7.11 8.13L22.5 22h-6.35l-4.97-6.51L4.73 22H1.47l7.61-8.7L1.5 2h6.51l4.49 5.94L18.244 2zm-1.11 18h1.8L5.52 3.9H3.58L17.134 20z"/>
+            </svg>
+          </div>
+          <div class="social-pill sp-linkedin">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M20.447 20.452H16.89V14.87c0-1.33-.027-3.04-1.852-3.04-1.853 0-2.136 1.446-2.136 2.94v5.682H9.35V9h3.414v1.561h.049c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.063 2.063 0 1 1 0-4.126 2.063 2.063 0 0 1 0 4.126zM7.119 20.452H3.555V9H7.12v11.452z"/>
+            </svg>
+            LinkedIn
+          </div>
         </div>
       </div>
     </div>
 
-    <!-- RIGHT: Form -->
-    <div class="contact-form-wrap reveal" style="transition-delay:0.08s">
-      <div class="form-header">
-        <div class="form-title">Send us a message &#10022;</div>
-        <div class="form-subtitle">Fill in the form and our team will get back to you with thoughtful, personalised replies &mdash; not templates.</div>
+    <!-- RIGHT: Transmission Console -->
+    <div class="tx-console reveal" style="transition-delay:0.08s">
+
+      <!-- Top bar -->
+      <div class="tx-topbar">
+        <div class="tx-topbar-left">
+          <div class="tx-dots">
+            <div class="tx-dot tx-dot-r"></div>
+            <div class="tx-dot tx-dot-y"></div>
+            <div class="tx-dot tx-dot-g"></div>
+          </div>
+          <div class="tx-console-title">signal_terminal &mdash; v2.4.1</div>
+        </div>
+        <div class="tx-live-badge">
+          <div class="tx-live-dot"></div>
+          LIVE
+        </div>
       </div>
 
-      <form id="contactForm" onsubmit="handleSubmit(event)">
+      <!-- Waveform visualizer -->
+      <div class="tx-wave-section">
+        <div class="tx-wave-label">
+          <div class="tx-wave-title">&#11835; Incoming Signal</div>
+          <div class="tx-wave-freq" id="txFreq">432.8 MHz</div>
+        </div>
+        <div class="tx-waveform" id="txWaveform"></div>
+      </div>
 
-        <div class="form-group form-row-2">
-          <div>
-            <label class="form-label" for="firstName">First Name <span>*</span></label>
-            <input class="form-input" id="firstName" type="text" placeholder="Arjun" required>
+      <!-- Channel cards -->
+      <div class="tx-channels">
+
+        <div class="tx-channel tx-ch-email" onclick="copyToClipboard('aipathforge@gmail.com', this, 'General inbox copied!')">
+          <div class="tx-ch-top">
+            <div class="tx-ch-icon">✉️</div>
+            <div class="tx-ch-ping"></div>
           </div>
           <div>
-            <label class="form-label" for="lastName">Last Name</label>
-            <input class="form-input" id="lastName" type="text" placeholder="Sharma">
+            <div class="tx-ch-label">General</div>
+            <div class="tx-ch-name">team@pathforge.ai</div>
+          </div>
+          <div class="tx-ch-cta">
+            Copy address <span class="tx-ch-cta-arrow">→</span>
           </div>
         </div>
 
-        <div class="form-group">
-          <label class="form-label" for="emailInput">Email Address <span>*</span></label>
-          <input class="form-input" id="emailInput" type="email" placeholder="you@example.com" required>
-        </div>
-
-        <div class="form-group">
-          <label class="form-label" for="institution">Institution / Organisation</label>
-          <input class="form-input" id="institution" type="text" placeholder="IIT Delhi, BITS Pilani, etc.">
-        </div>
-
-        <div class="form-group">
-          <label class="form-label" style="margin-bottom:10px">Topic <span>*</span></label>
-          <div class="topic-chips" id="topicChips">
-            <div class="topic-chip active" data-val="General Feedback">&#128172; General Feedback</div>
-            <div class="topic-chip" data-val="Feature Request">&#10024; Feature Request</div>
-            <div class="topic-chip" data-val="Bug Report">&#128027; Bug Report</div>
-            <div class="topic-chip" data-val="Partnership">&#129309; Partnership</div>
-            <div class="topic-chip" data-val="Press / Media">&#128240; Press / Media</div>
-            <div class="topic-chip" data-val="Other">&#128161; Other</div>
+        <div class="tx-channel tx-ch-github" onclick="openLink('https://github.com/lakshminarayanverma91-bot/PathForge', 'Opening GitHub...')">
+          <div class="tx-ch-top">
+            <div class="tx-ch-icon" aria-hidden="true">
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+                <path d="M8 0C3.58 0 0 3.58 0 8a8 8 0 0 0 5.47 7.59c.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.5-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.5 7.5 0 0 1 4 0c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8 8 0 0 0 16 8c0-4.42-3.58-8-8-8z"/>
+              </svg>
+            </div>
+            <div class="tx-ch-ping"></div>
+          </div>
+          <div>
+            <div class="tx-ch-label">Open Source</div>
+            <div class="tx-ch-name">github/pathforge</div>
+          </div>
+          <div class="tx-ch-cta">
+            View repo <span class="tx-ch-cta-arrow">→</span>
           </div>
         </div>
 
-        <div class="form-group">
-          <div class="priority-row">
-            <span class="priority-label">Priority Level</span>
-            <div class="priority-toggle" id="priorityToggle">
-              <div class="p-opt active-low" data-p="low">Low</div>
-              <div class="p-opt" data-p="med">Medium</div>
-              <div class="p-opt" data-p="hi">High</div>
+      </div><!-- /.tx-channels -->
+
+      <!-- Radar + Team panel -->
+      <div class="tx-radar-section">
+        <div class="tx-radar-wrap" id="txRadar">
+          <div class="tx-radar-ring"></div>
+          <div class="tx-radar-ring"></div>
+          <div class="tx-radar-ring"></div>
+          <div class="tx-radar-sweep"></div>
+          <div class="tx-radar-center"></div>
+          <!-- Blips placed by JS -->
+        </div>
+        <div class="tx-team-panel">
+          <div class="tx-team-title">&#11044; Who's Around</div>
+          <div class="tx-members">
+            <div class="tx-member">
+              <div class="tx-member-avatar" style="background:linear-gradient(135deg,#00F2C3,#3D7EFF)">A</div>
+              <div>
+                <div class="tx-member-name">Laxmi</div>
+                <div class="tx-member-role">Product &amp; Design</div>
+              </div>
+              <div class="tx-member-time">2m ago</div>
+            </div>
+            <div class="tx-member">
+              <div class="tx-member-avatar" style="background:linear-gradient(135deg,#BF5AF2,#3D7EFF); --m-dot: var(--green)">S</div>
+              <div>
+                <div class="tx-member-name">Ayush</div>
+                <div class="tx-member-role">ML &amp; Backend</div>
+              </div>
+              <div class="tx-member-time">14m ago</div>
+            </div>
+            <div class="tx-member">
+              <div class="tx-member-avatar" style="background:linear-gradient(135deg,#FFD166,#FF6B6B); --m-dot: var(--gold)">R</div>
+              <div>
+                <div class="tx-member-name">Miheer</div>
+                <div class="tx-member-role">Comms &amp; Growth</div>
+              </div>
+              <div class="tx-member-time">1h ago</div>
             </div>
           </div>
         </div>
+      </div>
 
-        <div class="form-group">
-          <label class="form-label" for="messageInput">Message <span>*</span></label>
-          <textarea class="form-textarea" id="messageInput" placeholder="Tell us what's on your mind &mdash; ideas, feedback, bugs, or just a hello. The more detail, the better we can help." maxlength="1000" oninput="updateChar(this)" required></textarea>
-          <div class="char-count"><span id="charVal">0</span> / 1000</div>
+      <!-- Response heatmap -->
+      <div class="tx-heatmap-section">
+        <div class="tx-heatmap-header">
+          <div class="tx-heatmap-title">&#127774; Response heatmap &mdash; last 7 days (IST)</div>
+          <div class="tx-heatmap-legend">
+            <div class="tx-legend-swatch" style="background:rgba(0,242,195,0.1)"></div>
+            slow
+            <div class="tx-legend-swatch" style="background:rgba(0,242,195,0.55)"></div>
+            fast
+          </div>
         </div>
+        <div class="tx-heatmap-days" id="heatmapDays"></div>
+        <div class="tx-heatmap-grid" id="heatmapGrid"></div>
+      </div>
 
-        <button class="form-submit-btn" type="submit" id="submitBtn">
-          <span id="submitText">Send Message</span>
-          <span class="submit-arrow" id="submitArrow">&rarr;</span>
-        </button>
+    </div><!-- /.tx-console -->
 
-        <div class="form-footer-note">
-          <span class="lock-icon">&#128274;</span>
-          Your data is never stored or sold. We reply from a real inbox, not a bot.
-        </div>
-      </form>
-    </div>
-
-  </div>
+  </div><!-- /.contact-grid -->
 </section>
 
 <!-- FAQ SECTION -->
@@ -654,7 +882,7 @@ body::before {
         <span class="faq-q-text">I found a bug. How do I report it?</span>
         <div class="faq-toggle">+</div>
       </div>
-      <div class="faq-a">Thank you for helping us improve! Use the contact form on this page and select "Bug Report" as the topic. Please include the module name, what you expected, and what actually happened. Screenshots are incredibly helpful too.</div>
+      <div class="faq-a">Thank you for helping us improve! Drop us an email at team@pathforge.ai with the subject "Bug Report". Please include the module name, what you expected, and what actually happened. Screenshots are incredibly helpful too.</div>
     </div>
 
     <div class="faq-item">
@@ -667,33 +895,95 @@ body::before {
 
   </div>
 </section>
+
+<!-- TOAST -->
+<div class="toast" id="toast">
+  <div class="toast-icon" id="toastIcon">✓</div>
+  <div class="toast-body">
+    <div class="toast-title" id="toastTitle">Done!</div>
+    <div class="toast-sub" id="toastSub"></div>
+  </div>
+</div>
 {% endblock %}
 
 {% block extra_scripts %}
 <script>
-// Particles
+/* ---- Waveform ---- */
 (function(){
-  const c = document.getElementById('particlesCanvas');
-  if(!c) return;
-  const ctx = c.getContext('2d');
-  let pts = [];
-  function resize(){ c.width = window.innerWidth; c.height = window.innerHeight; }
-  function mkPt(){ return { x:Math.random()*c.width, y:Math.random()*c.height, vx:(Math.random()-.5)*0.25, vy:(Math.random()-.5)*0.25, r:Math.random()*1.5+0.3, op:Math.random()*0.4+0.08, col:['#00F2C3','#3D7EFF','#BF5AF2'][Math.floor(Math.random()*3)] }; }
-  resize(); pts = Array.from({length:80},mkPt);
-  function draw(){
-    ctx.clearRect(0,0,c.width,c.height);
-    pts.forEach((p,i)=>{
-      p.x+=p.vx; p.y+=p.vy;
-      if(p.x<0||p.x>c.width||p.y<0||p.y>c.height) Object.assign(p,mkPt(),{x:Math.random()*c.width,y:Math.random()*c.height});
-      ctx.save(); ctx.globalAlpha=p.op; ctx.fillStyle=p.col; ctx.beginPath(); ctx.arc(p.x,p.y,p.r,0,Math.PI*2); ctx.fill(); ctx.restore();
-    });
-    requestAnimationFrame(draw);
+  const wrap = document.getElementById('txWaveform');
+  const n = 42;
+  const bars = [];
+  for(let i=0;i<n;i++){
+    const b = document.createElement('div');
+    b.className = 'tx-wave-bar';
+    const lo = (Math.random()*0.1+0.05).toFixed(2);
+    const hi = (Math.random()*0.7+0.3).toFixed(2);
+    const dur = (Math.random()*0.8+0.6).toFixed(2);
+    b.style.cssText = `--lo:${lo};--hi:${hi};--dur:${dur}s;animation-delay:${(Math.random()*dur).toFixed(2)}s;height:100%`;
+    wrap.appendChild(b);
+    bars.push(b);
   }
-  draw();
-  window.addEventListener('resize',()=>{ resize(); pts=Array.from({length:80},mkPt); });
+  /* Randomise freq display */
+  const freqEl = document.getElementById('txFreq');
+  setInterval(()=>{
+    freqEl.textContent = (430 + Math.random()*10).toFixed(1) + ' MHz';
+  }, 2200);
 })();
 
-// Response time bars
+/* ---- Radar blips ---- */
+(function(){
+  const wrap = document.getElementById('txRadar');
+  const blipData = [
+    {top:'22%',left:'62%'}, {top:'58%',left:'28%'}, {top:'72%',left:'70%'},
+    {top:'35%',left:'15%'}, {top:'15%',left:'45%'},
+  ];
+  blipData.forEach((b,i)=>{
+    const el = document.createElement('div');
+    el.className = 'tx-radar-blip';
+    el.style.cssText = `width:5px;height:5px;top:${b.top};left:${b.left};animation-delay:${i*0.4}s`;
+    wrap.appendChild(el);
+  });
+})();
+
+/* ---- Heatmap ---- */
+(function(){
+  const days = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+  const daysWrap = document.getElementById('heatmapDays');
+  days.forEach(d=>{
+    const el = document.createElement('div');
+    el.className = 'tx-heatmap-day'; el.textContent = d;
+    daysWrap.appendChild(el);
+  });
+  /* Two rows: morning and afternoon sessions */
+  const grid = document.getElementById('heatmapGrid');
+  const opMap = [
+    [0.08,0.12,0.35,0.55,0.7,0.18,0.08],
+    [0.45,0.6,0.75,0.9,0.6,0.12,0.05],
+  ];
+  const labels = [
+    ['Mon 9am','Tue 9am','Wed 9am','Thu 9am','Fri 9am','Sat 9am','Sun 9am'],
+    ['Mon 2pm','Tue 2pm','Wed 2pm','Thu 2pm','Fri 2pm','Sat 2pm','Sun 2pm'],
+  ];
+  opMap.forEach((row,ri)=>{
+    row.forEach((op,ci)=>{
+      const cell = document.createElement('div');
+      cell.className = 'tx-hcell';
+      cell.style.setProperty('--op', op);
+      const resp = op > 0.6 ? 'Very fast' : op > 0.35 ? 'Fast' : op > 0.1 ? 'Moderate' : 'Slow';
+      cell.setAttribute('data-tip', `${labels[ri][ci]} · ${resp}`);
+      grid.appendChild(cell);
+    });
+  });
+})();
+
+/* ---- Mouse shimmer on left info cards ---- */
+function trackMouse(el, e){
+  const r = el.getBoundingClientRect();
+  el.style.setProperty('--mx', ((e.clientX-r.left)/r.width*100).toFixed(1)+'%');
+  el.style.setProperty('--my', ((e.clientY-r.top)/r.height*100).toFixed(1)+'%');
+}
+
+/* ---- Response time bars (left column) ---- */
 (function(){
   const wrap = document.getElementById('rwChart');
   const heights = [40,55,35,70,60,80,65];
@@ -702,39 +992,41 @@ body::before {
     b.className = 'rw-bar';
     b.style.height = h+'%';
     b.style.animationDelay = (i*0.08)+'s';
-    b.style.opacity = 0.4 + (h/100)*0.6;
+    b.style.opacity = 0.4+(h/100)*0.6;
     wrap.appendChild(b);
   });
 })();
 
-// Mouse shimmer on info cards
-function trackMouse(el, e){
-  const r = el.getBoundingClientRect();
-  el.style.setProperty('--mx', ((e.clientX-r.left)/r.width*100).toFixed(1)+'%');
-  el.style.setProperty('--my', ((e.clientY-r.top)/r.height*100).toFixed(1)+'%');
+/* ---- Toast ---- */
+function showToast(title, sub, icon='✓'){
+  const t = document.getElementById('toast');
+  document.getElementById('toastIcon').textContent = icon;
+  document.getElementById('toastTitle').textContent = title;
+  document.getElementById('toastSub').textContent = sub || '';
+  t.classList.add('show');
+  clearTimeout(t._t);
+  t._t = setTimeout(()=>t.classList.remove('show'), 3800);
 }
 
-// Topic chips
-document.querySelectorAll('.topic-chip').forEach(chip=>{
-  chip.addEventListener('click',()=>{
-    document.querySelectorAll('.topic-chip').forEach(c=>c.classList.remove('active'));
-    chip.classList.add('active');
+/* ---- Channel interactions ---- */
+function copyToClipboard(text, cardEl, msg){
+  navigator.clipboard.writeText(text).then(()=>{
+    showToast(msg, text, '📋');
+    cardEl.classList.add('copied');
+    const cta = cardEl.querySelector('.tx-ch-cta');
+    const orig = cta.innerHTML;
+    cta.innerHTML = '✓ Copied!';
+    setTimeout(()=>{ cta.innerHTML = orig; cardEl.classList.remove('copied'); }, 2200);
+  }).catch(()=>{
+    showToast('Copy failed', 'Please copy manually: '+text, '⚠');
   });
-});
+}
+function openLink(url, msg){
+  showToast(msg, url, '🔗');
+  setTimeout(()=>window.open(url,'_blank'), 400);
+}
 
-// Priority toggle
-document.querySelectorAll('.p-opt').forEach(opt=>{
-  opt.addEventListener('click',()=>{
-    document.querySelectorAll('.p-opt').forEach(o=>o.className='p-opt');
-    const p = opt.dataset.p;
-    opt.className = 'p-opt active-'+p;
-  });
-});
-
-// Char count
-function updateChar(el){ document.getElementById('charVal').textContent = el.value.length; }
-
-// FAQ
+/* ---- FAQ ---- */
 function toggleFaq(q){
   const item = q.parentElement;
   const wasOpen = item.classList.contains('open');
@@ -742,42 +1034,10 @@ function toggleFaq(q){
   if(!wasOpen) item.classList.add('open');
 }
 
-// Toast
-function showToast(title, sub, icon='\u2713'){
-  const t = document.getElementById('toast');
-  document.getElementById('toastIcon').textContent = icon;
-  document.getElementById('toastMsg').textContent = sub ? (title + ' - ' + sub) : title;
-  t.classList.add('show');
-  clearTimeout(t._t);
-  t._t = setTimeout(()=>t.classList.remove('show'), 4000);
-}
-
-// Form submit
-function handleSubmit(e){
-  e.preventDefault();
-  const btn = document.getElementById('submitBtn');
-  const txt = document.getElementById('submitText');
-  const arr = document.getElementById('submitArrow');
-  btn.classList.add('loading');
-  txt.textContent = 'Sending...';
-  arr.textContent = '\u23F3';
-  setTimeout(()=>{
-    btn.classList.remove('loading');
-    txt.textContent = 'Message Sent!';
-    arr.textContent = '\u2713';
-    showToast('Message Sent! \uD83C\uDF89', "We'll reply within 24 hours");
-    e.target.reset();
-    document.getElementById('charVal').textContent = '0';
-    document.querySelectorAll('.topic-chip').forEach((c,i)=>c.classList.toggle('active',i===0));
-    setTimeout(()=>{ txt.textContent='Send Message'; arr.textContent='\u2192'; }, 3000);
-  }, 1600);
-}
-
-// Reveal
+/* ---- Reveal on scroll ---- */
 const obs = new IntersectionObserver(e=>{
   e.forEach(en=>{ if(en.isIntersecting){ en.target.classList.add('vis'); obs.unobserve(en.target); } });
 },{threshold:0.08});
 document.querySelectorAll('.reveal').forEach(el=>obs.observe(el));
 </script>
 {% endblock %}
-

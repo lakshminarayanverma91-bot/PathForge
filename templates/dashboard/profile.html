@@ -32,6 +32,175 @@
 
 .profile-grid { display: grid; grid-template-columns: 290px 1fr; gap: 20px; align-items: start; }
 
+/* Dashboard-style profile header */
+.profile-overview-header {
+  margin-bottom: 20px;
+  opacity: 0;
+  animation: fadeUp 0.6s 0.15s var(--ease) forwards;
+}
+.profile-hero {
+  position: relative;
+  border-radius: 20px;
+  overflow: hidden;
+  background: var(--card);
+  border: 1px solid var(--border);
+}
+.profile-hero-cover {
+  height: 140px;
+  background: linear-gradient(135deg, #0a1628 0%, #0f1e35 40%, #130f28 70%, #0a1620 100%);
+  position: relative;
+  overflow: hidden;
+}
+.cover-image {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0.7;
+}
+.profile-hero-body {
+  padding: 0 28px 28px;
+  position: relative;
+}
+.profile-avatar-wrap {
+  position: relative;
+  display: inline-block;
+  margin-top: -52px;
+  margin-bottom: 14px;
+}
+.profile-avatar {
+  width: 104px;
+  height: 104px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--accent), var(--accent2));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Syne', sans-serif;
+  font-size: 38px;
+  font-weight: 800;
+  color: #000;
+  border: 4px solid var(--bg);
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+}
+.profile-avatar img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 14%;
+  border-radius: 50%;
+  display: none;
+  z-index: 1;
+}
+.avatar-upload-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0,0,0,0.55);
+  border-radius: 50%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  opacity: 0;
+  transition: opacity 0.25s;
+  font-size: 0.62rem;
+  font-weight: 600;
+  color: #fff;
+}
+.profile-avatar:hover .avatar-upload-overlay { opacity: 1; }
+.avatar-upload-icon { font-size: 20px; }
+.avatar-online-dot {
+  position: absolute;
+  bottom: 5px;
+  right: 5px;
+  width: 16px;
+  height: 16px;
+  background: var(--green);
+  border-radius: 50%;
+  border: 3px solid var(--bg);
+}
+.profile-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+.profile-meta { flex: 1; min-width: 0; }
+.profile-name {
+  font-family: 'Syne', sans-serif;
+  font-size: 1.7rem;
+  font-weight: 800;
+  letter-spacing: -0.025em;
+  line-height: 1.1;
+  margin-bottom: 4px;
+}
+.profile-role-line {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+  flex-wrap: wrap;
+}
+.profile-role-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 12px;
+  border-radius: 100px;
+  background: rgba(6,214,160,0.08);
+  border: 1px solid rgba(6,214,160,0.2);
+  font-size: 0.78rem;
+  color: var(--accent);
+  font-weight: 600;
+}
+.profile-college {
+  font-size: 0.8rem;
+  color: var(--t3);
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+.profile-bio {
+  font-size: 0.875rem;
+  color: var(--t2);
+  line-height: 1.65;
+  max-width: 520px;
+  margin-bottom: 16px;
+}
+.profile-quick-stats {
+  display: flex;
+  gap: 1px;
+  background: var(--border);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+.pqs-item {
+  padding: 14px 20px;
+  text-align: center;
+  background: var(--card2);
+  transition: background 0.2s;
+  min-width: 90px;
+}
+.pqs-item:hover { background: #252548; }
+.pqs-val {
+  font-family: 'Syne', sans-serif;
+  font-size: 1.4rem;
+  font-weight: 800;
+  color: var(--t1);
+  line-height: 1;
+  margin-bottom: 4px;
+}
+.pqs-label { font-size: 0.65rem; color: var(--t3); letter-spacing: 0.05em; }
+
 .avatar-card {
   background: var(--surface);
   border: 1px solid var(--border);
@@ -56,20 +225,6 @@
 }
 .avatar-ring img { width: 100%; height: 100%; object-fit: cover; object-position: center 14%; border-radius: 50%; display: none; }
 .avatar-ring-emoji { font-size: 68px; line-height: 1; }
-.avatar-edit-btn {
-  position: absolute;
-  bottom: 6px;
-  right: 6px;
-  width: 34px;
-  height: 34px;
-  border-radius: 50%;
-  background: linear-gradient(135deg, var(--accent), var(--accent2));
-  border: 2px solid var(--surface);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #000;
-}
 .avatar-status {
   display: inline-flex;
   align-items: center;
@@ -105,6 +260,8 @@
 .btn-photo { color: var(--t1); border-color: var(--border-h); background: var(--card2); }
 .btn-password { color: #000; border-color: transparent; background: linear-gradient(135deg, var(--accent), var(--accent2)); }
 .btn-delete { color: var(--coral); border-color: rgba(255,107,53,0.22); background: rgba(255,107,53,0.04); }
+.quick-photo-input { display: none; }
+.inline-action-form { margin: 0; }
 
 .info-card {
   background: var(--surface);
@@ -217,81 +374,122 @@
   border-radius: 6px;
 }
 
-.info-footer {
-  padding: 14px 26px;
-  border-top: 1px solid var(--border);
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  flex-wrap: wrap;
-}
-.footer-chips { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
-.footer-chip { display: flex; align-items: center; gap: 5px; font-family: 'Space Mono', monospace; font-size: 0.57rem; color: var(--t3); }
-.footer-dot { width: 5px; height: 5px; border-radius: 50%; }
-.footer-id { font-family: 'Space Mono', monospace; font-size: 0.57rem; color: var(--t3); }
-
 @keyframes fadeUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
 @keyframes pulseD { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.35; transform: scale(0.6); } }
 
 @media (max-width: 900px) {
   .profile-grid { grid-template-columns: 1fr; }
   .avatar-card { max-width: 420px; margin: 0 auto; }
+  .profile-quick-stats { display: none; }
 }
 @media (max-width: 640px) {
   .info-header { flex-direction: column; align-items: flex-start; gap: 12px; padding: 18px 18px; }
   .field-row { grid-template-columns: 1fr; gap: 5px; padding: 11px 18px; }
-  .info-footer { padding: 12px 18px; }
 }
 </style>
 {% endblock %}
 
-{% block page_modals %}
-<div class="modal-overlay" id="deleteModal">
-  <div class="modal" style="width:420px;max-width:calc(100vw - 32px);text-align:center;border:1px solid rgba(255,107,53,0.22)">
-    <div style="font-size:2.4rem;margin-bottom:12px">⚠️</div>
-    <div class="modal-title" style="color:var(--coral)">Delete Account</div>
-    <div style="font-size:0.83rem;color:var(--t3);line-height:1.7;margin-bottom:22px">
-      This action is permanent and cannot be undone.<br>
-      All your data, sessions and progress will be erased forever.
-    </div>
-    <div class="modal-actions" style="justify-content:center">
-      <button class="btn-danger">Yes, Delete</button>
-      <button class="btn-ghost">Keep Account</button>
-    </div>
-  </div>
-</div>
-{% endblock %}
-
 {% block page_content %}
-{% for user in all_users %}
 
 <div class="profile-page">
   <div class="page-header">
     <div class="page-eyebrow"><div class="eyebrow-dot"></div>USER PROFILE</div>
   </div>
 
+  <div class="profile-overview-header">
+    <div class="profile-hero">
+      <div class="profile-hero-cover">
+        <img class="cover-image" src="{% if profile and profile.cover_image %}{{ profile.cover_image.url }}{% else %}https://kaiz-in.com/wp-content/uploads/elementor/thumbs/Technology-LinkedIn-Cover-Banner-2-qx2x62u3jigig6gs6xr2ltywwx8ygrwg4h3lbg3y48.webp{% endif %}" alt="Cover image">
+      </div>
+
+      <div class="profile-hero-body">
+        <div class="profile-row">
+          <div>
+            <div class="profile-avatar-wrap">
+              <div class="profile-avatar">
+                {% if profile and profile.image %}
+                <img src="{{ profile.image.url }}" alt="Profile image" style="display:block;">
+                {% else %}
+                {{ user.first_name|default:user.username|slice:":1"|upper }}
+                {% endif %}
+                <div class="avatar-upload-overlay">
+                  <div class="avatar-upload-icon">📷</div>
+                  <span>View</span>
+                </div>
+              </div>
+              <div class="avatar-online-dot"></div>
+            </div>
+
+            <div class="profile-meta">
+              <div class="profile-name">{{ user.get_full_name|default:user.username }}</div>
+              <div class="profile-role-line">
+                <div class="profile-role-badge">🎯 {{ profile.role|default:'-' }}</div>
+                <div class="profile-college">🎓 {{ profile.university|default:'-' }}</div>
+              </div>
+              <p class="profile-bio">{{ profile.about|default:'No bio added yet.' }}</p>
+              <div style="display:flex; gap:10px; flex-wrap:wrap">
+                <a href="{{ profile.github|default:'' }}" target="_blank" style="display:flex; align-items:center; gap:6px; text-decoration:none; padding:8px 14px; border:1px solid #ccc; border-radius:6px;">
+                  <svg width="16" height="16" viewBox="0 0 16 16">
+                    <path d="M8 0C3.58 0 0 3.58 0 8a8 8 0 0 0 5.47 7.59c.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.5-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.5 7.5 0 0 1 4 0c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8 8 0 0 0 16 8c0-4.42-3.58-8-8-8z"/>
+                  </svg>
+                  GitHub
+                </a>
+                <a href="{{ profile.linkedin|default:'' }}" target="_blank" style="display:flex; align-items:center; gap:6px; text-decoration:none; padding:8px 14px; border:1px solid #ccc; border-radius:6px;">
+                  <svg width="16" height="16" viewBox="0 0 24 24">
+                    <path d="M20.45 20.45h-3.56v-5.57c0-1.33-.03-3.04-1.85-3.04-1.86 0-2.15 1.45-2.15 2.95v5.66H9.33V9h3.41v1.56h.05c.47-.9 1.63-1.85 3.36-1.85 3.6 0 4.27 2.37 4.27 5.45v6.29ZM5.31 7.43a2.07 2.07 0 1 1 0-4.14 2.07 2.07 0 0 1 0 4.14Zm1.78 13.02H3.53V9h3.56v11.45Z"/>
+                  </svg>
+                  LinkedIn
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <div class="profile-grid">
+    <!-- Left Card -->
     <div class="avatar-card">
       <div class="card-top-line"></div>
       <div class="avatar-section">
         <div class="avatar-ring-wrap">
           <div class="avatar-ring" id="avatarRing">
-            <img id="avatarImg" src="{% if user.image %}{{ user.image.url }}{% endif %}" alt="Avatar" {% if user.image %}style="display:block"{% endif %}>
-            <div class="avatar-ring-emoji" id="avatarEmoji" {% if user.image %}style="display:none"{% endif %}>{{ user.first_name|default:user.username|slice:":1"|upper }}</div>
+            <img id="avatarImg" src="{% if profile and profile.image %}{{ profile.image.url }}{% endif %}" alt="Avatar" {% if profile and profile.image %}style="display:block"{% endif %}>
+            <div class="avatar-ring-emoji" id="avatarEmoji" {% if profile and profile.image %}style="display:none"{% endif %}>{{ user.first_name|default:user.username|slice:":1"|upper }}</div>
           </div>
         </div>
         <div class="avatar-status"><div class="status-pulse"></div>ACTIVE MEMBER</div>
         <div class="avatar-name" id="profileName">{{ user.get_full_name|default:user.username }}</div>
-        <div class="avatar-role">{{ user.role|default:'-' }}</div>
+        <div class="avatar-role">{{ profile.role|default:'-' }}</div>
       </div>
       <div class="avatar-actions">
-        <button class="action-btn btn-photo">📸 Change Profile Photo</button>
-        <button class="action-btn btn-password">🔑 Change Password</button>
-        <button class="action-btn btn-delete">🗑️ Delete Account</button>
+        <form class="inline-action-form" method="post" action="{% url 'edit_profile' %}" enctype="multipart/form-data" id="quickPhotoForm">
+          {% csrf_token %}
+          <input class="quick-photo-input" type="file" name="image" id="quickPhotoInput" accept="image/*">
+
+          <input type="hidden" name="first_name" value="{{ user.first_name|default:'' }}">
+          <input type="hidden" name="last_name" value="{{ user.last_name|default:'' }}">
+          <input type="hidden" name="email" value="{{ user.email|default:'' }}">
+          <input type="hidden" name="phone_no" value="{{ profile.phone_no|default:'' }}">
+          <input type="hidden" name="github" value="{{ profile.github|default:'' }}">
+          <input type="hidden" name="linkedin" value="{{ profile.linkedin|default:'' }}">
+          <input type="hidden" name="gender" value="{{ profile.gender|default:'' }}">
+          <input type="hidden" name="university" value="{{ profile.university|default:'' }}">
+          <input type="hidden" name="role" value="{{ profile.role|default:'' }}">
+          <input type="hidden" name="about" value="{{ profile.about|default:'' }}">
+
+          <button type="button" class="action-btn btn-photo" id="quickPhotoBtn">📸 Change Profile Photo</button>
+        </form>
+
+        <form class="inline-action-form" method="post" action="{% url 'delete_profile' %}" onsubmit="return confirm('Delete your account permanently? This action cannot be undone.');">
+          {% csrf_token %}
+          <button type="submit" class="action-btn btn-delete">🗑️ Delete Account</button>
+        </form>
       </div>
     </div>
 
+    <!-- Right Card -->
     <div class="info-card">
       <div class="card-top-line-blue"></div>
       <div class="info-header">
@@ -301,9 +499,7 @@
           <div class="info-sub">Manage your personal data and preferences</div>
         </div>
         <div class="edit-btn-group">
-          <button class="edit-btn btn-edit" id="editBtn">✏️ Edit Profile</button>
-          <button class="edit-btn btn-save" id="saveBtn">✦ Save Changes</button>
-          <button class="edit-btn btn-cancel" id="cancelBtn">✕ Cancel</button>
+          <a href="{% url 'edit_profile' %}" class="edit-btn btn-edit" id="editBtn">✏️ Edit Profile</a>
         </div>
       </div>
 
@@ -325,8 +521,8 @@
         <div class="field-row">
           <div class="field-label"><span class="field-icon">📞</span>Phone</div>
           <div>
-            <div class="field-display" id="dv-phone">{{ user.phone_no }}</div>
-            <input class="field-input" id="inp-phone" value="{{ user.phone_no|default:'' }}">
+            <div class="field-display" id="dv-phone">{{ profile.phone_no|default:'-' }}</div>
+            <input class="field-input" id="inp-phone" value="{{ profile.phone_no|default:'' }}">
           </div>
         </div>
         <div class="field-row">
@@ -336,8 +532,8 @@
             </svg>
           </span>LinkedIn</div>
           <div>
-            <div class="field-display" id="dv-linkedin">{% if user.linkedin %}<a class="link-val" href="{{ user.linkedin }}" target="_blank">{{ user.linkedin }}</a>{% else %}<span class="none-tag">None</span>{% endif %}</div>
-            <input class="field-input" id="inp-linkedin" value="{{ user.linkedin|default:'' }}">
+            <div class="field-display" id="dv-linkedin">{% if profile and profile.linkedin %}<span class="link-val">{{ profile.linkedin }}</span>{% else %}<span class="none-tag">None</span>{% endif %}</div>
+            <input class="field-input" id="inp-linkedin" value="{{ profile.linkedin|default:'' }}">
           </div>
         </div>
         <div class="field-row">
@@ -347,19 +543,18 @@
             </svg>
           </span>GitHub</div>
           <div>
-            <div class="field-display" id="dv-github">{% if user.github %}<a class="link-val" href="{{ user.github }}" target="_blank">{{ user.github }}</a>{% else %}<span class="none-tag">None</span>{% endif %}</div>
-            <input class="field-input" id="inp-github" value="{{ user.github|default:'' }}">
+            <div class="field-display" id="dv-github">{% if profile and profile.github %}<span class="link-val">{{ profile.github }}</span>{% else %}<span class="none-tag">None</span>{% endif %}</div>
+            <input class="field-input" id="inp-github" value="{{ profile.github|default:'' }}">
           </div>
         </div>
         <div class="field-row">
           <div class="field-label"><span class="field-icon">⚥</span>Gender</div>
           <div>
-            <div class="field-display"><span class="gender-pill" id="gender-pill">{{ user.gender|default:'Prefer not to say' }}</span></div>
+            <div class="field-display"><span class="gender-pill" id="gender-pill">{{ profile.gender|default:'Prefer not to say' }}</span></div>
             <select class="field-select" id="inp-gender">
-              <option value="Male" {% if user.gender == 'Male' %}selected{% endif %}>Male</option>
-              <option value="Female" {% if user.gender == 'Female' %}selected{% endif %}>Female</option>
-              <option value="Non-binary" {% if user.gender == 'Non-binary' %}selected{% endif %}>Non-binary</option>
-              <option value="Prefer not to say" {% if not user.gender or user.gender == 'Prefer not to say' %}selected{% endif %}>Prefer not to say</option>
+              <option value="Male" {% if profile.gender == 'Male' %}selected{% endif %}>Male</option>
+              <option value="Female" {% if profile.gender == 'Female' %}selected{% endif %}>Female</option>
+              <option value="Prefer not to say" {% if not profile or not profile.gender or profile.gender == 'Prefer not to say' %}selected{% endif %}>Prefer not to say</option>
             </select>
           </div>
         </div>
@@ -367,6 +562,21 @@
     </div>
   </div>
 </div>
-{% endfor %}
+
+<script>
+const quickPhotoBtn = document.getElementById('quickPhotoBtn');
+const quickPhotoInput = document.getElementById('quickPhotoInput');
+const quickPhotoForm = document.getElementById('quickPhotoForm');
+
+if (quickPhotoBtn && quickPhotoInput && quickPhotoForm) {
+  quickPhotoBtn.addEventListener('click', () => quickPhotoInput.click());
+  quickPhotoInput.addEventListener('change', () => {
+    if (quickPhotoInput.files && quickPhotoInput.files.length > 0) {
+      quickPhotoForm.submit();
+    }
+  });
+}
+</script>
+
 {% endblock %}
 

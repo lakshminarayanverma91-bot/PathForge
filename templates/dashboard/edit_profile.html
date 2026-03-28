@@ -1,0 +1,825 @@
+{% extends "dashboard/base.html" %}
+
+{% block title %}Edit Profile — Pathforge{% endblock %}
+{% block page_label %}Edit Profile{% endblock %}
+
+{% block page_styles %}
+<style>
+/* ─── Variables (mirror base theme) ─── */
+:root {
+  --accent:  #06d6a0;
+  --accent2: #00b4d8;
+  --blue:    #3b9eff;
+  --coral:   #ff6b35;
+  --green:   #06d6a0;
+  --bg:      #0c0c1d;
+  --surface: #11112a;
+  --card:    #13132e;
+  --card2:   #1a1a38;
+  --border:  rgba(255,255,255,0.07);
+  --border-h:rgba(255,255,255,0.13);
+  --t1: #f0f0ff;
+  --t2: #9898c0;
+  --t3: #5a5a88;
+  --ease: cubic-bezier(.22,.68,0,1.2);
+}
+
+/* ─── Page shell ─── */
+.edit-page { max-width: 880px; }
+
+.page-header {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 32px;
+  opacity: 0;
+  animation: fadeUp .5s .05s var(--ease) forwards;
+}
+.page-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  border: 1px solid rgba(6,214,160,.2);
+  background: rgba(6,214,160,.04);
+  border-radius: 100px;
+  padding: 5px 14px;
+  font-family: 'Space Mono', monospace;
+  font-size: .66rem;
+  color: var(--accent);
+  letter-spacing: .1em;
+}
+.eyebrow-dot {
+  width: 6px; height: 6px;
+  background: var(--accent);
+  border-radius: 50%;
+  animation: pulseD 2s infinite;
+}
+.page-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: 'Space Mono', monospace;
+  font-size: .67rem;
+  color: var(--t3);
+  text-decoration: none;
+  transition: color .2s;
+  padding: 6px 12px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: transparent;
+}
+.page-back:hover { color: var(--t1); border-color: var(--border-h); }
+
+/* ─── Form card ─── */
+.form-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  overflow: hidden;
+  opacity: 0;
+  animation: fadeUp .55s .15s var(--ease) forwards;
+}
+.form-card + .form-card {
+  margin-top: 16px;
+  animation-delay: .25s;
+}
+
+.card-accent-line {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--accent), transparent);
+  opacity: .4;
+}
+.card-accent-line.blue {
+  background: linear-gradient(90deg, transparent, var(--blue), transparent);
+  opacity: .3;
+}
+.card-accent-line.coral {
+  background: linear-gradient(90deg, transparent, var(--coral), transparent);
+  opacity: .3;
+}
+
+.card-header {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 22px 28px 20px;
+  border-bottom: 1px solid var(--border);
+}
+.card-header-icon {
+  width: 38px; height: 38px;
+  border-radius: 11px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 17px;
+  background: var(--card2);
+  border: 1px solid var(--border);
+  flex-shrink: 0;
+}
+.card-header-text { flex: 1; }
+.card-kicker {
+  font-family: 'Space Mono', monospace;
+  font-size: .58rem;
+  color: var(--accent);
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  margin-bottom: 2px;
+}
+.card-kicker.blue  { color: var(--blue); }
+.card-kicker.coral { color: var(--coral); }
+.card-title {
+  font-family: 'Syne', sans-serif;
+  font-size: 1rem;
+  font-weight: 800;
+  color: var(--t1);
+  line-height: 1.2;
+}
+.card-sub { font-size: .75rem; color: var(--t3); margin-top: 2px; }
+
+/* ─── Avatar upload zone ─── */
+.avatar-upload-zone {
+  padding: 28px 28px 24px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  gap: 24px;
+}
+.avatar-preview-wrap { position: relative; flex-shrink: 0; }
+.avatar-preview {
+  width: 96px; height: 96px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--accent), var(--accent2));
+  border: 3px solid var(--border-h);
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'Syne', sans-serif;
+  font-size: 34px; font-weight: 800;
+  color: #000;
+  overflow: hidden;
+  position: relative;
+}
+.avatar-preview img {
+  position: absolute; inset: 0;
+  width: 100%; height: 100%;
+  object-fit: cover;
+  object-position: center 12%;
+  border-radius: 50%;
+}
+.avatar-online { 
+  position: absolute; bottom: 3px; right: 3px;
+  width: 14px; height: 14px;
+  background: var(--green);
+  border: 2.5px solid var(--surface);
+  border-radius: 50%;
+}
+.avatar-upload-info { flex: 1; }
+.avatar-upload-title {
+  font-family: 'Syne', sans-serif;
+  font-size: .9rem; font-weight: 700;
+  color: var(--t1); margin-bottom: 4px;
+}
+.avatar-upload-hint { font-size: .75rem; color: var(--t3); line-height: 1.55; margin-bottom: 12px; }
+.upload-btn-row { display: flex; gap: 8px; }
+.btn-upload {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 8px 16px;
+  border-radius: 9px;
+  font-family: 'Syne', sans-serif;
+  font-size: .78rem; font-weight: 700;
+  cursor: pointer; border: 1px solid;
+  transition: all .2s;
+}
+.btn-upload.primary {
+  background: linear-gradient(135deg, var(--accent), var(--accent2));
+  color: #000; border-color: transparent;
+}
+.btn-upload.primary:hover { opacity: .88; }
+.btn-upload.ghost {
+  background: transparent;
+  color: var(--t2); border-color: var(--border-h);
+}
+.btn-upload.ghost:hover { color: var(--t1); border-color: var(--border-h); background: var(--card2); }
+#avatarFileInput { display: none; }
+
+/* ─── Field grid ─── */
+.fields-grid {
+  padding: 8px 0;
+}
+.field-group {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0;
+}
+.field-item {
+  padding: 16px 28px;
+  border-bottom: 1px solid var(--border);
+  border-right: 1px solid var(--border);
+  transition: background .2s;
+}
+.field-item:nth-child(even) { border-right: none; }
+.field-item.full {
+  grid-column: 1 / -1;
+  border-right: none;
+}
+.field-item:last-child,
+.field-item.no-border { border-bottom: none; }
+.field-item:hover { background: rgba(255,255,255,.012); }
+
+.field-label-row {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  margin-bottom: 8px;
+}
+.f-icon {
+  width: 22px; height: 22px;
+  border-radius: 6px;
+  background: var(--card2);
+  border: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 10px; flex-shrink: 0;
+}
+.f-label {
+  font-family: 'Space Mono', monospace;
+  font-size: .63rem;
+  color: var(--t3);
+  letter-spacing: .07em;
+  text-transform: uppercase;
+}
+.f-required {
+  font-size: .55rem;
+  color: var(--coral);
+  background: rgba(255,107,53,.08);
+  border: 1px solid rgba(255,107,53,.18);
+  padding: 1px 6px;
+  border-radius: 4px;
+  margin-left: auto;
+}
+
+/* ─── Inputs ─── */
+.f-input, .f-select, .f-textarea {
+  width: 100%;
+  background: var(--card2);
+  border: 1px solid var(--border-h);
+  color: var(--t1);
+  border-radius: 10px;
+  padding: 10px 14px;
+  font-size: .86rem;
+  font-family: inherit;
+  transition: border-color .2s, box-shadow .2s;
+  outline: none;
+  appearance: none;
+  -webkit-appearance: none;
+}
+.f-input:focus, .f-select:focus, .f-textarea:focus {
+  border-color: rgba(6,214,160,.45);
+  box-shadow: 0 0 0 3px rgba(6,214,160,.07);
+}
+.f-input::placeholder, .f-textarea::placeholder { color: var(--t3); }
+.f-select { cursor: pointer; }
+.f-select option { background: var(--card2); color: var(--t1); }
+.f-textarea { resize: vertical; min-height: 90px; line-height: 1.6; }
+
+/* Character counter */
+.f-footer { display: flex; justify-content: flex-end; margin-top: 5px; }
+.f-counter { font-family: 'Space Mono', monospace; font-size: .58rem; color: var(--t3); }
+
+/* ─── Password fields ─── */
+.input-reveal-wrap { position: relative; }
+.input-reveal-wrap .f-input { padding-right: 42px; }
+.reveal-btn {
+  position: absolute; right: 12px; top: 50%; transform: translateY(-50%);
+  background: none; border: none; cursor: pointer;
+  color: var(--t3); font-size: 14px;
+  padding: 4px; line-height: 1;
+  transition: color .2s;
+}
+.reveal-btn:hover { color: var(--t1); }
+
+/* ─── Strength bar ─── */
+.strength-wrap { margin-top: 8px; }
+.strength-bar { height: 3px; background: var(--border); border-radius: 99px; overflow: hidden; }
+.strength-fill {
+  height: 100%; border-radius: 99px;
+  width: 0%;
+  transition: width .35s, background .35s;
+}
+.strength-label { font-family: 'Space Mono', monospace; font-size: .6rem; color: var(--t3); margin-top: 5px; }
+
+/* ─── Danger zone ─── */
+.danger-zone-body { padding: 20px 28px; }
+.danger-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 14px 0;
+  border-bottom: 1px solid var(--border);
+}
+.danger-item:last-child { border-bottom: none; padding-bottom: 0; }
+.danger-info-title { font-family: 'Syne', sans-serif; font-size: .88rem; font-weight: 700; color: var(--t1); margin-bottom: 3px; }
+.danger-info-sub { font-size: .75rem; color: var(--t3); }
+.btn-danger {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 8px 16px;
+  border-radius: 9px;
+  font-family: 'Syne', sans-serif;
+  font-size: .77rem; font-weight: 700;
+  cursor: pointer; transition: all .2s;
+  white-space: nowrap; flex-shrink: 0;
+  border: 1px solid rgba(255,107,53,.25);
+  background: rgba(255,107,53,.05);
+  color: var(--coral);
+}
+.btn-danger:hover { background: rgba(255,107,53,.12); border-color: rgba(255,107,53,.4); }
+
+/* ─── Save bar ─── */
+.save-bar {
+  position: sticky;
+  bottom: 20px;
+  margin-top: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 14px 20px;
+  background: rgba(17,17,42,.82);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  border: 1px solid var(--border-h);
+  border-radius: 16px;
+  opacity: 0;
+  animation: fadeUp .5s .4s var(--ease) forwards;
+}
+.save-bar-left { display: flex; align-items: center; gap: 10px; }
+.save-dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: var(--accent);
+  animation: pulseD 2s infinite;
+}
+.save-label { font-size: .8rem; color: var(--t2); }
+.save-bar-right { display: flex; gap: 8px; }
+.btn-cancel-form {
+  padding: 9px 18px;
+  border-radius: 10px;
+  font-family: 'Syne', sans-serif;
+  font-size: .8rem; font-weight: 700;
+  border: 1px solid var(--border-h);
+  background: transparent;
+  color: var(--t2);
+  cursor: pointer;
+  text-decoration: none;
+  display: inline-flex; align-items: center;
+  transition: all .2s;
+}
+.btn-cancel-form:hover { color: var(--t1); background: var(--card2); }
+.btn-save-form {
+  padding: 9px 22px;
+  border-radius: 10px;
+  font-family: 'Syne', sans-serif;
+  font-size: .8rem; font-weight: 700;
+  border: none;
+  background: linear-gradient(135deg, var(--accent), var(--accent2));
+  color: #000;
+  cursor: pointer;
+  display: inline-flex; align-items: center; gap: 7px;
+  transition: opacity .2s, transform .15s;
+}
+.btn-save-form:hover { opacity: .88; transform: translateY(-1px); }
+.btn-save-form:active { transform: translateY(0); }
+
+/* ─── Toast ─── */
+.toast {
+  position: fixed; bottom: 28px; left: 50%; transform: translateX(-50%) translateY(20px);
+  background: var(--card2);
+  border: 1px solid var(--border-h);
+  border-radius: 12px;
+  padding: 12px 20px;
+  display: flex; align-items: center; gap: 10px;
+  font-size: .82rem; color: var(--t1);
+  opacity: 0;
+  transition: opacity .3s, transform .3s;
+  pointer-events: none; z-index: 9999;
+  backdrop-filter: blur(12px);
+}
+.toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+.toast-icon { font-size: 16px; }
+
+/* ─── Animations ─── */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(18px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes pulseD {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50%       { opacity: .35; transform: scale(.6); }
+}
+
+/* ─── Responsive ─── */
+@media (max-width: 700px) {
+  .field-group { grid-template-columns: 1fr; }
+  .field-item { border-right: none !important; }
+  .field-item:nth-child(even) { border-right: none; }
+  .avatar-upload-zone { flex-direction: column; align-items: flex-start; }
+  .save-bar { flex-direction: column; align-items: stretch; }
+  .save-bar-right { justify-content: flex-end; }
+}
+@media (max-width: 500px) {
+  .card-header { padding: 18px 18px 16px; }
+  .field-item { padding: 14px 18px; }
+  .danger-zone-body { padding: 16px 18px; }
+}
+</style>
+{% endblock %}
+
+{% block page_content %}
+<div class="edit-page">
+
+  <!-- Header -->
+  <div class="page-header">
+    <a href="{% url 'profile' %}" class="page-back">← Back</a>
+    <div class="page-eyebrow"><div class="eyebrow-dot"></div>EDIT PROFILE</div>
+  </div>
+
+  <form method="POST" enctype="multipart/form-data" id="profileForm">
+    {% csrf_token %}
+
+    <!-- ① Profile Photo -->
+    <div class="form-card">
+      <div class="card-accent-line"></div>
+      <div class="card-header">
+        <div class="card-header-icon">🖼️</div>
+        <div class="card-header-text">
+          <div class="card-kicker">Avatar</div>
+          <div class="card-title">Profile Photo</div>
+          <div class="card-sub">JPG, PNG or WebP · Max 2 MB</div>
+        </div>
+      </div>
+
+      <div class="avatar-upload-zone">
+        <div class="avatar-preview-wrap">
+          <div class="avatar-preview" id="avatarPreview">
+            {% if profile and profile.image %}
+            <img id="avatarPreviewImg" src="{{ profile.image.url }}" alt="">
+            {% else %}
+            <span id="avatarInitial">{{ user.first_name|default:user.username|slice:":1"|upper }}</span>
+            {% endif %}
+          </div>
+          <div class="avatar-online"></div>
+        </div>
+
+        <div class="avatar-upload-info">
+          <div class="avatar-upload-title">Upload a new photo</div>
+          <div class="avatar-upload-hint">Choose a clear, well-lit photo. Square images work best. Your photo will be shown on your public profile.</div>
+          <div class="upload-btn-row">
+            <button type="button" class="btn-upload primary" onclick="document.getElementById('avatarFileInput').click()">📷 Choose Photo</button>
+            <button type="button" class="btn-upload ghost" id="removePhotoBtn" {% if not profile or not profile.image %}style="display:none"{% endif %}>Remove</button>
+          </div>
+          <input type="file" name="image" id="avatarFileInput" accept="image/*">
+          <input type="hidden" name="remove_image" id="removeImageInput" value="">
+        </div>
+      </div>
+    </div>
+
+    <!-- ② Personal Info -->
+    <div class="form-card">
+      <div class="card-accent-line blue"></div>
+      <div class="card-header">
+        <div class="card-header-icon">👤</div>
+        <div class="card-header-text">
+          <div class="card-kicker blue">Identity</div>
+          <div class="card-title">Personal Information</div>
+          <div class="card-sub">Basic details shown on your profile</div>
+        </div>
+      </div>
+
+      <div class="fields-grid">
+        <div class="field-group">
+
+          <div class="field-item">
+            <div class="field-label-row">
+              <span class="f-icon">✦</span>
+              <span class="f-label">First Name</span>
+              <span class="f-required">Required</span>
+            </div>
+            <input class="f-input" type="text" name="first_name" placeholder="Enter first name" value="{{ user.first_name|default:'' }}" required>
+          </div>
+
+          <div class="field-item">
+            <div class="field-label-row">
+              <span class="f-icon">✦</span>
+              <span class="f-label">Last Name</span>
+            </div>
+            <input class="f-input" type="text" name="last_name" placeholder="Enter last name" value="{{ user.last_name|default:'' }}">
+          </div>
+
+          <div class="field-item">
+            <div class="field-label-row">
+              <span class="f-icon">@</span>
+              <span class="f-label">Email</span>
+              <span class="f-required">Required</span>
+            </div>
+            <input class="f-input" type="email" name="email" placeholder="you@example.com" value="{{ user.email|default:'' }}" required>
+          </div>
+
+          <div class="field-item">
+            <div class="field-label-row">
+              <span class="f-icon">📞</span>
+              <span class="f-label">Phone</span>
+            </div>
+            <input class="f-input" type="tel" name="phone_no" placeholder="+91 00000 00000" value="{{ profile.phone_no|default:'' }}" maxlength="13">
+          </div>
+
+          <div class="field-item">
+            <div class="field-label-row">
+              <span class="f-icon">⚥</span>
+              <span class="f-label">Gender</span>
+            </div>
+            <select class="f-select" name="gender">
+              <option value="" {% if not profile or not profile.gender %}selected{% endif %}>Select gender</option>
+              <option value="Male" {% if profile.gender == 'Male' %}selected{% endif %}>Male</option>
+              <option value="Female" {% if profile.gender == 'Female' %}selected{% endif %}>Female</option>
+              <option value="Prefer not to say" {% if profile.gender == 'Prefer not to say' %}selected{% endif %}>Prefer not to say</option>
+            </select>
+          </div>
+
+          <div class="field-item">
+            <div class="field-label-row">
+              <span class="f-icon">🎓</span>
+              <span class="f-label">University</span>
+            </div>
+            <input class="f-input" type="text" name="university" placeholder="Your university or college" value="{{ profile.university|default:'' }}" maxlength="20">
+          </div>
+
+          <div class="field-item">
+            <div class="field-label-row">
+              <span class="f-icon">🎯</span>
+              <span class="f-label">Role / Title</span>
+            </div>
+            <input class="f-input" type="text" name="role" placeholder="e.g. Full-Stack Developer" value="{{ profile.role|default:'' }}" maxlength="30">
+          </div>
+
+          <div class="field-item" style="visibility:hidden; pointer-events:none;"></div>
+
+          <div class="field-item full no-border">
+            <div class="field-label-row">
+              <span class="f-icon">📝</span>
+              <span class="f-label">Bio</span>
+            </div>
+            <textarea class="f-textarea" name="about" id="bioArea" maxlength="500" placeholder="Tell the community a little about yourself…">{{ profile.about|default:'' }}</textarea>
+            <div class="f-footer"><span class="f-counter" id="bioCounter">0 / 500</span></div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <!-- ③ Social Links -->
+    <div class="form-card">
+      <div class="card-accent-line"></div>
+      <div class="card-header">
+        <div class="card-header-icon">🔗</div>
+        <div class="card-header-text">
+          <div class="card-kicker">Online Presence</div>
+          <div class="card-title">Social Links</div>
+          <div class="card-sub">Connect your public profiles</div>
+        </div>
+      </div>
+
+      <div class="fields-grid">
+        <div class="field-group">
+
+          <div class="field-item">
+            <div class="field-label-row">
+              <span class="f-icon">
+                <svg viewBox="0 0 16 16" width="11" height="11"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8a8 8 0 0 0 5.47 7.59c.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.5-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.5 7.5 0 0 1 4 0c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8 8 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>
+              </span>
+              <span class="f-label">GitHub</span>
+            </div>
+            <input class="f-input" type="url" name="github" placeholder="https://github.com/username" value="{{ profile.github|default:'' }}">
+          </div>
+
+          <div class="field-item">
+            <div class="field-label-row">
+              <span class="f-icon">
+                <svg viewBox="0 0 24 24" width="11" height="11"><path fill="currentColor" d="M20.45 20.45h-3.56v-5.57c0-1.33-.03-3.04-1.85-3.04-1.86 0-2.15 1.45-2.15 2.95v5.66H9.33V9h3.41v1.56h.05c.47-.9 1.63-1.85 3.36-1.85 3.6 0 4.27 2.37 4.27 5.45v6.29ZM5.31 7.43a2.07 2.07 0 1 1 0-4.14 2.07 2.07 0 0 1 0 4.14Zm1.78 13.02H3.53V9h3.56v11.45Z"/></svg>
+              </span>
+              <span class="f-label">LinkedIn</span>
+            </div>
+            <input class="f-input" type="url" name="linkedin" placeholder="https://linkedin.com/in/username" value="{{ profile.linkedin|default:'' }}">
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <!-- ④ Change Password -->
+    <div class="form-card">
+      <div class="card-accent-line blue"></div>
+      <div class="card-header">
+        <div class="card-header-icon">🔐</div>
+        <div class="card-header-text">
+          <div class="card-kicker blue">Security</div>
+          <div class="card-title">Change Password</div>
+          <div class="card-sub">Leave blank to keep your current password</div>
+        </div>
+      </div>
+
+      <div class="fields-grid">
+        <div class="field-group">
+
+          <div class="field-item full">
+            <div class="field-label-row">
+              <span class="f-icon">🔑</span>
+              <span class="f-label">Current Password</span>
+            </div>
+            <div class="input-reveal-wrap">
+              <input class="f-input" type="password" name="current_password" id="curPwd" placeholder="Enter current password" autocomplete="current-password">
+              <button type="button" class="reveal-btn" data-target="curPwd">👁</button>
+            </div>
+          </div>
+
+          <div class="field-item">
+            <div class="field-label-row">
+              <span class="f-icon">✨</span>
+              <span class="f-label">New Password</span>
+            </div>
+            <div class="input-reveal-wrap">
+              <input class="f-input" type="password" name="new_password1" id="newPwd" placeholder="Min 8 characters" autocomplete="new-password">
+              <button type="button" class="reveal-btn" data-target="newPwd">👁</button>
+            </div>
+            <div class="strength-wrap">
+              <div class="strength-bar"><div class="strength-fill" id="strengthFill"></div></div>
+              <div class="strength-label" id="strengthLabel"></div>
+            </div>
+          </div>
+
+          <div class="field-item">
+            <div class="field-label-row">
+              <span class="f-icon">✅</span>
+              <span class="f-label">Confirm New Password</span>
+            </div>
+            <div class="input-reveal-wrap">
+              <input class="f-input" type="password" name="new_password2" id="confirmPwd" placeholder="Repeat new password" autocomplete="new-password">
+              <button type="button" class="reveal-btn" data-target="confirmPwd">👁</button>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <!-- ⑤ Danger Zone -->
+    <div class="form-card">
+      <div class="card-accent-line coral"></div>
+      <div class="card-header">
+        <div class="card-header-icon">⚠️</div>
+        <div class="card-header-text">
+          <div class="card-kicker coral">Irreversible Actions</div>
+          <div class="card-title">Danger Zone</div>
+          <div class="card-sub">These actions cannot be undone</div>
+        </div>
+      </div>
+
+      <div class="danger-zone-body">
+        <div class="danger-item">
+          <div>
+            <div class="danger-info-title">Deactivate Account</div>
+            <div class="danger-info-sub">Temporarily hide your profile and pause all activity.</div>
+          </div>
+          <button type="button" class="btn-danger" onclick="confirmAction('deactivate')">Deactivate</button>
+        </div>
+        <div class="danger-item">
+          <div>
+            <div class="danger-info-title">Delete Account</div>
+            <div class="danger-info-sub">Permanently erase your account and all associated data.</div>
+          </div>
+          <button
+            type="submit"
+            class="btn-danger"
+            formaction="{% url 'delete_profile' %}"
+            formmethod="post"
+            formnovalidate
+          >
+            Delete Account
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Save Bar -->
+    <div class="save-bar">
+      <div class="save-bar-left">
+        <div class="save-dot"></div>
+        <span class="save-label">Unsaved changes will be lost</span>
+      </div>
+      <div class="save-bar-right">
+        <a href="{% url 'profile' %}" class="btn-cancel-form">Discard</a>
+        <button type="submit" class="btn-save-form">💾 Save Changes</button>
+      </div>
+    </div>
+
+  </form>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast">
+  <span class="toast-icon" id="toastIcon">✅</span>
+  <span id="toastMsg">Changes saved!</span>
+</div>
+
+<script>
+/* Avatar preview */
+const fileInput   = document.getElementById('avatarFileInput');
+const preview     = document.getElementById('avatarPreview');
+const removeBtn   = document.getElementById('removePhotoBtn');
+const removeInput = document.getElementById('removeImageInput');
+
+fileInput.addEventListener('change', e => {
+  const file = e.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = ev => {
+    preview.innerHTML = `<img src="${ev.target.result}" alt="">`;
+    removeBtn.style.display = '';
+    removeInput.value = '';
+  };
+  reader.readAsDataURL(file);
+});
+
+removeBtn.addEventListener('click', () => {
+  fileInput.value = '';
+  removeInput.value = 'true';
+  const initial = '{{ user.first_name|default:user.username|slice:":1"|upper }}';
+  preview.innerHTML = `<span>${initial}</span>`;
+  removeBtn.style.display = 'none';
+});
+
+/* Bio counter */
+const bioArea    = document.getElementById('bioArea');
+const bioCounter = document.getElementById('bioCounter');
+function updateCounter() {
+  bioCounter.textContent = `${bioArea.value.length} / 500`;
+}
+bioArea.addEventListener('input', updateCounter);
+updateCounter();
+
+/* Password reveal */
+document.querySelectorAll('.reveal-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const inp = document.getElementById(btn.dataset.target);
+    inp.type = inp.type === 'password' ? 'text' : 'password';
+    btn.textContent = inp.type === 'password' ? '👁' : '🙈';
+  });
+});
+
+/* Password strength */
+const newPwd       = document.getElementById('newPwd');
+const strengthFill = document.getElementById('strengthFill');
+const strengthLabel= document.getElementById('strengthLabel');
+
+newPwd.addEventListener('input', () => {
+  const v = newPwd.value;
+  let score = 0;
+  if (v.length >= 8)  score++;
+  if (/[A-Z]/.test(v)) score++;
+  if (/[0-9]/.test(v)) score++;
+  if (/[^A-Za-z0-9]/.test(v)) score++;
+  const levels = [
+    { w:'0%',   c:'transparent', l:'' },
+    { w:'25%',  c:'#ff6b35', l:'Weak' },
+    { w:'50%',  c:'#f9c74f', l:'Fair' },
+    { w:'75%',  c:'#90be6d', l:'Good' },
+    { w:'100%', c:'#06d6a0', l:'Strong' },
+  ];
+  const lv = v.length ? levels[score] : levels[0];
+  strengthFill.style.width      = lv.w;
+  strengthFill.style.background = lv.c;
+  strengthLabel.textContent     = lv.l;
+});
+
+/* Danger zone confirms */
+function confirmAction(type) {
+  const msgs = {
+    deactivate: 'Deactivate your account? You can reactivate it by logging back in.',
+  };
+  if (type === 'deactivate' && confirm(msgs.deactivate)) {
+    showToast('⚠️', 'Action not yet wired to backend.', '#f9c74f');
+  }
+}
+
+/* Toast helper */
+function showToast(icon, msg, color) {
+  const t  = document.getElementById('toast');
+  document.getElementById('toastIcon').textContent = icon;
+  document.getElementById('toastMsg').textContent  = msg;
+  t.style.borderColor = color || '';
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 3200);
+}
+
+/* Form submit feedback */
+document.getElementById('profileForm').addEventListener('submit', () => {
+  showToast('💾', 'Saving changes…', '#06d6a0');
+});
+
+</script>
+{% endblock %}

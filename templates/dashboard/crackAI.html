@@ -875,7 +875,7 @@ select { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmln
 
     <div class="nav-actions">
       <div class="theme-toggle" id="themeToggle" onclick="toggleTheme()">🌙</div>
-      <div class="nav-back" onclick="goHome()" id="nav-home-btn">← Pathforge</div>
+      <div class="nav-back" onclick="goDashboard()" id="nav-home-btn">← Pathforge</div>
     </div>
   </div>
 </nav>
@@ -2001,6 +2001,10 @@ function goHome() {
   clearInterval(sessionTimerInterval);
   document.getElementById('nav-session-badge').style.display = 'none';
   showScreen('setup');
+}
+
+function goDashboard() {
+  window.location.href = "{% url 'dashboard' %}";
 }
 
 // ===== WORD COUNT =====

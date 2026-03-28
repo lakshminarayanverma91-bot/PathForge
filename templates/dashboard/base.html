@@ -170,7 +170,7 @@ body.theme-digital { --accent: #3B9EFF; --accent2: #B084CC; }
   font-family: 'Syne', sans-serif; font-weight: 800; font-size: 15px; color: #000;
   flex-shrink: 0; position: relative; overflow: hidden;
 }
-.sidebar-avatar-sm img { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; }
+.sidebar-avatar-sm img { width: 100%; height: 100%; object-fit: cover; object-position: center 10%; border-radius: 50%; }
 
 .sidebar-user-info { flex: 1; min-width: 0; }
 .sidebar-user-name { font-weight: 600; font-size: 0.875rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: var(--t1); }
@@ -244,7 +244,7 @@ body.theme-digital { --accent: #3B9EFF; --accent2: #B084CC; }
   font-family: 'Syne', sans-serif; font-weight: 800; font-size: 11px; color: #000;
   flex-shrink: 0; overflow: hidden;
 }
-.topbar-greeting-avatar img { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; display: none; }
+.topbar-greeting-avatar img { width: 100%; height: 100%; object-fit: cover; object-position: center 10%; border-radius: 50%; display: none; }
 .topbar-greeting-text { font-size: 0.8rem; color: var(--t2); font-weight: 500; white-space: nowrap; }
 .topbar-greeting-text strong { color: var(--t1); font-weight: 700; }
 
@@ -474,7 +474,7 @@ body.theme-digital { --accent: #3B9EFF; --accent2: #B084CC; }
 <!-- ── TOAST ─────────────────────────────────────────────────────────── -->
 <div class="toast" id="toast" role="alert" aria-live="polite">
   <span class="toast-icon" id="toastIcon">✓</span>
-  <span class="toast-msg"  id="toastMsg">Done!</span>
+  <span class="toast-msg" id="toastMsg">Done!</span>
 </div>
 
 <!-- ── MOBILE SIDEBAR OVERLAY ─────────────────────────────────────────── -->
@@ -500,9 +500,13 @@ body.theme-digital { --accent: #3B9EFF; --accent2: #B084CC; }
 
     <!-- Mini User Card -->
     <a href="{% url 'dashboard' %}" class="sidebar-user-mini" id="sidebarUserMini">
+      
       <div class="sidebar-avatar-sm" id="sbAvatar">
-        A
-        <img id="sbAvatarImg" src="" alt="User avatar">
+        {% if profile and profile.image %}
+          <img id="sbAvatarImg" src="{{ profile.image.url }}" alt="Profile Picture" style="display:block;">
+        {% else %}
+        {{ user.first_name|default:'U'|slice:':1'|upper }}
+        {% endif %}
       </div>
       <div class="sidebar-user-info">
         <div class="sidebar-user-name" id="sbUserName">{{ user.first_name }} {{ user.last_name }}</div>
@@ -531,15 +535,15 @@ body.theme-digital { --accent: #3B9EFF; --accent2: #B084CC; }
 
     <!-- Bottom: Logout -->
     <div class="sidebar-bottom">
-      <div class="sidebar-item" style="color:var(--coral)" onclick="logoutConfirm()">
+      <a class="sidebar-item" style="color:var(--coral)" href="{% url 'logout' %}">
         <span class="si-icon">↩</span> Logout
-      </div>
+      </a>
     </div>
 
   </aside>
 
   <!-- ==================================================================
-       MAIN CONTENT
+       NAV-BAR
        ================================================================== -->
   <div class="main">
 
@@ -579,8 +583,11 @@ body.theme-digital { --accent: #3B9EFF; --accent2: #B084CC; }
         <!-- Hi, Student greeting -->
         <div class="topbar-greeting" id="topbarGreeting">
           <div class="topbar-greeting-avatar" id="greetingAvatar">
-            A
-            <img id="greetingAvatarImg" src="" alt="">
+            {% if profile and profile.image %}
+              <img id="greetingAvatarImg" src="{{ profile.image.url }}" alt="Profile Picture" style="display:block;">
+            {% else %}
+              {{ user.first_name|default:'U'|slice:':1'|upper }}
+            {% endif %}
           </div>
           <div class="topbar-greeting-text">
             Hi, <strong id="greetingName">{{ user.first_name }}</strong> 👋
@@ -620,8 +627,11 @@ body.theme-digital { --accent: #3B9EFF; --accent2: #B084CC; }
    ─────────────────────────────────────────────────────────────────── */
 function showToast(msg, icon = '✓') {
   const el = document.getElementById('toast');
-  document.getElementById('toastMsg').textContent  = msg;
-  document.getElementById('toastIcon').textContent = icon;
+  const msgEl = document.getElementById('toastMsg');
+  const iconEl = document.getElementById('toastIcon');
+  if (!el || !msgEl || !iconEl) return;
+  msgEl.textContent  = msg;
+  iconEl.textContent = icon;
   el.classList.add('show');
   clearTimeout(el._tid);
   el._tid = setTimeout(() => el.classList.remove('show'), 3200);
@@ -694,14 +704,6 @@ function setAccentTheme(theme, el) {
     if (saved && saved !== 'default') document.body.classList.add(`theme-${saved}`);
   } catch(_) {}
 })();
-
-/* ── LOGOUT ─────────────────────────────────────────────────────────── */
-function logoutConfirm() {
-  if (confirm('Log out of Pathforge?')) {
-    showToast('Logging out…', '👋');
-    setTimeout(() => { window.location.href = "{% url 'logout' %}"; }, 250);
-  }
-}
 
 /* ── AVATAR UPLOAD ──────────────────────────────────────────────────────
    Attach to: <input type="file" accept="image/*" onchange="uploadAvatar(this)">

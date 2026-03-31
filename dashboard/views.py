@@ -1,5 +1,7 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
+from django.contrib import messages
+from django.db import connection, IntegrityError
 from accounts.models import Profile
 from django.core.mail import EmailMessage
 from django.conf import settings
@@ -18,6 +20,10 @@ def _dashboard_context(request, extra=None):
 
 @login_required
 def dashboard(request):
+
+    if not request.user.has_usable_password():
+        return redirect('set_password')
+
     return render(request, "dashboard/dashboard.html", _dashboard_context(request))
 
 @login_required
@@ -91,8 +97,23 @@ def edit_profile(request):
         request.user.save()
 
         # Ensure every authenticated user has a Profile row.
+        # Profile uses multi-table inheritance from User, so creating through ORM
+        # for an existing User may try inserting auth_user again and fail.
         if not profile:
-            profile = Profile.objects.create(user_ptr=request.user, phone_no="")
+            table = Profile._meta.db_table
+            try:
+                with connection.cursor() as cursor:
+                    cursor.execute(
+                        f"""
+                        INSERT INTO {table}
+                        (user_ptr_id, phone_no, linkedin, github, role, about, image, cover_image, university, gender)
+                        VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+                        """,
+                        [request.user.pk, "", None, None, None, None, None, None, None, None],
+                    )
+            except IntegrityError:
+                # Row may have been created in another request; continue safely.
+                pass
 
         # Reload profile after user save to avoid stale inherited values.
         profile = Profile.objects.get(pk=request.user.pk)
@@ -145,16 +166,48 @@ def edit_profile(request):
     }))
 
 @login_required
-def delete_profile(request):
+def set_password(request):
+
+    if request.user.has_usable_password():
+        return redirect("dashboard")
+
     if request.method == "POST":
+        password = request.POST.get("password")
+
+        if not password:
+            return redirect("set_password")
+
         user = request.user
-        password = request.POST.get("password") or request.POST.get("current_password")
+        user.set_password(password)
+        user.save()
 
-        if password and not user.check_password(password):
-            return redirect("profile")
+        update_session_auth_hash(request, user)
 
-        logout(request)
-        user.delete()
-        return redirect("login")
+        return redirect("dashboard")
 
-    return redirect("profile")
+    return render(request, "accounts/set_password.html")
+
+@login_required
+def delete_profile(request):
+    if request.method != "POST":
+        return redirect("profile")
+
+    user = request.user
+
+    # Extra safety: avoid removing the only admin account from dashboard forms.
+    if user.is_superuser:
+        messages.error(request, "Superuser account cannot be deleted from this page.")
+        return redirect("profile")
+
+    if request.POST.get("confirm_delete") != "yes":
+        messages.error(request, "Delete confirmation missing.")
+        return redirect("profile")
+
+    password = (request.POST.get("password") or request.POST.get("current_password") or "").strip()
+    if not password or not user.check_password(password):
+        messages.error(request, "Please enter your current password to delete account.")
+        return redirect("profile")
+
+    logout(request)
+    user.delete()
+    return redirect("login")

@@ -2,7 +2,7 @@ from django.db import models
 from django.contrib.auth.models import User
 
 class Profile(User):
-    phone_no = models.CharField(max_length= 13)
+    phone_no = models.CharField(max_length= 13, blank=True, default="")
     linkedin = models.URLField(null= True, blank= True)
     github = models.URLField(null= True, blank= True)
     role = models.CharField(max_length= 30, null= True, blank= True)

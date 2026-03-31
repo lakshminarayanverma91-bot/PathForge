@@ -99,6 +99,12 @@ body::before {
 }
 .nav.scrolled .nav-glass { background: rgba(5,5,16,0.92); }
 .nav-logo { position: relative; z-index: 1; display: flex; align-items: center; gap: 10px; cursor: pointer; }
+.nav-logo-img {
+  width: 50px;
+  height: 50px;
+  object-fit: contain;
+  flex-shrink: 0;
+}
 .nav-logo-mark {
   width: 34px; height: 34px;
   border-radius: 9px;
@@ -956,8 +962,10 @@ footer { position: relative; overflow: hidden; background: var(--bg); }
 <nav class="nav" id="mainNav">
   <div class="nav-glass"></div>
   <div class="nav-inner">
+
+    {% load static %}
     <a class="nav-logo" href="{% url 'home' %}">
-      <div class="nav-logo-mark">✦</div>
+      <img class="nav-logo-img" src="{% static 'images/logo.png' %}" alt="Pathforge logo">
       <div class="nav-logo-text">Pathforge</div>
     </a>
     <div class="nav-links">
@@ -1443,7 +1451,7 @@ footer { position: relative; overflow: hidden; background: var(--bg); }
   <div class="footer-body">
     <div>
       <div class="footer-brand-logo">
-        <div class="footer-brand-mark">✦</div>
+        <img class="nav-logo-img" src="{% static 'images/logo.png' %}" alt="Pathforge logo">
         <div class="footer-brand-name">Pathforge</div>
       </div>
       <div class="footer-brand-desc">An AI-powered growth ecosystem for ambitious students. Built on Google Gemini. Open source at heart.</div>
@@ -1452,7 +1460,7 @@ footer { position: relative; overflow: hidden; background: var(--bg); }
           <img class="footer-social-icon" src="https://cdn.simpleicons.org/github/9794b8" alt="GitHub">
         </a>
         <a class="footer-social-btn" title="Twitter" href="https://x.com" target="_blank" rel="noopener noreferrer" aria-label="Twitter">𝕏</a>
-        <a class="footer-social-btn" title="LinkedIn" href="https://www.linkedin.com" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn">
+        <a class="footer-social-btn" title="LinkedIn" href="https://www.linkedin.com/company/pathforge-ai/" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn">
           <img class="footer-social-icon" src="https://cdn.simpleicons.org/linkedin/0A66C2" alt="LinkedIn" onerror="this.onerror=null;this.src='https://upload.wikimedia.org/wikipedia/commons/c/ca/LinkedIn_logo_initials.png';">
         </a>
       </div>

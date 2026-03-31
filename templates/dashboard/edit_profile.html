@@ -692,13 +692,7 @@
             <div class="danger-info-title">Delete Account</div>
             <div class="danger-info-sub">Permanently erase your account and all associated data.</div>
           </div>
-          <button
-            type="submit"
-            class="btn-danger"
-            formaction="{% url 'delete_profile' %}"
-            formmethod="post"
-            formnovalidate
-          >
+          <button type="button" class="btn-danger" id="deleteAccountBtn">
             Delete Account
           </button>
         </div>
@@ -717,6 +711,12 @@
       </div>
     </div>
 
+  </form>
+
+  <form method="POST" action="{% url 'delete_profile' %}" id="deleteProfileForm" style="display:none;">
+    {% csrf_token %}
+    <input type="hidden" name="confirm_delete" value="yes">
+    <input type="hidden" name="current_password" id="deleteProfilePassword">
   </form>
 </div>
 
@@ -820,6 +820,30 @@ function showToast(icon, msg, color) {
 document.getElementById('profileForm').addEventListener('submit', () => {
   showToast('💾', 'Saving changes…', '#06d6a0');
 });
+
+/* Delete account with explicit confirmation */
+const deleteAccountBtn = document.getElementById('deleteAccountBtn');
+const deleteProfileForm = document.getElementById('deleteProfileForm');
+const deleteProfilePassword = document.getElementById('deleteProfilePassword');
+
+if (deleteAccountBtn && deleteProfileForm && deleteProfilePassword) {
+  deleteAccountBtn.addEventListener('click', () => {
+    const typed = window.prompt('Type DELETE to confirm account deletion.');
+    if (typed !== 'DELETE') {
+      showToast('⚠️', 'Deletion cancelled.', '#f9c74f');
+      return;
+    }
+
+    const password = window.prompt('Enter your current password to continue.');
+    if (!password) {
+      showToast('⚠️', 'Password is required for deletion.', '#f9c74f');
+      return;
+    }
+
+    deleteProfilePassword.value = password;
+    deleteProfileForm.submit();
+  });
+}
 
 </script>
 {% endblock %}

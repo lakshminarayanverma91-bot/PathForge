@@ -6,7 +6,8 @@ from .models import Profile
 def login(request):
 
     if request.method == "POST":
-        username = request.POST.get("email")
+        # Prefer the username field from the form; keep email fallback for compatibility.
+        username = request.POST.get("username") or request.POST.get("email")
         password = request.POST.get("password")
 
         user = auth.authenticate(request, username = username, password = password)

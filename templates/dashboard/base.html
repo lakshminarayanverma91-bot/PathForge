@@ -131,10 +131,17 @@ body.theme-digital { --accent: #3B9EFF; --accent2: #B084CC; }
 .sidebar::-webkit-scrollbar-thumb { background: rgba(128,128,200,0.12); }
 
 /* Logo */
-.sidebar-logo {
+.sidebar-logo,
+.nav-logo {
   padding: 24px 22px 20px;
   display: flex; align-items: center; gap: 10px;
   border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+}
+.nav-logo-img {
+  width: 50px;
+  height: 50px;
+  object-fit: contain;
   flex-shrink: 0;
 }
 .sidebar-logo-mark {
@@ -147,7 +154,8 @@ body.theme-digital { --accent: #3B9EFF; --accent2: #B084CC; }
   box-shadow: 0 4px 16px rgba(6,214,160,0.25);
   flex-shrink: 0;
 }
-.sidebar-logo-text {
+.sidebar-logo-text,
+.nav-logo-text {
   font-family: 'Syne', sans-serif;
   font-size: 1.2rem; font-weight: 800;
   background: linear-gradient(90deg, var(--t1), var(--t2));
@@ -493,9 +501,10 @@ body.theme-digital { --accent: #3B9EFF; --accent2: #B084CC; }
   <aside class="sidebar" id="sidebar">
 
     <!-- Logo -->
-    <a href="{% url 'home' %}" class="sidebar-logo">
-      <div class="sidebar-logo-mark">✦</div>
-      <div class="sidebar-logo-text">Pathforge</div>
+    {% load static %}
+    <a class="nav-logo" href="{% url 'home' %}">
+      <img class="nav-logo-img" src="{% static 'images/logo.png' %}" alt="Pathforge logo">
+      <div class="nav-logo-text">Pathforge</div>
     </a>
 
     <!-- Mini User Card -->

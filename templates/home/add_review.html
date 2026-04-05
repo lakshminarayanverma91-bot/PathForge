@@ -1,0 +1,802 @@
+{% extends 'home/base.html' %}
+
+{% block title %}Write a Review — Pathforge{% endblock %}
+{% block nav_reviews %}active{% endblock %}
+
+{% block extra_styles %}
+<style>
+body { min-height: 100vh; }
+
+/* LAYOUT */
+.page-wrap {
+  max-width: 1100px; margin: 0 auto; padding: 110px 36px 80px;
+  display: grid; grid-template-columns: 1fr 1.4fr; gap: 60px; align-items: start;
+}
+
+/* LEFT PANEL */
+.left-panel { position: sticky; top: 90px; }
+
+.panel-kicker {
+  display: inline-flex; align-items: center; gap: 8px;
+  border: 1px solid rgba(0,242,195,0.25); background: rgba(0,242,195,0.04);
+  border-radius: 100px; padding: 5px 14px;
+  font-family: 'Space Mono', monospace; font-size: 0.68rem; color: var(--teal);
+  letter-spacing: 0.1em; margin-bottom: 24px;
+  animation: fadeUp 0.5s 0.05s var(--ease) both;
+}
+.kicker-dot { width: 6px; height: 6px; background: var(--teal); border-radius: 50%; animation: pulse 2s infinite; }
+
+.panel-title {
+  font-family: 'Syne', sans-serif; font-size: clamp(2.2rem, 4vw, 3.8rem);
+  font-weight: 800; letter-spacing: -0.04em; line-height: 1.05;
+  margin-bottom: 20px; animation: fadeUp 0.6s 0.1s var(--ease) both;
+}
+.panel-title em {
+  font-style: normal;
+  background: linear-gradient(135deg, var(--teal), var(--blue));
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+}
+.panel-sub {
+  font-size: 0.9rem; color: var(--t2); line-height: 1.75; margin-bottom: 36px;
+  animation: fadeUp 0.6s 0.15s var(--ease) both;
+}
+
+/* TRUST BADGES */
+.trust-badges { display: flex; flex-direction: column; gap: 12px; margin-bottom: 0; animation: fadeUp 0.6s 0.2s var(--ease) both; }
+.trust-item {
+  display: flex; align-items: flex-start; gap: 14px;
+  padding: 16px; background: rgba(255,255,255,0.02);
+  border: 1px solid var(--border); border-radius: 14px; transition: border-color 0.2s;
+}
+.trust-item:hover { border-color: rgba(0,242,195,0.15); }
+.trust-icon {
+  width: 38px; height: 38px; border-radius: 10px; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center; font-size: 1.1rem;
+  background: rgba(0,242,195,0.06); border: 1px solid rgba(0,242,195,0.12);
+}
+.trust-title { font-family: 'Syne', sans-serif; font-size: 0.84rem; font-weight: 700; margin-bottom: 2px; }
+.trust-body { font-size: 0.77rem; color: var(--t3); line-height: 1.5; }
+
+/* RIGHT PANEL — FORM */
+.form-card {
+  background: linear-gradient(145deg, #111127, #0c0c22);
+  border: 1px solid rgba(255,255,255,0.08); border-radius: 26px; padding: 44px;
+  position: relative; overflow: hidden;
+  animation: fadeUp 0.7s 0.15s var(--ease) both;
+}
+.form-card::before {
+  content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px;
+  background: linear-gradient(90deg, transparent, var(--teal), var(--blue), transparent);
+  opacity: 0.4;
+}
+.form-card-orb {
+  position: absolute; bottom: -80px; right: -80px;
+  width: 240px; height: 240px; border-radius: 50%;
+  background: radial-gradient(circle, rgba(61,126,255,0.07), transparent 70%);
+  pointer-events: none;
+}
+
+/* STEP INDICATOR */
+.step-indicator {
+  display: flex; align-items: center; gap: 0; margin-bottom: 36px;
+}
+.step-dot {
+  width: 32px; height: 32px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'Space Mono', monospace; font-size: 0.65rem; font-weight: 700;
+  border: 1px solid rgba(255,255,255,0.1); background: var(--card); color: var(--t3);
+  transition: all 0.4s var(--ease); flex-shrink: 0; position: relative; z-index: 1;
+}
+.step-dot.active { background: linear-gradient(135deg,var(--teal),var(--blue)); border-color: transparent; color: #000; box-shadow: 0 4px 16px rgba(0,242,195,0.3); }
+.step-dot.done { background: rgba(6,214,160,0.12); border-color: rgba(6,214,160,0.3); color: var(--green); }
+.step-line { flex: 1; height: 1px; background: rgba(255,255,255,0.06); margin: 0 8px; transition: background 0.4s; }
+.step-line.done { background: rgba(0,242,195,0.3); }
+.step-label {
+  position: absolute; top: 38px; left: 50%; transform: translateX(-50%);
+  font-family: 'Space Mono', monospace; font-size: 0.52rem;
+  color: var(--t3); white-space: nowrap; letter-spacing: 0.06em;
+  transition: color 0.3s;
+}
+.step-dot.active .step-label { color: var(--teal); }
+.step-dot.done .step-label { color: var(--green); }
+
+/* FORM STEPS */
+.form-step { display: none; }
+.form-step.active { display: block; animation: stepIn 0.4s var(--ease) both; }
+@keyframes stepIn { from{opacity:0;transform:translateX(16px)} to{opacity:1;transform:translateX(0)} }
+
+.form-section-title {
+  font-family: 'Syne', sans-serif; font-size: 1.15rem; font-weight: 800;
+  letter-spacing: -0.02em; margin-bottom: 6px;
+}
+.form-section-sub { font-size: 0.82rem; color: var(--t2); margin-bottom: 28px; }
+
+/* FIELD GROUP */
+.field-group { margin-bottom: 20px; }
+.field-label {
+  display: block; font-size: 0.75rem; color: var(--t3); margin-bottom: 7px;
+  font-family: 'Space Mono', monospace; letter-spacing: 0.08em; text-transform: uppercase;
+}
+.field-required { color: var(--coral); margin-left: 2px; }
+.field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+
+.form-input, .form-select, .form-textarea {
+  background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08);
+  color: var(--t1); border-radius: 12px; padding: 13px 16px; width: 100%;
+  outline: none; transition: border 0.25s, box-shadow 0.25s, background 0.25s;
+  font-size: 0.9rem; font-family: 'DM Sans', sans-serif;
+}
+.form-input:focus, .form-select:focus, .form-textarea:focus {
+  border-color: var(--teal); box-shadow: 0 0 0 3px rgba(0,242,195,0.1);
+  background: rgba(0,242,195,0.02);
+}
+.form-input::placeholder, .form-textarea::placeholder { color: var(--t3); }
+.form-input.error, .form-select.error, .form-textarea.error {
+  border-color: var(--coral); box-shadow: 0 0 0 3px rgba(255,107,107,0.1);
+}
+.field-error { font-size: 0.72rem; color: var(--coral); margin-top: 5px; display: none; }
+.field-error.show { display: block; }
+
+.form-textarea { min-height: 130px; resize: vertical; line-height: 1.65; }
+.form-select {
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' fill='%239794b8'%3E%3Cpath d='M0 0l5 6 5-6z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat; background-position: right 14px center; cursor: pointer;
+  background-color: rgba(255,255,255,0.03);
+}
+
+/* YEAR SELECT READABILITY */
+#f-year {
+  color: var(--t1);
+  background-color: rgba(255,255,255,0.055);
+  border-color: rgba(255,255,255,0.14);
+  filter: brightness(1.06);
+  color-scheme: dark;
+}
+#f-year:focus {
+  filter: brightness(1.12);
+}
+#f-year option {
+  background: #0f1026;
+  color: #f2f0ff;
+}
+#f-year option[value=""] {
+  color: #9794b8;
+}
+#f-year option:checked {
+  background: #1a1b3a;
+  color: #00F2C3;
+}
+
+/* CHAR COUNTER */
+.textarea-wrap { position: relative; }
+.char-counter {
+  position: absolute; bottom: 10px; right: 12px;
+  font-family: 'Space Mono', monospace; font-size: 0.58rem;
+  color: var(--t3); pointer-events: none; transition: color 0.2s;
+}
+.char-counter.warn { color: var(--gold); }
+.char-counter.danger { color: var(--coral); }
+
+/* STAR RATING PICKER */
+.star-picker-wrap { margin-bottom: 8px; }
+.star-picker-label { font-size: 0.75rem; color: var(--t3); margin-bottom: 12px; font-family: 'Space Mono', monospace; letter-spacing: 0.08em; text-transform: uppercase; }
+.star-picker {
+  display: flex; gap: 8px; align-items: center; margin-bottom: 10px;
+}
+.star-btn {
+  font-size: 2.4rem; background: none; border: none; cursor: pointer;
+  transition: transform 0.2s var(--ease), filter 0.2s; color: rgba(255,255,255,0.12);
+  line-height: 1; filter: grayscale(1);
+}
+.star-btn.lit { color: var(--gold); filter: grayscale(0) drop-shadow(0 0 6px rgba(255,209,102,0.5)); }
+.star-btn:hover { transform: scale(1.3) rotate(-5deg); }
+.star-btn.lit:hover { transform: scale(1.25) rotate(5deg); }
+.star-label-text {
+  font-family: 'Space Mono', monospace; font-size: 0.68rem; color: var(--t3);
+  letter-spacing: 0.06em; margin-left: 6px; transition: color 0.2s, opacity 0.2s;
+  min-width: 80px;
+}
+
+/* HIGHLIGHT TAGS */
+.tags-grid { display: flex; flex-wrap: wrap; gap: 8px; }
+.tag-opt { display: none; }
+.tag-label {
+  padding: 7px 14px; border-radius: 100px;
+  border: 1px solid rgba(255,255,255,0.07); background: rgba(255,255,255,0.02);
+  font-size: 0.77rem; color: var(--t2); cursor: pointer; transition: all 0.2s;
+  user-select: none;
+}
+.tag-label:hover { border-color: rgba(0,242,195,0.2); color: var(--teal); }
+.tag-opt:checked + .tag-label {
+  background: rgba(0,242,195,0.08); border-color: rgba(0,242,195,0.3); color: var(--teal);
+}
+
+/* RECOMMEND TOGGLE */
+.recommend-wrap {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 16px 18px; background: rgba(255,255,255,0.02);
+  border: 1px solid rgba(255,255,255,0.07); border-radius: 13px;
+}
+.recommend-text { font-size: 0.87rem; color: var(--t1); }
+.recommend-sub { font-size: 0.72rem; color: var(--t3); margin-top: 2px; }
+.toggle-wrap { position: relative; }
+.toggle-input { display: none; }
+.toggle-track {
+  width: 46px; height: 26px; border-radius: 100px;
+  background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.1);
+  cursor: pointer; transition: background 0.3s, border-color 0.3s; display: block;
+  position: relative;
+}
+.toggle-track::after {
+  content: ''; position: absolute; top: 3px; left: 3px;
+  width: 18px; height: 18px; border-radius: 50%; background: var(--t3);
+  transition: transform 0.3s var(--ease), background 0.3s;
+}
+.toggle-input:checked + .toggle-track { background: rgba(0,242,195,0.2); border-color: rgba(0,242,195,0.4); }
+.toggle-input:checked + .toggle-track::after { transform: translateX(20px); background: var(--teal); }
+
+/* CONSENT CHECKBOX */
+.consent-wrap { display: flex; align-items: flex-start; gap: 12px; margin-bottom: 6px; }
+.consent-check { display: none; }
+.consent-box {
+  width: 20px; height: 20px; flex-shrink: 0; margin-top: 2px;
+  border-radius: 5px; border: 1px solid rgba(255,255,255,0.15); background: rgba(255,255,255,0.03);
+  cursor: pointer; display: flex; align-items: center; justify-content: center;
+  transition: all 0.2s; font-size: 0.7rem; color: transparent;
+}
+.consent-check:checked + .consent-box { background: rgba(0,242,195,0.15); border-color: rgba(0,242,195,0.4); color: var(--teal); }
+.consent-text { font-size: 0.78rem; color: var(--t3); line-height: 1.55; }
+.consent-text a { color: var(--teal); }
+
+/* AVATAR PICKER */
+.avatar-picker { display: flex; gap: 10px; flex-wrap: wrap; }
+.avatar-opt { display: none; }
+.avatar-label {
+  width: 48px; height: 48px; border-radius: 50%; cursor: pointer;
+  display: flex; align-items: center; justify-content: center; font-size: 1.4rem;
+  border: 2px solid rgba(255,255,255,0.08); background: rgba(255,255,255,0.03);
+  transition: all 0.25s var(--ease);
+}
+.avatar-label:hover { transform: scale(1.1); border-color: rgba(0,242,195,0.3); }
+.avatar-opt:checked + .avatar-label {
+  border-color: var(--teal); background: rgba(0,242,195,0.1);
+  transform: scale(1.15); box-shadow: 0 4px 16px rgba(0,242,195,0.25);
+}
+
+/* NAV BUTTONS */
+.form-nav {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-top: 30px; padding-top: 24px; border-top: 1px solid rgba(255,255,255,0.05);
+}
+.back-btn {
+  display: flex; align-items: center; gap: 7px; padding: 10px 18px; border-radius: 10px;
+  border: 1px solid rgba(255,255,255,0.1); color: var(--t2); font-size: 0.84rem;
+  transition: all 0.2s; cursor: pointer; font-family: 'DM Sans', sans-serif;
+}
+.back-btn:hover { border-color: rgba(255,255,255,0.22); color: var(--t1); }
+.next-btn, .submit-btn {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 11px 26px; border-radius: 11px;
+  background: linear-gradient(135deg, var(--teal), var(--blue)); color: #000;
+  font-family: 'Syne', sans-serif; font-weight: 700; font-size: 0.9rem;
+  border: none; cursor: pointer; transition: all 0.3s var(--ease);
+}
+.next-btn:hover, .submit-btn:hover { transform: translateY(-2px); box-shadow: 0 10px 28px rgba(0,242,195,0.3); }
+.next-btn:disabled, .submit-btn:disabled { opacity: 0.4; cursor: not-allowed; transform: none; box-shadow: none; }
+
+/* SUBMIT LOADING */
+.submit-btn.loading {
+  background: rgba(0,242,195,0.15); border: 1px solid rgba(0,242,195,0.25); color: var(--teal);
+  pointer-events: none;
+}
+.spinner {
+  width: 16px; height: 16px;
+  border: 2px solid rgba(0,242,195,0.3); border-top-color: var(--teal);
+  border-radius: 50%; animation: spinnerSpin 0.7s linear infinite;
+}
+@keyframes spinnerSpin { to { transform: rotate(360deg); } }
+
+/* SUCCESS STATE */
+.success-state {
+  display: none; text-align: center; padding: 40px 20px; animation: scaleIn 0.6s var(--ease) both;
+}
+.success-state.show { display: block; }
+@keyframes scaleIn { from{opacity:0;transform:scale(0.88)} to{opacity:1;transform:scale(1)} }
+.success-ring {
+  width: 90px; height: 90px; border-radius: 50%; margin: 0 auto 24px;
+  background: radial-gradient(circle, rgba(0,242,195,0.15), rgba(0,242,195,0.04));
+  border: 2px solid rgba(0,242,195,0.3); display: flex; align-items: center; justify-content: center;
+  font-size: 2.5rem; box-shadow: 0 0 40px rgba(0,242,195,0.15);
+  animation: ringPop 0.5s 0.1s var(--ease) both;
+}
+@keyframes ringPop { from{transform:scale(0.6);opacity:0} to{transform:scale(1);opacity:1} }
+.success-title { font-family: 'Syne', sans-serif; font-size: 2rem; font-weight: 800; letter-spacing: -0.03em; margin-bottom: 12px; }
+.success-title span { background: linear-gradient(135deg, var(--teal), var(--blue)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+.success-sub { font-size: 0.9rem; color: var(--t2); line-height: 1.7; max-width: 320px; margin: 0 auto 32px; }
+.success-actions { display: flex; flex-direction: column; gap: 10px; align-items: center; }
+.success-primary {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: linear-gradient(135deg, var(--teal), var(--blue));
+  color: #000; padding: 12px 28px; border-radius: 11px;
+  font-family: 'Syne', sans-serif; font-weight: 700; font-size: 0.9rem;
+  transition: all 0.3s var(--ease);
+}
+.success-primary:hover { transform: translateY(-2px); box-shadow: 0 10px 28px rgba(0,242,195,0.3); }
+.success-ghost {
+  font-size: 0.83rem; color: var(--t3); cursor: pointer; border: none;
+  background: none; transition: color 0.2s; font-family: 'DM Sans', sans-serif;
+}
+.success-ghost:hover { color: var(--t1); }
+
+/* CONFETTI CANVAS */
+#confettiCanvas { position: fixed; inset: 0; pointer-events: none; z-index: 9998; }
+
+/* PREVIEW PANEL */
+.preview-panel {
+  display: none; margin-bottom: 28px;
+}
+.preview-panel.show { display: block; animation: fadeUp 0.4s var(--ease) both; }
+.preview-title {
+  font-family: 'Space Mono', monospace; font-size: 0.6rem;
+  letter-spacing: 0.14em; color: var(--t3); text-transform: uppercase;
+  margin-bottom: 12px;
+}
+
+.preview-panel .testimonial-card {
+  background: var(--card); border: 1px solid var(--border); border-radius: 18px;
+  padding: 28px; transition: all 0.3s;
+}
+.preview-panel .testimonial-card:hover { border-color: var(--border-h); transform: translateY(-3px); }
+.preview-panel .test-stars { color: var(--gold); font-size: 0.8rem; margin-bottom: 14px; letter-spacing: 2px; }
+.preview-panel .test-text {
+  font-size: 0.9rem; color: var(--t2); line-height: 1.7; margin-bottom: 20px; font-style: italic;
+  display: -webkit-box; line-clamp: 3; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;
+}
+.preview-panel .test-author { display: flex; align-items: center; gap: 12px; }
+.preview-panel .test-avatar {
+  width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center;
+  justify-content: center; font-size: 18px; background: var(--card2); flex-shrink: 0;
+}
+.preview-panel .test-name { font-weight: 600; font-size: 0.875rem; }
+.preview-panel .test-role { font-size: 0.75rem; color: var(--t3); }
+
+/* PROGRESS BAR */
+.form-progress { height: 3px; background: rgba(255,255,255,0.05); border-radius: 3px; margin-bottom: 32px; overflow: hidden; }
+.form-progress-fill { height: 100%; background: linear-gradient(90deg, var(--teal), var(--blue)); border-radius: 3px; transition: width 0.5s var(--ease); }
+
+/* RESPONSIVE */
+@media(max-width: 900px) {
+  .page-wrap { grid-template-columns: 1fr; }
+  .left-panel { position: static; }
+}
+@media(max-width: 640px) {
+  .page-wrap { padding: 90px 20px 60px; }
+  .form-card { padding: 28px 22px; }
+  .field-row { grid-template-columns: 1fr; }
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<form id="reviewForm" method="post" action="{% url 'add_review' %}">
+  {% csrf_token %}
+<div class="page-wrap">
+
+  <!-- LEFT -->
+  <div class="left-panel">
+    <div class="panel-kicker"><div class="kicker-dot"></div>SHARE YOUR STORY</div>
+    <h1 class="panel-title">Your voice<br>matters <em>here.</em></h1>
+    <p class="panel-sub">Every review helps a student choose better, a builder build smarter, and a community grow stronger. Takes about 2 minutes.</p>
+
+    <div class="trust-badges">
+      <div class="trust-item">
+        <div class="trust-icon">🔒</div>
+        <div>
+          <div class="trust-title">Fully Anonymous Option</div>
+          <div class="trust-body">Choose to display only your first name and college. We never share personal data.</div>
+        </div>
+      </div>
+      <div class="trust-item">
+        <div class="trust-icon">✦</div>
+        <div>
+          <div class="trust-title">Real Reviews Only</div>
+          <div class="trust-body">All submissions are moderated. Only genuine student experiences are published.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- RIGHT — FORM -->
+  <div>
+    <div class="form-card" id="formCard">
+      <div class="form-card-orb"></div>
+
+      <!-- PROGRESS -->
+      <div class="form-progress">
+        <div class="form-progress-fill" id="progressFill" style="width:33%"></div>
+      </div>
+
+      <!-- STEP INDICATOR -->
+      <div class="step-indicator" id="stepIndicator" style="padding-bottom:36px;position:relative">
+        <div class="step-dot active" id="sd1">01<span class="step-label">YOUR INFO</span></div>
+        <div class="step-line" id="sl1"></div>
+        <div class="step-dot" id="sd2">02<span class="step-label">YOUR REVIEW</span></div>
+        <div class="step-line" id="sl2"></div>
+        <div class="step-dot" id="sd3">03<span class="step-label">EXTRAS</span></div>
+      </div>
+
+      <!-- STEP 1 -->
+      <div class="form-step active" id="step1">
+        <div class="form-section-title">Tell us about yourself</div>
+        <div class="form-section-sub">Basic info helps others relate to your experience.</div>
+
+        <!-- Avatar picker -->
+        <div class="field-group">
+          <div class="field-label">Pick your avatar</div>
+          <div class="avatar-picker">
+            <input class="avatar-opt" type="radio" name="avatar" id="av1" value="👨‍💻" checked>
+            <label class="avatar-label" for="av1">👨‍💻</label>
+            <input class="avatar-opt" type="radio" name="avatar" id="av2" value="👩‍💼">
+            <label class="avatar-label" for="av2">👩‍💼</label>
+            <input class="avatar-opt" type="radio" name="avatar" id="av4" value="👨‍🔬">
+            <label class="avatar-label" for="av4">👨‍🔬</label>
+            <input class="avatar-opt" type="radio" name="avatar" id="av5" value="👩‍🔬">
+            <label class="avatar-label" for="av5">👩‍🔬</label>
+            <input class="avatar-opt" type="radio" name="avatar" id="av7" value="💻">
+            <label class="avatar-label" for="av7">💻</label>
+          </div>
+        </div>
+
+        <div class="field-row">
+          <div class="field-group">
+            <label class="field-label" for="f-name">Full Name <span class="field-required">*</span></label>
+            <input class="form-input" type="text" id="f-name" name="name" maxlength="20" placeholder="e.g. Arjun Sharma">
+            <div class="field-error" id="err-name">Please enter your name.</div>
+          </div>
+          <div class="field-group">
+            <label class="field-label" for="f-course">Course / Degree <span class="field-required">*</span></label>
+            <input class="form-input" type="text" id="f-course" name="course" maxlength="15" placeholder="e.g. B.Tech CSE">
+            <div class="field-error" id="err-course">Please enter your course.</div>
+          </div>
+        </div>
+
+        <div class="field-row">
+          <div class="field-group">
+            <label class="field-label" for="f-college">College / University <span class="field-required">*</span></label>
+            <input class="form-input" type="text" id="f-college" name="college" maxlength="20" placeholder="e.g. IIT Delhi">
+            <div class="field-error" id="err-college">Please enter your college.</div>
+          </div>
+          <div class="field-group">
+            <label class="field-label" for="f-year">Year of Study</label>
+            <select class="form-select" id="f-year">
+              <option value="">Select year...</option>
+              <option>1st Year</option>
+              <option>2nd Year</option>
+              <option>3rd Year</option>
+              <option>4th Year</option>
+              <option>5th Year+</option>
+              <option>Postgraduate</option>
+              <option>Alumni</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-nav">
+          <div></div>
+          <button type="button" class="next-btn" id="next1Btn">Continue <span>→</span></button>
+        </div>
+      </div>
+
+      <!-- STEP 2 -->
+      <div class="form-step" id="step2">
+        <div class="form-section-title">Rate your experience</div>
+        <div class="form-section-sub">How was your experience?</div>
+
+        <!-- Star Picker -->
+        <div class="field-group star-picker-wrap">
+          <div class="star-picker-label">Overall rating <span class="field-required">*</span></div>
+          <input type="hidden" id="f-stars" name="stars" value="0">
+          <div style="display:flex;align-items:center;flex-wrap:wrap;gap:4px">
+            <div class="star-picker" id="starPicker">
+              <button type="button" class="star-btn" data-val="1">★</button>
+              <button type="button" class="star-btn" data-val="2">★</button>
+              <button type="button" class="star-btn" data-val="3">★</button>
+              <button type="button" class="star-btn" data-val="4">★</button>
+              <button type="button" class="star-btn" data-val="5">★</button>
+            </div>
+            <div class="star-label-text" id="starLabelText">Tap a star</div>
+          </div>
+          <div class="field-error" id="err-stars">Please select a rating.</div>
+        </div>
+
+        <!-- Review text -->
+        <div class="field-group">
+          <label class="field-label" for="f-text">Your Review <span class="field-required">*</span></label>
+          <div class="textarea-wrap">
+            <textarea class="form-textarea" id="f-text" name="description" maxlength="800" placeholder="Tell us what you loved, what you learned, or how it helped you grow..." rows="5"></textarea>
+            <div class="char-counter" id="charCounter">0 / 800</div>
+          </div>
+          <div class="field-error" id="err-text">Please write your review.</div>
+        </div>
+
+        <!-- Live preview -->
+        <div class="preview-panel" id="previewPanel">
+          <div class="preview-title">Preview</div>
+          <div class="testimonial-card">
+            <div class="test-stars" id="previewStars"></div>
+            <p class="test-text" id="previewText"></p>
+            <div class="test-author">
+              <div class="test-avatar" id="previewAvatar"></div>
+              <div>
+                <div class="test-name" id="previewName"></div>
+                <div class="test-role" id="previewRole"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-nav">
+          <button type="button" class="back-btn" id="back2Btn">← Back</button>
+          <button type="button" class="next-btn" id="next2Btn">Continue →</button>
+        </div>
+      </div>
+
+      <!-- STEP 3 -->
+      <div class="form-step" id="step3">
+        <div class="form-section-title">One last thing ✦</div>
+        <div class="form-section-sub">Optional extras that help other students discover your review.</div>
+
+        <!-- Highlights -->
+        <div class="field-group">
+          <div class="field-label">What stood out most?</div>
+          <div class="tags-grid">
+            <input class="tag-opt" type="checkbox" id="tg1" value="Real-time feedback">
+            <label class="tag-label" for="tg1">⚡ Real-time feedback</label>
+            <input class="tag-opt" type="checkbox" id="tg2" value="Accurate analysis">
+            <label class="tag-label" for="tg2">🎯 Accurate analysis</label>
+            <input class="tag-opt" type="checkbox" id="tg3" value="Easy to use">
+            <label class="tag-label" for="tg3">✨ Easy to use</label>
+            <input class="tag-opt" type="checkbox" id="tg4" value="Saved time">
+            <label class="tag-label" for="tg4">⏱️ Saved time</label>
+            <input class="tag-opt" type="checkbox" id="tg5" value="Changed my thinking">
+            <label class="tag-label" for="tg5">💡 Changed my thinking</label>
+            <input class="tag-opt" type="checkbox" id="tg6" value="Free & accessible">
+            <label class="tag-label" for="tg6">🔓 Free & accessible</label>
+            <input class="tag-opt" type="checkbox" id="tg7" value="Privacy-first">
+            <label class="tag-label" for="tg7">🔒 Privacy-first</label>
+            <input class="tag-opt" type="checkbox" id="tg8" value="Better than alternatives">
+            <label class="tag-label" for="tg8">🏆 Better than alternatives</label>
+          </div>
+        </div>
+
+        <!-- Would recommend -->
+        <div class="field-group">
+          <div class="recommend-wrap">
+            <div>
+              <div class="recommend-text">I'd recommend Pathforge to friends</div>
+              <div class="recommend-sub">Help us know how you feel overall.</div>
+            </div>
+            <div class="toggle-wrap">
+              <input class="toggle-input" type="checkbox" id="recommend" checked>
+              <label class="toggle-track" for="recommend"></label>
+            </div>
+          </div>
+        </div>
+
+        <!-- Consent -->
+        <div class="field-group">
+          <div class="consent-wrap">
+            <input class="consent-check" type="checkbox" id="consent">
+            <label class="consent-box" for="consent">✓</label>
+            <div class="consent-text">
+              I confirm this is my genuine experience and I agree to Pathforge's
+              <a href="{% url 'privacy' %}">Privacy Policy</a> and <a href="{% url 'terms' %}">Terms of Use</a>.
+              I understand my review may be published publicly.
+            </div>
+          </div>
+          <div class="field-error" id="err-consent">Please accept the terms to continue.</div>
+        </div>
+
+        <div class="form-nav">
+          <button type="button" class="back-btn" id="back3Btn">← Back</button>
+          <button type="submit" class="submit-btn" id="submitBtn">Submit Review ✦</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+</form>
+{% endblock %}
+
+{% block footer %}{% endblock footer %}
+
+{% block extra_scripts %}
+<script>
+// State
+let currentStep = 1;
+let selectedStars = 0;
+
+const STAR_LABELS = ['', 'Terrible 😞', 'Poor 😟', 'Okay 😐', 'Good 😊', 'Amazing! 🤩'];
+
+// Steps
+function goToStep(n) {
+  document.querySelectorAll('.form-step').forEach(s => s.classList.remove('active'));
+  document.getElementById(`step${n}`).classList.add('active');
+  currentStep = n;
+  updateIndicator();
+  updateProgress();
+  window.scrollTo({
+    top: document.getElementById('formCard').getBoundingClientRect().top + window.scrollY - 100,
+    behavior: 'smooth'
+  });
+}
+
+function updateIndicator() {
+  [1, 2, 3].forEach(i => {
+    const dot = document.getElementById(`sd${i}`);
+    const line = document.getElementById(`sl${i}`);
+    if (!dot) return;
+    dot.className = 'step-dot';
+    if (i < currentStep) {
+      dot.classList.add('done');
+      dot.textContent = '✓';
+    } else if (i === currentStep) {
+      dot.classList.add('active');
+      dot.textContent = '0' + i;
+    } else {
+      dot.textContent = '0' + i;
+    }
+
+    const lbl = document.createElement('span');
+    lbl.className = 'step-label';
+    lbl.textContent = ['YOUR INFO', 'YOUR REVIEW', 'EXTRAS'][i - 1];
+    dot.appendChild(lbl);
+    if (line) line.className = 'step-line' + (i < currentStep ? ' done' : '');
+  });
+}
+
+function updateProgress() {
+  const pct = { 1: 33, 2: 66, 3: 100 }[currentStep] || 33;
+  document.getElementById('progressFill').style.width = pct + '%';
+}
+
+// Validation
+function validate(fields) {
+  let ok = true;
+  fields.forEach(({ id, errId, check }) => {
+    const el = document.getElementById(id);
+    const err = document.getElementById(errId);
+    const valid = check(el);
+    el.classList.toggle('error', !valid);
+    err.classList.toggle('show', !valid);
+    if (!valid) ok = false;
+  });
+  return ok;
+}
+
+function v1() {
+  return validate([
+    { id: 'f-name', errId: 'err-name', check: el => el.value.trim().length >= 1 },
+    { id: 'f-course', errId: 'err-course', check: el => el.value.trim().length >= 1 },
+    { id: 'f-college', errId: 'err-college', check: el => el.value.trim().length >= 1 }
+  ]);
+}
+
+function v2() {
+  let ok = true;
+
+  const starsErr = document.getElementById('err-stars');
+  if (!selectedStars) {
+    starsErr.classList.add('show');
+    ok = false;
+  } else {
+    starsErr.classList.remove('show');
+  }
+
+  const textEl = document.getElementById('f-text');
+  const textErr = document.getElementById('err-text');
+  if (textEl.value.trim().length < 1) {
+    textEl.classList.add('error');
+    textErr.classList.add('show');
+    ok = false;
+  } else {
+    textEl.classList.remove('error');
+    textErr.classList.remove('show');
+  }
+
+  return ok;
+}
+
+function v3() {
+  // Consent is optional in backend view; keep this step non-blocking.
+  return true;
+}
+
+// Star picker
+const stars = document.querySelectorAll('.star-btn');
+stars.forEach(btn => {
+  btn.addEventListener('mouseenter', () => {
+    const v = parseInt(btn.dataset.val, 10);
+    stars.forEach((b, i) => b.classList.toggle('lit', i < v));
+  });
+
+  btn.addEventListener('click', () => {
+    selectedStars = parseInt(btn.dataset.val, 10);
+    stars.forEach((b, i) => b.classList.toggle('lit', i < selectedStars));
+    document.getElementById('starLabelText').textContent = STAR_LABELS[selectedStars];
+    document.getElementById('f-stars').value = String(selectedStars);
+    document.getElementById('err-stars').classList.remove('show');
+    updatePreview();
+  });
+});
+
+document.getElementById('starPicker').addEventListener('mouseleave', () => {
+  stars.forEach((b, i) => b.classList.toggle('lit', i < selectedStars));
+});
+
+// Char counter
+document.getElementById('f-text').addEventListener('input', () => {
+  const len = document.getElementById('f-text').value.length;
+  const counter = document.getElementById('charCounter');
+  counter.textContent = len + ' / 800';
+  counter.className = 'char-counter' + (len > 700 ? ' danger' : len > 500 ? ' warn' : '');
+  updatePreview();
+});
+
+// Live preview
+function updatePreview() {
+  const text = document.getElementById('f-text').value.trim();
+  const name = document.getElementById('f-name').value.trim();
+  const course = document.getElementById('f-course').value.trim();
+  const college = document.getElementById('f-college').value.trim();
+  const avatar = document.querySelector('input[name="avatar"]:checked')?.value || '🎓';
+  const panel = document.getElementById('previewPanel');
+
+  if (text.length > 0 || selectedStars > 0) {
+    panel.classList.add('show');
+    document.getElementById('previewStars').textContent = '★'.repeat(selectedStars) + '☆'.repeat(5 - selectedStars);
+    document.getElementById('previewText').textContent = `"${text || '...'}"`;
+    document.getElementById('previewAvatar').textContent = avatar;
+    document.getElementById('previewName').textContent = name || 'Your Name';
+    document.getElementById('previewRole').textContent = `${course || 'Course'}, ${college || 'College'}`;
+  } else {
+    panel.classList.remove('show');
+  }
+}
+
+document.getElementById('f-text').addEventListener('input', updatePreview);
+['f-name', 'f-course', 'f-college'].forEach(id => {
+  document.getElementById(id).addEventListener('input', updatePreview);
+});
+document.querySelectorAll('input[name="avatar"]').forEach(el => {
+  el.addEventListener('change', updatePreview);
+});
+
+// Navigation
+const next1Btn = document.getElementById('next1Btn');
+const next2Btn = document.getElementById('next2Btn');
+const back2Btn = document.getElementById('back2Btn');
+const back3Btn = document.getElementById('back3Btn');
+
+next1Btn.addEventListener('click', () => { if (v1()) goToStep(2); });
+next2Btn.addEventListener('click', () => { if (v2()) goToStep(3); });
+back2Btn.addEventListener('click', () => goToStep(1));
+back3Btn.addEventListener('click', () => goToStep(2));
+
+// Submit
+document.getElementById('reviewForm').addEventListener('submit', (e) => {
+  if (!(v1() && v2() && v3())) {
+    e.preventDefault();
+    return;
+  }
+
+  const btn = document.getElementById('submitBtn');
+  btn.classList.add('loading');
+  btn.innerHTML = '<div class="spinner"></div> Submitting...';
+});
+
+updateIndicator();
+</script>
+{% endblock %}

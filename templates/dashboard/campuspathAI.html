@@ -1,9 +1,11 @@
-﻿<!DOCTYPE html>
+﻿{% load static %}
+<!DOCTYPE html>
 <html lang="en" data-theme="dark">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>CampusPath AI — Your 6-Month Career Blueprint</title>
+{% csrf_token %}
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,300&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
 
@@ -15,883 +17,284 @@
   --font-display: 'Syne', sans-serif;
   --font-body: 'DM Sans', sans-serif;
   --font-mono: 'Space Mono', monospace;
-
   --sky:     #3B9EFF;
   --global:  #06D6A0;
   --coral:   #FF6B35;
   --emerald: #00C896;
   --mauve:   #B084CC;
   --gold:    #FFD166;
-
   --shadow-sm: 0 2px 8px rgba(0,0,0,0.15);
   --shadow-md: 0 8px 32px rgba(0,0,0,0.25);
   --shadow-lg: 0 24px 64px rgba(0,0,0,0.35);
-
   --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
-  --ease-in-out: cubic-bezier(0.45, 0, 0.55, 1);
 }
 
 [data-theme="dark"] {
-  --bg:        #070711;
-  --bg-2:      #0d0d1f;
-  --surface:   #131326;
-  --card:      #1a1a35;
-  --card-2:    #20203f;
-  --border:    rgba(255,255,255,0.07);
-  --border-h:  rgba(255,255,255,0.15);
-  --text-1:    #f0eeff;
-  --text-2:    #a09ec0;
-  --text-3:    #6a6888;
-  --nav-bg:    rgba(7,7,17,0.92);
+  --bg:#070711;--bg-2:#0d0d1f;--surface:#131326;--card:#1a1a35;
+  --card-2:#20203f;--border:rgba(255,255,255,0.07);--border-h:rgba(255,255,255,0.15);
+  --text-1:#f0eeff;--text-2:#a09ec0;--text-3:#6a6888;--nav-bg:rgba(7,7,17,0.92);
 }
-
 [data-theme="light"] {
-  --bg:        #f4f0ed;
-  --bg-2:      #ede8e3;
-  --surface:   #ffffff;
-  --card:      #faf8f6;
-  --card-2:    #f0ece8;
-  --border:    rgba(0,0,0,0.08);
-  --border-h:  rgba(0,0,0,0.18);
-  --text-1:    #1a1426;
-  --text-2:    #4a4060;
-  --text-3:    #8a80a8;
-  --nav-bg:    rgba(244,240,237,0.92);
+  --bg:#f4f0ed;--bg-2:#ede8e3;--surface:#ffffff;--card:#faf8f6;
+  --card-2:#f0ece8;--border:rgba(0,0,0,0.08);--border-h:rgba(0,0,0,0.18);
+  --text-1:#1a1426;--text-2:#4a4060;--text-3:#8a80a8;--nav-bg:rgba(244,240,237,0.92);
 }
 
-/* ============================================================
-   RESET & BASE
-============================================================ */
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-html { scroll-behavior: smooth; }
-body {
-  font-family: var(--font-body);
-  background: var(--bg);
-  color: var(--text-1);
-  line-height: 1.6;
-  overflow-x: hidden;
-  transition: background 0.4s var(--ease-out), color 0.4s var(--ease-out);
-}
-a { text-decoration: none; color: inherit; }
-ul { list-style: none; }
-button { cursor: pointer; border: none; background: none; font-family: inherit; }
-input, textarea, select {
-  font-family: var(--font-body);
-  background: var(--card);
-  border: 1px solid var(--border);
-  color: var(--text-1);
-  border-radius: 10px;
-  padding: 12px 16px;
-  width: 100%;
-  outline: none;
-  transition: border 0.2s, box-shadow 0.2s;
-  font-size: 0.9rem;
-}
-input:focus, textarea:focus, select:focus {
-  border-color: var(--sky);
-  box-shadow: 0 0 0 3px rgba(59,158,255,0.12);
-}
-input::placeholder, textarea::placeholder { color: var(--text-3); }
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:var(--font-body);background:var(--bg);color:var(--text-1);line-height:1.6;overflow-x:hidden;transition:background .4s var(--ease-out),color .4s var(--ease-out)}
+a{text-decoration:none;color:inherit}
+button{cursor:pointer;border:none;background:none;font-family:inherit}
+input,textarea,select{font-family:var(--font-body);background:var(--card);border:1px solid var(--border);color:var(--text-1);border-radius:10px;padding:12px 16px;width:100%;outline:none;transition:border .2s,box-shadow .2s;font-size:.9rem}
+input:focus,textarea:focus,select:focus{border-color:var(--sky);box-shadow:0 0 0 3px rgba(59,158,255,.12)}
+input::placeholder,textarea::placeholder{color:var(--text-3)}
 
-/* ============================================================
-   NAV
-============================================================ */
-.nav {
-  position: fixed;
-  top: 0; left: 0; right: 0;
-  z-index: 999;
-  background: var(--nav-bg);
-  backdrop-filter: blur(20px) saturate(180%);
-  border-bottom: 1px solid var(--border);
-}
-.nav-inner {
-  max-width: 1300px;
-  margin: 0 auto;
-  padding: 0 32px;
-  height: 64px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-.nav-logo {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  font-family: var(--font-display);
-  font-size: 1.25rem;
-  font-weight: 800;
-}
-.nav-logo-icon {
-  width: 34px; height: 34px;
-  background: linear-gradient(135deg, var(--sky), #8b5cf6);
-  border-radius: 10px;
-  display: flex; align-items: center; justify-content: center;
-  font-size: 16px;
-}
-.nav-logo span { background: linear-gradient(90deg, var(--sky), #8b5cf6); background-clip: text; -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-.nav-actions { display: flex; align-items: center; gap: 10px; }
-.theme-toggle {
-  width: 38px; height: 38px;
-  border-radius: 10px;
-  background: var(--card);
-  border: 1px solid var(--border);
-  display: flex; align-items: center; justify-content: center;
-  font-size: 17px;
-  cursor: pointer;
-  transition: all 0.2s;
-}
-.theme-toggle:hover { border-color: var(--sky); transform: scale(1.05); }
-.btn-primary {
-  background: linear-gradient(135deg, var(--sky), #8b5cf6);
-  color: #fff;
-  padding: 9px 20px;
-  border-radius: 10px;
-  font-weight: 600;
-  font-size: 0.85rem;
-  transition: all 0.25s var(--ease-out);
-  display: inline-flex; align-items: center; gap: 7px;
-}
-.btn-primary:hover { transform: translateY(-1px); box-shadow: 0 8px 24px rgba(59,158,255,0.35); }
+/* NAV */
+.nav{position:fixed;top:0;left:0;right:0;z-index:999;background:var(--nav-bg);backdrop-filter:blur(20px) saturate(180%);border-bottom:1px solid var(--border)}
+.nav-inner{max-width:1300px;margin:0 auto;padding:0 32px;height:64px;display:flex;align-items:center;justify-content:space-between}
+.nav-logo{display:flex;align-items:center;gap:10px;font-family:var(--font-display);font-size:1.25rem;font-weight:800}
+.nav-logo-icon{width:34px;height:34px;background:linear-gradient(135deg,var(--sky),#8b5cf6);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:16px}
+.nav-logo span{background:linear-gradient(90deg,var(--sky),#8b5cf6);background-clip:text;-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.nav-actions{display:flex;align-items:center;gap:10px}
+.theme-toggle{width:38px;height:38px;border-radius:10px;background:var(--card);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:17px;cursor:pointer;transition:all .2s}
+.theme-toggle:hover{border-color:var(--sky);transform:scale(1.05)}
+.btn-primary{background:linear-gradient(135deg,var(--sky),#8b5cf6);color:#fff;padding:9px 20px;border-radius:10px;font-weight:600;font-size:.85rem;transition:all .25s var(--ease-out);display:inline-flex;align-items:center;gap:7px}
+.btn-primary:hover{transform:translateY(-1px);box-shadow:0 8px 24px rgba(59,158,255,.35)}
 
-/* ============================================================
-   HERO
-============================================================ */
-.hero {
-  padding-top: 64px;
-  min-height: 100vh;
-  display: flex;
-  align-items: center;
-  position: relative;
-  overflow: hidden;
-}
-#hero-canvas {
-  position: absolute;
-  inset: 0;
-  opacity: 0.5;
-  pointer-events: none;
-}
-[data-theme="light"] #hero-canvas { opacity: 0.2; }
-.hero-mesh {
-  position: absolute;
-  inset: 0;
-  background:
-    radial-gradient(ellipse 70% 60% at 15% 50%, rgba(59,158,255,0.1) 0%, transparent 70%),
-    radial-gradient(ellipse 50% 50% at 85% 40%, rgba(139,92,246,0.08) 0%, transparent 65%),
-    radial-gradient(ellipse 60% 40% at 50% 0%, rgba(6,214,160,0.06) 0%, transparent 60%);
-  pointer-events: none;
-}
-.hero-content {
-  position: relative;
-  z-index: 2;
-  max-width: 1300px;
-  margin: 0 auto;
-  padding: 80px 32px 60px;
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 80px;
-  align-items: center;
-}
-.hero-badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  background: var(--card);
-  border: 1px solid rgba(59,158,255,0.3);
-  border-radius: 100px;
-  padding: 6px 16px;
-  font-size: 0.78rem;
-  font-weight: 500;
-  color: var(--sky);
-  margin-bottom: 24px;
-  opacity: 0;
-  animation: fadeUp 0.6s 0.1s var(--ease-out) forwards;
-}
-.hero-badge-dot {
-  width: 6px; height: 6px;
-  background: var(--sky);
-  border-radius: 50%;
-  animation: pulse-dot 2s infinite;
-}
-@keyframes pulse-dot {
-  0%,100% { opacity: 1; transform: scale(1); }
-  50% { opacity: 0.5; transform: scale(0.7); }
-}
-.hero-title {
-  font-family: var(--font-display);
-  font-size: clamp(2.6rem, 4.5vw, 4rem);
-  font-weight: 800;
-  line-height: 1.08;
-  letter-spacing: -0.03em;
-  margin-bottom: 22px;
-  opacity: 0;
-  animation: fadeUp 0.7s 0.2s var(--ease-out) forwards;
-}
-.hero-title .accent {
-  background: linear-gradient(135deg, var(--sky) 0%, #8b5cf6 60%, var(--mauve) 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-}
-.hero-desc {
-  font-size: 1.05rem;
-  color: var(--text-2);
-  line-height: 1.75;
-  max-width: 460px;
-  margin-bottom: 36px;
-  opacity: 0;
-  animation: fadeUp 0.7s 0.3s var(--ease-out) forwards;
-}
-.hero-stats {
-  display: flex;
-  gap: 28px;
-  margin-top: 44px;
-  padding-top: 32px;
-  border-top: 1px solid var(--border);
-  opacity: 0;
-  animation: fadeUp 0.7s 0.45s var(--ease-out) forwards;
-  flex-wrap: wrap;
-}
-.hero-stat-val { font-family: var(--font-display); font-size: 1.6rem; font-weight: 700; color: var(--sky); }
-.hero-stat-label { font-size: 0.75rem; color: var(--text-3); margin-top: 2px; }
+/* HERO */
+.hero{padding-top:64px;min-height:100vh;display:flex;align-items:center;position:relative;overflow:hidden}
+#hero-canvas{position:absolute;inset:0;opacity:.5;pointer-events:none}
+[data-theme="light"] #hero-canvas{opacity:.2}
+.hero-mesh{position:absolute;inset:0;background:radial-gradient(ellipse 70% 60% at 15% 50%,rgba(59,158,255,.1) 0%,transparent 70%),radial-gradient(ellipse 50% 50% at 85% 40%,rgba(139,92,246,.08) 0%,transparent 65%),radial-gradient(ellipse 60% 40% at 50% 0%,rgba(6,214,160,.06) 0%,transparent 60%);pointer-events:none}
+.hero-content{position:relative;z-index:2;max-width:1300px;margin:0 auto;padding:80px 32px 60px;display:grid;grid-template-columns:1fr 1fr;gap:80px;align-items:center}
+.hero-badge{display:inline-flex;align-items:center;gap:8px;background:var(--card);border:1px solid rgba(59,158,255,.3);border-radius:100px;padding:6px 16px;font-size:.78rem;font-weight:500;color:var(--sky);margin-bottom:24px;opacity:0;animation:fadeUp .6s .1s var(--ease-out) forwards}
+.hero-badge-dot{width:6px;height:6px;background:var(--sky);border-radius:50%;animation:pulse-dot 2s infinite}
+@keyframes pulse-dot{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(.7)}}
+.hero-title{font-family:var(--font-display);font-size:clamp(2.6rem,4.5vw,4rem);font-weight:800;line-height:1.08;letter-spacing:-.03em;margin-bottom:22px;opacity:0;animation:fadeUp .7s .2s var(--ease-out) forwards}
+.hero-title .accent{background:linear-gradient(135deg,var(--sky) 0%,#8b5cf6 60%,var(--mauve) 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.hero-desc{font-size:1.05rem;color:var(--text-2);line-height:1.75;max-width:460px;margin-bottom:36px;opacity:0;animation:fadeUp .7s .3s var(--ease-out) forwards}
+.hero-stats{display:flex;gap:28px;margin-top:44px;padding-top:32px;border-top:1px solid var(--border);opacity:0;animation:fadeUp .7s .45s var(--ease-out) forwards;flex-wrap:wrap}
+.hero-stat-val{font-family:var(--font-display);font-size:1.6rem;font-weight:700;color:var(--sky)}
+.hero-stat-label{font-size:.75rem;color:var(--text-3);margin-top:2px}
 
-/* Hero visual — floating panels */
-.hero-visual {
-  position: relative;
-  height: 480px;
-  opacity: 0;
-  animation: fadeIn 1s 0.5s var(--ease-out) forwards;
-}
-.hero-orb {
-  position: absolute;
-  top: 50%; left: 50%;
-  transform: translate(-50%, -50%);
-  width: 100px; height: 100px;
-  border-radius: 50%;
-  background: radial-gradient(circle at 35% 35%, var(--sky), #8b5cf6);
-  box-shadow: 0 0 60px rgba(59,158,255,0.45), 0 0 120px rgba(139,92,246,0.2);
-  display: flex; align-items: center; justify-content: center;
-  font-size: 36px;
-  animation: orb-pulse 4s ease-in-out infinite;
-  z-index: 5;
-}
-@keyframes orb-pulse {
-  0%,100% { box-shadow: 0 0 60px rgba(59,158,255,0.4), 0 0 120px rgba(139,92,246,0.2); transform: translate(-50%,-50%) scale(1); }
-  50% { box-shadow: 0 0 80px rgba(59,158,255,0.6), 0 0 160px rgba(139,92,246,0.3); transform: translate(-50%,-50%) scale(1.06); }
-}
-.f-card {
-  position: absolute;
-  background: var(--card);
-  border: 1px solid rgba(59,158,255,0.2);
-  border-radius: 16px;
-  padding: 18px;
-  backdrop-filter: blur(10px);
-  transition: box-shadow 0.3s;
-  background: linear-gradient(135deg, var(--card), rgba(59,158,255,0.04));
-}
-.f-card:hover { box-shadow: var(--shadow-lg); }
-.f-card-1 { width: 200px; top: 20px; left: 5%; animation: float1 6s ease-in-out infinite; }
-.f-card-2 { width: 220px; top: 50px; right: 2%; animation: float2 7s ease-in-out infinite; }
-.f-card-3 { width: 190px; bottom: 80px; left: 2%; animation: float3 8s ease-in-out infinite; }
-.f-card-4 { width: 215px; bottom: 20px; right: 5%; animation: float4 6.5s ease-in-out infinite; }
-@keyframes float1 { 0%,100%{transform:translateY(0px) rotate(-1deg)} 50%{transform:translateY(-18px) rotate(1deg)} }
-@keyframes float2 { 0%,100%{transform:translateY(-8px) rotate(1deg)} 50%{transform:translateY(10px) rotate(-1deg)} }
-@keyframes float3 { 0%,100%{transform:translateY(4px) rotate(0.5deg)} 50%{transform:translateY(-14px) rotate(-0.5deg)} }
-@keyframes float4 { 0%,100%{transform:translateY(0px) rotate(-0.5deg)} 50%{transform:translateY(-16px) rotate(1deg)} }
-.f-card-icon { width: 34px; height: 34px; border-radius: 9px; display: flex; align-items: center; justify-content: center; font-size: 16px; margin-bottom: 10px; background: rgba(59,158,255,0.12); }
-.f-card-title { font-family: var(--font-display); font-size: 0.82rem; font-weight: 700; margin-bottom: 4px; }
-.f-card-body { font-size: 0.72rem; color: var(--text-3); line-height: 1.5; }
-.f-card-tag { display: inline-block; margin-top: 8px; padding: 2px 9px; border-radius: 100px; font-size: 0.65rem; font-weight: 600; font-family: var(--font-mono); background: rgba(59,158,255,0.1); color: var(--sky); }
+/* FLOATING CARDS */
+.hero-visual{position:relative;height:480px;opacity:0;animation:fadeIn 1s .5s var(--ease-out) forwards}
+.hero-orb{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:100px;height:100px;border-radius:50%;background:radial-gradient(circle at 35% 35%,var(--sky),#8b5cf6);box-shadow:0 0 60px rgba(59,158,255,.45),0 0 120px rgba(139,92,246,.2);display:flex;align-items:center;justify-content:center;font-size:36px;animation:orb-pulse 4s ease-in-out infinite;z-index:5}
+@keyframes orb-pulse{0%,100%{box-shadow:0 0 60px rgba(59,158,255,.4),0 0 120px rgba(139,92,246,.2);transform:translate(-50%,-50%) scale(1)}50%{box-shadow:0 0 80px rgba(59,158,255,.6),0 0 160px rgba(139,92,246,.3);transform:translate(-50%,-50%) scale(1.06)}}
+.f-card{position:absolute;background:linear-gradient(135deg,var(--card),rgba(59,158,255,.04));border:1px solid rgba(59,158,255,.2);border-radius:16px;padding:18px;backdrop-filter:blur(10px);transition:box-shadow .3s}
+.f-card:hover{box-shadow:var(--shadow-lg)}
+.f-card-1{width:200px;top:20px;left:5%;animation:float1 6s ease-in-out infinite}
+.f-card-2{width:220px;top:50px;right:2%;animation:float2 7s ease-in-out infinite}
+.f-card-3{width:190px;bottom:80px;left:2%;animation:float3 8s ease-in-out infinite}
+.f-card-4{width:215px;bottom:20px;right:5%;animation:float4 6.5s ease-in-out infinite}
+@keyframes float1{0%,100%{transform:translateY(0) rotate(-1deg)}50%{transform:translateY(-18px) rotate(1deg)}}
+@keyframes float2{0%,100%{transform:translateY(-8px) rotate(1deg)}50%{transform:translateY(10px) rotate(-1deg)}}
+@keyframes float3{0%,100%{transform:translateY(4px) rotate(.5deg)}50%{transform:translateY(-14px) rotate(-.5deg)}}
+@keyframes float4{0%,100%{transform:translateY(0) rotate(-.5deg)}50%{transform:translateY(-16px) rotate(1deg)}}
+.f-card-icon{width:34px;height:34px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:16px;margin-bottom:10px;background:rgba(59,158,255,.12)}
+.f-card-title{font-family:var(--font-display);font-size:.82rem;font-weight:700;margin-bottom:4px}
+.f-card-body{font-size:.72rem;color:var(--text-3);line-height:1.5}
+.f-card-tag{display:inline-block;margin-top:8px;padding:2px 9px;border-radius:100px;font-size:.65rem;font-weight:600;font-family:var(--font-mono);background:rgba(59,158,255,.1);color:var(--sky)}
 
-/* ============================================================
-   SECTION LAYOUT
-============================================================ */
-.section-wrap {
-  max-width: 1300px;
-  margin: 0 auto;
-  padding: 80px 32px;
-}
-.section-label {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  font-family: var(--font-mono);
-  font-size: 0.7rem;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: var(--sky);
-  margin-bottom: 14px;
-}
-.section-label::before { content: ''; width: 16px; height: 1px; background: var(--sky); }
-.section-title {
-  font-family: var(--font-display);
-  font-size: clamp(1.8rem, 3vw, 2.6rem);
-  font-weight: 800;
-  letter-spacing: -0.025em;
-  line-height: 1.1;
-  margin-bottom: 16px;
-}
-.section-sub { font-size: 1rem; color: var(--text-2); max-width: 540px; line-height: 1.7; }
+/* SECTION LAYOUT */
+.section-wrap{max-width:1300px;margin:0 auto;padding:80px 32px}
+.section-label{display:inline-flex;align-items:center;gap:8px;font-family:var(--font-mono);font-size:.7rem;letter-spacing:.12em;text-transform:uppercase;color:var(--sky);margin-bottom:14px}
+.section-label::before{content:'';width:16px;height:1px;background:var(--sky)}
+.section-title{font-family:var(--font-display);font-size:clamp(1.8rem,3vw,2.6rem);font-weight:800;letter-spacing:-.025em;line-height:1.1;margin-bottom:16px}
+.section-sub{font-size:1rem;color:var(--text-2);max-width:540px;line-height:1.7}
 
-/* ============================================================
-   PANELS / CARDS
-============================================================ */
-.panel {
-  background: var(--card);
-  border: 1px solid var(--border);
-  border-radius: 20px;
-  padding: 28px;
-}
-.panel-title {
-  font-family: var(--font-display);
-  font-weight: 700;
-  font-size: 1rem;
-  margin-bottom: 20px;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-.divider { height: 1px; background: var(--border); margin: 20px 0; }
+/* PANELS */
+.panel{background:var(--card);border:1px solid var(--border);border-radius:20px;padding:28px}
+.panel-title{font-family:var(--font-display);font-weight:700;font-size:1rem;margin-bottom:20px;display:flex;align-items:center;gap:8px}
 
-/* ============================================================
-   INPUT SECTION
-============================================================ */
-.input-section {
-  background: var(--surface);
-  border-top: 1px solid var(--border);
-  border-bottom: 1px solid var(--border);
-}
-.input-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 24px;
-}
-.form-group { margin-bottom: 18px; }
-.form-label { font-size: 0.8rem; font-weight: 600; color: var(--text-2); margin-bottom: 8px; display: flex; align-items: center; gap: 6px; }
-.form-label span { font-family: var(--font-mono); font-size: 0.65rem; color: var(--text-3); }
+/* INPUT SECTION */
+.input-section{background:var(--surface);border-top:1px solid var(--border);border-bottom:1px solid var(--border)}
+.input-grid{display:grid;grid-template-columns:1fr 1fr;gap:24px}
+.form-group{margin-bottom:18px}
+.form-label{font-size:.8rem;font-weight:600;color:var(--text-2);margin-bottom:8px;display:flex;align-items:center;gap:6px}
+.form-label span{font-family:var(--font-mono);font-size:.65rem;color:var(--text-3)}
 
 /* Tag input */
-.tags-input-wrap {
-  background: var(--card);
-  border: 1px solid var(--border);
-  border-radius: 10px;
-  padding: 8px 12px;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-  min-height: 48px;
-  align-items: center;
-  cursor: text;
-  transition: border 0.2s, box-shadow 0.2s;
-}
-.tags-input-wrap:focus-within { border-color: var(--sky); box-shadow: 0 0 0 3px rgba(59,158,255,0.12); }
-.tag-chip {
-  display: inline-flex; align-items: center; gap: 4px;
-  background: rgba(59,158,255,0.12);
-  border: 1px solid rgba(59,158,255,0.25);
-  color: var(--sky);
-  padding: 3px 10px;
-  border-radius: 100px;
-  font-size: 0.75rem;
-  font-weight: 600;
-}
-.tag-chip button { color: var(--sky); opacity: 0.7; font-size: 14px; line-height: 1; transition: opacity 0.2s; }
-.tag-chip button:hover { opacity: 1; }
-.tags-input-field { border: none; background: transparent; color: var(--text-1); outline: none; font-size: 0.875rem; font-family: var(--font-body); flex: 1; min-width: 80px; padding: 4px 0; }
-.tags-input-field::placeholder { color: var(--text-3); }
+.tags-input-wrap{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:8px 12px;display:flex;flex-wrap:wrap;gap:6px;min-height:48px;align-items:center;cursor:text;transition:border .2s,box-shadow .2s}
+.tags-input-wrap:focus-within{border-color:var(--sky);box-shadow:0 0 0 3px rgba(59,158,255,.12)}
+.tag-chip{display:inline-flex;align-items:center;gap:4px;background:rgba(59,158,255,.12);border:1px solid rgba(59,158,255,.25);color:var(--sky);padding:3px 10px;border-radius:100px;font-size:.75rem;font-weight:600}
+.tag-chip button{color:var(--sky);opacity:.7;font-size:14px;line-height:1;transition:opacity .2s}
+.tag-chip button:hover{opacity:1}
+.tags-input-field{border:none;background:transparent;color:var(--text-1);outline:none;font-size:.875rem;font-family:var(--font-body);flex:1;min-width:80px;padding:4px 0}
+.tags-input-field::placeholder{color:var(--text-3)}
 
 /* Interest chips */
-.interest-grid { display: flex; flex-wrap: wrap; gap: 8px; }
-.interest-chip {
-  padding: 6px 14px;
-  border-radius: 100px;
-  font-size: 0.78rem;
-  font-weight: 500;
-  background: var(--card-2);
-  border: 1px solid var(--border);
-  color: var(--text-2);
-  cursor: pointer;
-  transition: all 0.2s;
-}
-.interest-chip:hover { border-color: var(--sky); color: var(--sky); }
-.interest-chip.active { background: rgba(59,158,255,0.12); border-color: rgba(59,158,255,0.4); color: var(--sky); }
+.interest-grid{display:flex;flex-wrap:wrap;gap:8px}
+.interest-chip{padding:6px 14px;border-radius:100px;font-size:.78rem;font-weight:500;background:var(--card-2);border:1px solid var(--border);color:var(--text-2);cursor:pointer;transition:all .2s}
+.interest-chip:hover{border-color:var(--sky);color:var(--sky)}
+.interest-chip.active{background:rgba(59,158,255,.12);border-color:rgba(59,158,255,.4);color:var(--sky)}
 
-/* CTA */
-.generate-btn {
-  width: 100%;
-  background: linear-gradient(135deg, var(--sky), #8b5cf6);
-  color: #fff;
-  padding: 15px;
-  border-radius: 12px;
-  font-weight: 700;
-  font-size: 1rem;
-  font-family: var(--font-display);
-  letter-spacing: 0.02em;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
-  transition: all 0.25s var(--ease-out);
-  margin-top: 8px;
-}
-.generate-btn:hover { transform: translateY(-2px); box-shadow: 0 12px 32px rgba(59,158,255,0.35); }
-.generate-btn:active { transform: translateY(0); }
+/* CTA Button */
+.generate-btn{width:100%;background:linear-gradient(135deg,var(--sky),#8b5cf6);color:#fff;padding:15px;border-radius:12px;font-weight:700;font-size:1rem;font-family:var(--font-display);letter-spacing:.02em;display:flex;align-items:center;justify-content:center;gap:10px;transition:all .25s var(--ease-out);margin-top:8px}
+.generate-btn:hover{transform:translateY(-2px);box-shadow:0 12px 32px rgba(59,158,255,.35)}
+.generate-btn:disabled{opacity:.6;cursor:not-allowed;transform:none}
 
-/* ============================================================
-   LOADING STATE
-============================================================ */
-.loading-overlay {
-  display: none;
-  text-align: center;
-  padding: 60px 20px;
-}
-.loading-overlay.active { display: block; }
-.loader-ring {
-  width: 72px; height: 72px;
-  border-radius: 50%;
-  border: 3px solid var(--border);
-  border-top-color: var(--sky);
-  animation: spin 1s linear infinite;
-  margin: 0 auto 24px;
-}
-@keyframes spin { to { transform: rotate(360deg); } }
-.loader-text {
-  font-family: var(--font-display);
-  font-size: 1.2rem;
-  font-weight: 700;
-  margin-bottom: 10px;
-}
-.loader-sub {
-  font-size: 0.875rem;
-  color: var(--text-3);
-  font-family: var(--font-mono);
-}
-.loader-dots span {
-  display: inline-block;
-  width: 6px; height: 6px;
-  border-radius: 50%;
-  background: var(--sky);
-  margin: 0 3px;
-  animation: bounce-dot 1.4s ease-in-out infinite;
-}
-.loader-dots span:nth-child(2) { animation-delay: 0.2s; }
-.loader-dots span:nth-child(3) { animation-delay: 0.4s; }
-@keyframes bounce-dot {
-  0%,60%,100% { transform: translateY(0); opacity: 0.4; }
-  30% { transform: translateY(-10px); opacity: 1; }
-}
-.loader-steps { display: flex; justify-content: center; gap: 24px; margin-top: 32px; flex-wrap: wrap; }
-.loader-step {
-  display: flex; flex-direction: column; align-items: center; gap: 6px;
-  padding: 14px 20px;
-  background: var(--card);
-  border: 1px solid var(--border);
-  border-radius: 14px;
-  font-size: 0.78rem;
-  color: var(--text-3);
-  opacity: 0.4;
-  transition: all 0.3s;
-  min-width: 100px;
-}
-.loader-step.done { opacity: 1; border-color: rgba(0,200,150,0.3); color: var(--emerald); }
-.loader-step.active { opacity: 1; border-color: rgba(59,158,255,0.4); color: var(--sky); animation: pulse-step 1s ease-in-out infinite; }
-@keyframes pulse-step { 0%,100% { box-shadow: none; } 50% { box-shadow: 0 0 0 3px rgba(59,158,255,0.15); } }
-.loader-step-icon { font-size: 20px; }
+/* LOADING */
+.loader-dots span{display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--sky);margin:0 3px;animation:bounce-dot 1.4s ease-in-out infinite}
+.loader-dots span:nth-child(2){animation-delay:.2s}
+.loader-dots span:nth-child(3){animation-delay:.4s}
+@keyframes bounce-dot{0%,60%,100%{transform:translateY(0);opacity:.4}30%{transform:translateY(-10px);opacity:1}}
+.loader-steps{display:flex;justify-content:center;gap:24px;margin-top:32px;flex-wrap:wrap}
+.loader-step{display:flex;flex-direction:column;align-items:center;gap:6px;padding:14px 20px;background:var(--card);border:1px solid var(--border);border-radius:14px;font-size:.78rem;color:var(--text-3);opacity:.4;transition:all .3s;min-width:100px}
+.loader-step.done{opacity:1;border-color:rgba(0,200,150,.3);color:var(--emerald)}
+.loader-step.active{opacity:1;border-color:rgba(59,158,255,.4);color:var(--sky);animation:pulse-step 1s ease-in-out infinite}
+@keyframes pulse-step{0%,100%{box-shadow:none}50%{box-shadow:0 0 0 3px rgba(59,158,255,.15)}}
+.loader-step-icon{font-size:20px}
 
-/* ============================================================
-   ROADMAP SECTION
-============================================================ */
-.roadmap-section { display: none; }
-.roadmap-section.active { display: block; }
+/* ROADMAP PROGRESS BAND */
+.progress-band{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:20px 28px;margin-bottom:28px;display:flex;align-items:center;gap:28px;flex-wrap:wrap}
+.progress-circle{width:72px;height:72px;flex-shrink:0;position:relative}
+.progress-circle svg{transform:rotate(-90deg)}
+.progress-circle-text{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;font-family:var(--font-display);font-size:1rem;font-weight:700;color:var(--sky)}
+.progress-circle-text small{font-size:.6rem;color:var(--text-3);font-family:var(--font-body);font-weight:400}
+.progress-track{height:8px;background:var(--card-2);border-radius:100px;overflow:hidden;margin-top:8px}
+.progress-fill{height:100%;border-radius:100px;background:linear-gradient(90deg,var(--sky),#8b5cf6);transition:width 1.2s var(--ease-out)}
+.is-hidden{display:none}
+.is-visible{display:block}
 
-/* Progress bar top */
-.progress-band {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 16px;
-  padding: 20px 28px;
-  margin-bottom: 28px;
-  display: flex;
-  align-items: center;
-  gap: 28px;
-  flex-wrap: wrap;
-}
-.progress-circle {
-  width: 72px; height: 72px;
-  flex-shrink: 0;
-  position: relative;
-}
-.progress-circle svg { transform: rotate(-90deg); }
-.progress-circle-text {
-  position: absolute;
-  inset: 0;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-family: var(--font-display);
-  font-size: 1rem;
-  font-weight: 700;
-  color: var(--sky);
-}
-.progress-circle-text small { font-size: 0.6rem; color: var(--text-3); font-family: var(--font-body); font-weight: 400; }
-.progress-details { flex: 1; }
-.progress-title { font-family: var(--font-display); font-weight: 700; margin-bottom: 6px; }
-.progress-track { height: 8px; background: var(--card-2); border-radius: 100px; overflow: hidden; margin-top: 8px; }
-.progress-fill { height: 100%; border-radius: 100px; background: linear-gradient(90deg, var(--sky), #8b5cf6); transition: width 1.2s var(--ease-out); }
-.progress-tags { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px; }
+/* ROADMAP TABS */
+.roadmap-tabs{display:flex;gap:8px;margin-bottom:24px}
+.roadmap-tab{padding:8px 18px;border-radius:10px;font-size:.82rem;font-weight:600;border:1px solid var(--border);color:var(--text-2);cursor:pointer;transition:all .2s}
+.roadmap-tab.active{background:rgba(59,158,255,.12);border-color:rgba(59,158,255,.35);color:var(--sky)}
 
-/* Week/Month tabs */
-.roadmap-tabs { display: flex; gap: 8px; margin-bottom: 24px; }
-.roadmap-tab {
-  padding: 8px 18px;
-  border-radius: 10px;
-  font-size: 0.82rem;
-  font-weight: 600;
-  border: 1px solid var(--border);
-  color: var(--text-2);
-  cursor: pointer;
-  transition: all 0.2s;
-}
-.roadmap-tab.active { background: rgba(59,158,255,0.12); border-color: rgba(59,158,255,0.35); color: var(--sky); }
-.roadmap-tab:hover:not(.active) { border-color: var(--border-h); color: var(--text-1); }
+/* ROADMAP GRID */
+.roadmap-main-grid{display:grid;grid-template-columns:1fr 360px;gap:28px}
 
-/* Roadmap grid */
-.roadmap-main-grid { display: grid; grid-template-columns: 1fr 360px; gap: 28px; }
+/* TIMELINE */
+.roadmap-timeline{position:relative;padding-left:30px}
+.roadmap-timeline::before{content:'';position:absolute;left:8px;top:12px;bottom:12px;width:2px;background:linear-gradient(to bottom,var(--sky),#8b5cf6,rgba(139,92,246,.1))}
+.roadmap-week{position:relative;margin-bottom:16px;padding:22px 24px;background:var(--card);border:1px solid var(--border);border-radius:16px;transition:all .3s var(--ease-out);cursor:pointer}
+.roadmap-week:hover{border-color:rgba(59,158,255,.3);transform:translateX(4px)}
+.roadmap-week.completed{border-color:rgba(0,200,150,.2);background:linear-gradient(135deg,var(--card),rgba(0,200,150,.03))}
+.roadmap-week.active-week{border-color:rgba(59,158,255,.45);background:linear-gradient(135deg,var(--card),rgba(59,158,255,.05));box-shadow:0 4px 20px rgba(59,158,255,.12)}
+.roadmap-week::before{content:'';position:absolute;left:-26px;top:26px;width:12px;height:12px;border-radius:50%;background:var(--card-2);border:2px solid var(--border)}
+.roadmap-week.completed::before{background:var(--emerald);border-color:var(--emerald);box-shadow:0 0 0 3px rgba(0,200,150,.2)}
+.roadmap-week.active-week::before{background:var(--sky);border-color:var(--sky);box-shadow:0 0 0 4px rgba(59,158,255,.25);animation:pulse-ring 2s infinite}
+@keyframes pulse-ring{0%,100%{box-shadow:0 0 0 3px rgba(59,158,255,.2)}50%{box-shadow:0 0 0 6px rgba(59,158,255,.1)}}
+.roadmap-week-header{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:10px}
+.roadmap-week-label{font-family:var(--font-mono);font-size:.67rem;color:var(--sky);letter-spacing:.06em;text-transform:uppercase;margin-bottom:4px}
+.roadmap-week.completed .roadmap-week-label{color:var(--emerald)}
+.roadmap-week-title{font-family:var(--font-display);font-weight:700;font-size:.95rem}
+.roadmap-week-check{width:28px;height:28px;border-radius:50%;border:2px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0;transition:all .2s;cursor:pointer}
+.roadmap-week-check:hover{border-color:var(--emerald)}
+.roadmap-week.completed .roadmap-week-check{background:var(--emerald);border-color:var(--emerald);color:#000}
+.roadmap-week-body{font-size:.84rem;color:var(--text-2);line-height:1.65;margin-bottom:12px}
+.week-details{display:none;margin-top:14px;border-top:1px solid var(--border);padding-top:14px}
+.week-details.open{display:block}
+.week-detail-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px}
+.week-detail-box{padding:12px;background:var(--card-2);border-radius:10px;border:1px solid var(--border)}
+.week-detail-label{font-size:.68rem;color:var(--text-3);margin-bottom:6px;font-family:var(--font-mono);text-transform:uppercase;letter-spacing:.05em}
+.week-detail-val{font-size:.82rem;color:var(--text-1);font-weight:500}
+.week-resource-link{display:inline-flex;align-items:center;gap:5px;padding:4px 10px;background:rgba(59,158,255,.08);border:1px solid rgba(59,158,255,.2);border-radius:6px;font-size:.72rem;color:var(--sky);font-weight:500;cursor:pointer;transition:all .2s;text-decoration:none}
+.week-resource-link:hover{background:rgba(59,158,255,.15)}
+.week-resources{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px}
+.week-resource-tag{padding:3px 9px;border-radius:6px;font-size:.7rem;background:rgba(59,158,255,.1);border:1px solid rgba(59,158,255,.25);color:var(--sky)}
+.week-resource-tag.completed{background:rgba(0,200,150,.08);border-color:rgba(0,200,150,.2);color:var(--emerald)}
+.week-project{padding:10px 14px;background:rgba(139,92,246,.07);border:1px solid rgba(139,92,246,.2);border-radius:9px;font-size:.82rem;color:var(--mauve)}
+.week-project::before{content:'🏗 Mini Project: ';font-weight:700}
 
-/* Timeline */
-.roadmap-timeline { position: relative; padding-left: 30px; }
-.roadmap-timeline::before {
-  content: '';
-  position: absolute;
-  left: 8px; top: 12px; bottom: 12px;
-  width: 2px;
-  background: linear-gradient(to bottom, var(--sky), #8b5cf6, rgba(139,92,246,0.1));
-}
-.roadmap-week {
-  position: relative;
-  margin-bottom: 16px;
-  padding: 22px 24px;
-  background: var(--card);
-  border: 1px solid var(--border);
-  border-radius: 16px;
-  transition: all 0.3s var(--ease-out);
-  cursor: pointer;
-}
-.roadmap-week:hover { border-color: rgba(59,158,255,0.3); transform: translateX(4px); }
-.roadmap-week.completed { border-color: rgba(0,200,150,0.2); background: linear-gradient(135deg, var(--card), rgba(0,200,150,0.03)); }
-.roadmap-week.active-week { border-color: rgba(59,158,255,0.45); background: linear-gradient(135deg, var(--card), rgba(59,158,255,0.05)); box-shadow: 0 4px 20px rgba(59,158,255,0.12); }
-.roadmap-week::before {
-  content: '';
-  position: absolute;
-  left: -26px; top: 26px;
-  width: 12px; height: 12px;
-  border-radius: 50%;
-  background: var(--card-2);
-  border: 2px solid var(--border);
-}
-.roadmap-week.completed::before { background: var(--emerald); border-color: var(--emerald); box-shadow: 0 0 0 3px rgba(0,200,150,0.2); }
-.roadmap-week.active-week::before { background: var(--sky); border-color: var(--sky); box-shadow: 0 0 0 4px rgba(59,158,255,0.25); animation: pulse-ring 2s infinite; }
-@keyframes pulse-ring { 0%,100% { box-shadow: 0 0 0 3px rgba(59,158,255,0.2); } 50% { box-shadow: 0 0 0 6px rgba(59,158,255,0.1); } }
-.roadmap-week-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; margin-bottom: 10px; }
-.roadmap-week-label { font-family: var(--font-mono); font-size: 0.67rem; color: var(--sky); letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 4px; }
-.roadmap-week.completed .roadmap-week-label { color: var(--emerald); }
-.roadmap-week-title { font-family: var(--font-display); font-weight: 700; font-size: 0.95rem; }
-.roadmap-week-check {
-  width: 28px; height: 28px;
-  border-radius: 50%;
-  border: 2px solid var(--border);
-  display: flex; align-items: center; justify-content: center;
-  font-size: 13px;
-  flex-shrink: 0;
-  transition: all 0.2s;
-  cursor: pointer;
-}
-.roadmap-week-check:hover { border-color: var(--emerald); }
-.roadmap-week.completed .roadmap-week-check { background: var(--emerald); border-color: var(--emerald); color: #000; }
-.roadmap-week-body { font-size: 0.84rem; color: var(--text-2); line-height: 1.65; margin-bottom: 12px; }
+/* SKILL GAP */
+.skill-gap-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:20px}
+.skill-gap-col-title{font-family:var(--font-mono);font-size:.68rem;letter-spacing:.08em;text-transform:uppercase;margin-bottom:12px;font-weight:700}
+.skill-item{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:10px;margin-bottom:8px;font-size:.82rem;font-weight:500}
+.skill-item.have{background:rgba(0,200,150,.07);border:1px solid rgba(0,200,150,.18);color:var(--emerald)}
+.skill-item.missing{background:rgba(255,107,53,.06);border:1px solid rgba(255,107,53,.18);color:var(--coral)}
+.skill-item.partial{background:rgba(255,209,102,.06);border:1px solid rgba(255,209,102,.18);color:var(--gold)}
+.skill-item-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.skill-item.have .skill-item-dot{background:var(--emerald)}
+.skill-item.missing .skill-item-dot{background:var(--coral)}
+.skill-item.partial .skill-item-dot{background:var(--gold)}
+.skill-level{margin-left:auto;font-family:var(--font-mono);font-size:.68rem;opacity:.8}
 
-/* Step details inside week */
-.week-details { display: none; margin-top: 14px; border-top: 1px solid var(--border); padding-top: 14px; }
-.week-details.open { display: block; }
-.week-detail-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 12px; }
-.week-detail-box {
-  padding: 12px;
-  background: var(--card-2);
-  border-radius: 10px;
-  border: 1px solid var(--border);
-}
-.week-detail-label { font-size: 0.68rem; color: var(--text-3); margin-bottom: 6px; font-family: var(--font-mono); text-transform: uppercase; letter-spacing: 0.05em; }
-.week-detail-val { font-size: 0.82rem; color: var(--text-1); font-weight: 500; }
-.week-resource-link {
-  display: inline-flex; align-items: center; gap: 5px;
-  padding: 4px 10px;
-  background: rgba(59,158,255,0.08);
-  border: 1px solid rgba(59,158,255,0.2);
-  border-radius: 6px;
-  font-size: 0.72rem;
-  color: var(--sky);
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.2s;
-}
-.week-resource-link:hover { background: rgba(59,158,255,0.15); }
-.week-resources { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 10px; }
-.week-project {
-  padding: 10px 14px;
-  background: rgba(139,92,246,0.07);
-  border: 1px solid rgba(139,92,246,0.2);
-  border-radius: 9px;
-  font-size: 0.82rem;
-  color: var(--mauve);
-}
-.week-project::before { content: '🏗 Mini Project: '; font-weight: 700; }
+/* SIDEBAR */
+.tracker-panel{position:sticky;top:80px;display:flex;flex-direction:column;gap:16px}
+.tracker-item{display:flex;gap:12px;align-items:flex-start;padding:12px;border-radius:10px;background:var(--card-2);border:1px solid var(--border);cursor:pointer;transition:all .2s}
+.tracker-item:hover{border-color:rgba(59,158,255,.2)}
+.tracker-item.done{border-color:rgba(0,200,150,.2)}
+.tracker-check{width:20px;height:20px;border-radius:50%;border:2px solid var(--border);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:10px;transition:all .2s;margin-top:1px}
+.tracker-item.done .tracker-check{background:var(--emerald);border-color:var(--emerald);color:#000}
+.tracker-label{font-size:.82rem;font-weight:500}
+.tracker-meta{font-size:.7rem;color:var(--text-3);margin-top:2px}
+.skill-progress{margin-bottom:12px}
+.skill-progress-header{display:flex;justify-content:space-between;margin-bottom:5px;font-size:.8rem}
+.skill-progress-pct{font-family:var(--font-mono);font-size:.72rem;color:var(--text-3)}
+.skill-progress-bar{height:5px;background:var(--card-2);border-radius:100px;overflow:hidden}
+.skill-progress-fill{height:100%;border-radius:100px;transition:width 1.2s var(--ease-out)}
 
-/* ============================================================
-   SKILL GAP ANALYSIS
-============================================================ */
-.skill-gap-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 20px; }
-.skill-gap-col-title {
-  font-family: var(--font-mono);
-  font-size: 0.68rem;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  margin-bottom: 12px;
-  font-weight: 700;
-}
-.skill-item {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 10px 12px;
-  border-radius: 10px;
-  margin-bottom: 8px;
-  font-size: 0.82rem;
-  font-weight: 500;
-}
-.skill-item.have {
-  background: rgba(0,200,150,0.07);
-  border: 1px solid rgba(0,200,150,0.18);
-  color: var(--emerald);
-}
-.skill-item.missing {
-  background: rgba(255,107,53,0.06);
-  border: 1px solid rgba(255,107,53,0.18);
-  color: var(--coral);
-}
-.skill-item.partial {
-  background: rgba(255,209,102,0.06);
-  border: 1px solid rgba(255,209,102,0.18);
-  color: var(--gold);
-}
-.skill-item-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
-.skill-item.have .skill-item-dot { background: var(--emerald); }
-.skill-item.missing .skill-item-dot { background: var(--coral); }
-.skill-item.partial .skill-item-dot { background: var(--gold); }
-.skill-level { margin-left: auto; font-family: var(--font-mono); font-size: 0.68rem; opacity: 0.8; }
-.skill-bar { height: 4px; background: var(--card-2); border-radius: 100px; overflow: hidden; margin-top: 5px; }
-.skill-bar-fill { height: 100%; border-radius: 100px; }
+/* AI INSIGHTS */
+.ai-insights-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:20px}
+.ai-insight-card{padding:20px;border-radius:16px;border:1px solid var(--border);background:var(--card);transition:all .3s}
+.ai-insight-card:hover{transform:translateY(-4px);border-color:rgba(59,158,255,.25);box-shadow:var(--shadow-md)}
+.ai-insight-icon{font-size:28px;margin-bottom:12px}
+.ai-insight-title{font-family:var(--font-display);font-weight:700;margin-bottom:8px;font-size:.95rem}
+.ai-insight-body{font-size:.83rem;color:var(--text-2);line-height:1.65}
+.ai-message-box{padding:18px 22px;background:var(--card-2);border:1px solid rgba(59,158,255,.15);border-radius:4px 16px 16px 16px;font-size:.9rem;line-height:1.75;color:var(--text-2);position:relative;margin-top:16px}
+.ai-message-box::before{content:'🤖 Gemini';display:block;font-family:var(--font-mono);font-size:.68rem;color:var(--sky);margin-bottom:10px;font-weight:700}
 
-/* ============================================================
-   PROGRESS TRACKER (sidebar)
-============================================================ */
-.tracker-panel { position: sticky; top: 80px; display: flex; flex-direction: column; gap: 16px; }
-.tracker-item {
-  display: flex;
-  gap: 12px;
-  align-items: flex-start;
-  padding: 12px;
-  border-radius: 10px;
-  background: var(--card-2);
-  border: 1px solid var(--border);
-  cursor: pointer;
-  transition: all 0.2s;
-}
-.tracker-item:hover { border-color: rgba(59,158,255,0.2); }
-.tracker-item.done { border-color: rgba(0,200,150,0.2); }
-.tracker-check {
-  width: 20px; height: 20px;
-  border-radius: 50%;
-  border: 2px solid var(--border);
-  flex-shrink: 0;
-  display: flex; align-items: center; justify-content: center;
-  font-size: 10px;
-  transition: all 0.2s;
-  margin-top: 1px;
-}
-.tracker-item.done .tracker-check { background: var(--emerald); border-color: var(--emerald); color: #000; }
-.tracker-label { font-size: 0.82rem; font-weight: 500; }
-.tracker-meta { font-size: 0.7rem; color: var(--text-3); margin-top: 2px; }
+/* ACTION BUTTONS */
+.actions-bar{display:flex;gap:12px;flex-wrap:wrap;margin-top:24px;padding-top:24px;border-top:1px solid var(--border)}
+.btn-action{display:inline-flex;align-items:center;gap:8px;padding:10px 20px;border-radius:10px;font-weight:600;font-size:.85rem;transition:all .2s;cursor:pointer}
+.btn-sky{background:rgba(59,158,255,.12);border:1px solid rgba(59,158,255,.3);color:var(--sky)}
+.btn-sky:hover{background:rgba(59,158,255,.2);transform:translateY(-1px)}
+.btn-emerald{background:rgba(0,200,150,.12);border:1px solid rgba(0,200,150,.3);color:var(--emerald)}
+.btn-emerald:hover{background:rgba(0,200,150,.2);transform:translateY(-1px)}
+.btn-ghost{background:var(--card);border:1px solid var(--border);color:var(--text-2)}
+.btn-ghost:hover{border-color:var(--border-h);color:var(--text-1);transform:translateY(-1px)}
 
-/* Mini progress bars in sidebar */
-.skill-progress { margin-bottom: 12px; }
-.skill-progress-header { display: flex; justify-content: space-between; margin-bottom: 5px; font-size: 0.8rem; }
-.skill-progress-pct { font-family: var(--font-mono); font-size: 0.72rem; color: var(--text-3); }
-.skill-progress-bar { height: 5px; background: var(--card-2); border-radius: 100px; overflow: hidden; }
-.skill-progress-fill { height: 100%; border-radius: 100px; transition: width 1.2s var(--ease-out); }
+/* HISTORY */
+.history-item{display:flex;align-items:center;gap:14px;padding:14px 16px;background:var(--card-2);border:1px solid var(--border);border-radius:12px;margin-bottom:10px;cursor:pointer;transition:all .2s}
+.history-item:hover{border-color:rgba(59,158,255,.25);transform:translateX(4px)}
+.history-dot{width:36px;height:36px;border-radius:10px;background:rgba(59,158,255,.12);display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
+.history-title{font-weight:600;font-size:.875rem}
+.history-meta{font-size:.72rem;color:var(--text-3);margin-top:2px}
+.history-score{font-family:var(--font-display);font-weight:700;font-size:1rem;color:var(--sky);margin-left:auto}
 
-/* ============================================================
-   AI INSIGHTS
-============================================================ */
-.ai-insights-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-top: 20px; }
-.ai-insight-card {
-  padding: 20px;
-  border-radius: 16px;
-  border: 1px solid var(--border);
-  background: var(--card);
-  transition: all 0.3s;
-}
-.ai-insight-card:hover { transform: translateY(-4px); border-color: rgba(59,158,255,0.25); box-shadow: var(--shadow-md); }
-.ai-insight-icon { font-size: 28px; margin-bottom: 12px; }
-.ai-insight-title { font-family: var(--font-display); font-weight: 700; margin-bottom: 8px; font-size: 0.95rem; }
-.ai-insight-body { font-size: 0.83rem; color: var(--text-2); line-height: 1.65; }
+/* TOAST */
+.toast{position:fixed;bottom:28px;right:28px;background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:14px 20px;font-size:.875rem;display:flex;align-items:center;gap:12px;box-shadow:var(--shadow-lg);z-index:10000;transform:translateY(100px);opacity:0;transition:all .4s var(--ease-out)}
+.toast.show{transform:translateY(0);opacity:1}
 
-.ai-message-box {
-  padding: 18px 22px;
-  background: var(--card-2);
-  border: 1px solid rgba(59,158,255,0.15);
-  border-radius: 4px 16px 16px 16px;
-  font-size: 0.9rem;
-  line-height: 1.75;
-  color: var(--text-2);
-  position: relative;
-  margin-top: 16px;
-}
-.ai-message-box::before {
-  content: '🤖 Gemini';
-  display: block;
-  font-family: var(--font-mono);
-  font-size: 0.68rem;
-  color: var(--sky);
-  margin-bottom: 10px;
-  font-weight: 700;
-}
+/* ANIMATIONS */
+@keyframes fadeUp{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+@keyframes spin{to{transform:rotate(360deg)}}
+.reveal{opacity:0;transform:translateY(28px);transition:opacity .7s var(--ease-out),transform .7s var(--ease-out)}
+.reveal.visible{opacity:1;transform:translateY(0)}
 
-/* typing animation */
-.ai-typing { display: flex; gap: 4px; padding: 10px 14px; background: var(--card-2); border-radius: 10px; width: fit-content; }
-.ai-typing span { width: 6px; height: 6px; border-radius: 50%; background: var(--text-3); animation: typing-dot 1.4s ease-in-out infinite; }
-.ai-typing span:nth-child(2) { animation-delay: 0.2s; }
-.ai-typing span:nth-child(3) { animation-delay: 0.4s; }
-@keyframes typing-dot { 0%,60%,100%{transform:translateY(0);opacity:0.4} 30%{transform:translateY(-8px);opacity:1} }
+::-webkit-scrollbar{width:5px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
+::selection{background:rgba(59,158,255,.25)}
 
-/* ============================================================
-   ACTION BUTTONS
-============================================================ */
-.actions-bar {
-  display: flex;
-  gap: 12px;
-  flex-wrap: wrap;
-  margin-top: 24px;
-  padding-top: 24px;
-  border-top: 1px solid var(--border);
+@media(max-width:1024px){
+  .hero-content{grid-template-columns:1fr;gap:48px}
+  .hero-visual{height:380px}
+  .roadmap-main-grid{grid-template-columns:1fr}
+  .tracker-panel{position:static}
+  .input-grid{grid-template-columns:1fr}
+  .skill-gap-grid{grid-template-columns:1fr}
+  .ai-insights-grid{grid-template-columns:1fr 1fr}
 }
-.btn-action {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  padding: 10px 20px;
-  border-radius: 10px;
-  font-weight: 600;
-  font-size: 0.85rem;
-  transition: all 0.2s;
-  cursor: pointer;
-}
-.btn-sky { background: rgba(59,158,255,0.12); border: 1px solid rgba(59,158,255,0.3); color: var(--sky); }
-.btn-sky:hover { background: rgba(59,158,255,0.2); transform: translateY(-1px); }
-.btn-emerald { background: rgba(0,200,150,0.12); border: 1px solid rgba(0,200,150,0.3); color: var(--emerald); }
-.btn-emerald:hover { background: rgba(0,200,150,0.2); transform: translateY(-1px); }
-.btn-ghost { background: var(--card); border: 1px solid var(--border); color: var(--text-2); }
-.btn-ghost:hover { border-color: var(--border-h); color: var(--text-1); transform: translateY(-1px); }
-
-/* History list */
-.history-item {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-  padding: 14px 16px;
-  background: var(--card-2);
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  margin-bottom: 10px;
-  cursor: pointer;
-  transition: all 0.2s;
-}
-.history-item:hover { border-color: rgba(59,158,255,0.25); transform: translateX(4px); }
-.history-dot { width: 36px; height: 36px; border-radius: 10px; background: rgba(59,158,255,0.12); display: flex; align-items: center; justify-content: center; font-size: 16px; flex-shrink: 0; }
-.history-title { font-weight: 600; font-size: 0.875rem; }
-.history-meta { font-size: 0.72rem; color: var(--text-3); margin-top: 2px; }
-.history-score { font-family: var(--font-display); font-weight: 700; font-size: 1rem; color: var(--sky); margin-left: auto; }
-
-/* ============================================================
-   TOAST
-============================================================ */
-.toast {
-  position: fixed;
-  bottom: 28px; right: 28px;
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 14px;
-  padding: 14px 20px;
-  font-size: 0.875rem;
-  display: flex; align-items: center; gap: 12px;
-  box-shadow: var(--shadow-lg);
-  z-index: 10000;
-  transform: translateY(100px);
-  opacity: 0;
-  transition: all 0.4s var(--ease-out);
-}
-.toast.show { transform: translateY(0); opacity: 1; }
-
-/* ============================================================
-   ANIMATIONS
-============================================================ */
-@keyframes fadeUp { from{opacity:0;transform:translateY(24px)} to{opacity:1;transform:translateY(0)} }
-@keyframes fadeIn { from{opacity:0} to{opacity:1} }
-
-.reveal {
-  opacity: 0;
-  transform: translateY(28px);
-  transition: opacity 0.7s var(--ease-out), transform 0.7s var(--ease-out);
-}
-.reveal.visible { opacity: 1; transform: translateY(0); }
-.stagger > * {
-  opacity: 0; transform: translateY(18px);
-  transition: opacity 0.5s var(--ease-out), transform 0.5s var(--ease-out);
-}
-.stagger.visible > *:nth-child(1) { opacity:1;transform:none;transition-delay:0s }
-.stagger.visible > *:nth-child(2) { opacity:1;transform:none;transition-delay:0.08s }
-.stagger.visible > *:nth-child(3) { opacity:1;transform:none;transition-delay:0.16s }
-.stagger.visible > *:nth-child(4) { opacity:1;transform:none;transition-delay:0.24s }
-.stagger.visible > *:nth-child(5) { opacity:1;transform:none;transition-delay:0.32s }
-.stagger.visible > *:nth-child(6) { opacity:1;transform:none;transition-delay:0.40s }
-
-::-webkit-scrollbar { width: 5px; }
-::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
-::selection { background: rgba(59,158,255,0.25); }
-
-/* ============================================================
-   RESPONSIVE
-============================================================ */
-@media (max-width: 1024px) {
-  .hero-content { grid-template-columns: 1fr; gap: 48px; }
-  .hero-visual { height: 380px; }
-  .roadmap-main-grid { grid-template-columns: 1fr; }
-  .tracker-panel { position: static; }
-  .input-grid { grid-template-columns: 1fr; }
-  .skill-gap-grid { grid-template-columns: 1fr; }
-  .ai-insights-grid { grid-template-columns: 1fr 1fr; }
-}
-@media (max-width: 640px) {
-  .section-wrap { padding: 60px 20px; }
-  .nav-inner { padding: 0 20px; }
-  .hero-content { padding: 60px 20px 40px; }
-  .ai-insights-grid { grid-template-columns: 1fr; }
-  .week-detail-grid { grid-template-columns: 1fr; }
-  .actions-bar { flex-direction: column; }
+@media(max-width:640px){
+  .section-wrap{padding:60px 20px}
+  .nav-inner{padding:0 20px}
+  .hero-content{padding:60px 20px 40px}
+  .ai-insights-grid{grid-template-columns:1fr}
+  .week-detail-grid{grid-template-columns:1fr}
+  .actions-bar{flex-direction:column}
 }
 </style>
 </head>
 <body>
+
+<!-- CSRF token for AJAX calls -->
+<script>
+  const CSRF_TOKEN = '{{ csrf_token }}';
+</script>
 
 <!-- TOAST -->
 <div class="toast" id="toast">
@@ -907,7 +310,7 @@ input::placeholder, textarea::placeholder { color: var(--text-3); }
       <span>CampusPath AI</span>
     </div>
     <div class="nav-actions">
-      <div class="theme-toggle" id="themeToggle" onclick="toggleTheme()" title="Toggle theme">🌙</div>
+      <div class="theme-toggle" id="themeToggle" onclick="toggleTheme()">🌙</div>
       <button class="btn-primary" onclick="document.getElementById('input-section').scrollIntoView({behavior:'smooth'})">
         <span>Generate Roadmap</span> <span>↗</span>
       </button>
@@ -915,78 +318,33 @@ input::placeholder, textarea::placeholder { color: var(--text-3); }
   </div>
 </nav>
 
-<!-- ============================================================
-     HERO
-============================================================ -->
+<!-- HERO -->
 <section class="hero">
   <canvas id="hero-canvas"></canvas>
   <div class="hero-mesh"></div>
   <div class="hero-content">
     <div>
-      <div class="hero-badge">
-        <div class="hero-badge-dot"></div>
-        Powered by Gemini AI · Personalised for You
-      </div>
-      <h1 class="hero-title">
-        Your 6-Month<br>
-        <span class="accent">Career Blueprint.</span><br>
-        Week by Week.
-      </h1>
-      <p class="hero-desc">
-        Connect your GitHub, tell us your skills and dream role — and get a dynamic, adaptive learning roadmap tailored exactly to where you are and where you want to be.
-      </p>
+      <div class="hero-badge"><div class="hero-badge-dot"></div>Powered by Gemini AI · Personalised for You</div>
+      <h1 class="hero-title">Your 6-Month<br><span class="accent">Career Blueprint.</span><br>Week by Week.</h1>
+      <p class="hero-desc">Connect your GitHub, tell us your skills and dream role — and get a dynamic, adaptive learning roadmap tailored exactly to where you are and where you want to be.</p>
       <div class="hero-stats">
-        <div>
-          <div class="hero-stat-val">24</div>
-          <div class="hero-stat-label">Weekly Milestones</div>
-        </div>
-        <div>
-          <div class="hero-stat-val">AI</div>
-          <div class="hero-stat-label">Skill Gap Analysis</div>
-        </div>
-        <div>
-          <div class="hero-stat-val">Live</div>
-          <div class="hero-stat-label">Progress Tracking</div>
-        </div>
-        <div>
-          <div class="hero-stat-val">100%</div>
-          <div class="hero-stat-label">Personalised</div>
-        </div>
+        <div><div class="hero-stat-val">24</div><div class="hero-stat-label">Weekly Milestones</div></div>
+        <div><div class="hero-stat-val">AI</div><div class="hero-stat-label">Skill Gap Analysis</div></div>
+        <div><div class="hero-stat-val">Live</div><div class="hero-stat-label">Progress Tracking</div></div>
+        <div><div class="hero-stat-val">100%</div><div class="hero-stat-label">Personalised</div></div>
       </div>
     </div>
     <div class="hero-visual">
-      <div class="f-card f-card-1">
-        <div class="f-card-icon">🔗</div>
-        <div class="f-card-title">GitHub Connected</div>
-        <div class="f-card-body">23 repos · 847 contributions · Skills auto-detected</div>
-        <span class="f-card-tag">SYNCED</span>
-      </div>
-      <div class="f-card f-card-2">
-        <div class="f-card-icon">⚡</div>
-        <div class="f-card-title">Skill Gap Found</div>
-        <div class="f-card-body">3 missing skills identified for Backend Engineer role</div>
-        <span class="f-card-tag">ANALYSIS</span>
-      </div>
-      <div class="f-card f-card-3">
-        <div class="f-card-icon">📅</div>
-        <div class="f-card-title">Week 16 Active</div>
-        <div class="f-card-body">Next.js + Performance — 68% overall progress</div>
-        <span class="f-card-tag">ON TRACK</span>
-      </div>
-      <div class="f-card f-card-4">
-        <div class="f-card-icon">🎯</div>
-        <div class="f-card-title">AI Insight</div>
-        <div class="f-card-body">System Design added to your path based on job market data</div>
-        <span class="f-card-tag">ADAPTIVE</span>
-      </div>
+      <div class="f-card f-card-1"><div class="f-card-icon">🔗</div><div class="f-card-title">GitHub Connected</div><div class="f-card-body">Auto-detect skills from your repos</div><span class="f-card-tag">SYNCED</span></div>
+      <div class="f-card f-card-2"><div class="f-card-icon">⚡</div><div class="f-card-title">Skill Gap Found</div><div class="f-card-body">Missing skills for your target role</div><span class="f-card-tag">ANALYSIS</span></div>
+      <div class="f-card f-card-3"><div class="f-card-icon">📅</div><div class="f-card-title">Active Week</div><div class="f-card-body">Your current learning milestone</div><span class="f-card-tag">ON TRACK</span></div>
+      <div class="f-card f-card-4"><div class="f-card-icon">🎯</div><div class="f-card-title">AI Insight</div><div class="f-card-body">Market-adaptive plan updates</div><span class="f-card-tag">ADAPTIVE</span></div>
       <div class="hero-orb">🗺️</div>
     </div>
   </div>
 </section>
 
-<!-- ============================================================
-     INPUT SECTION
-============================================================ -->
+<!-- INPUT SECTION -->
 <div class="input-section" id="input-section">
   <div class="section-wrap">
     <div class="reveal">
@@ -995,7 +353,7 @@ input::placeholder, textarea::placeholder { color: var(--text-3); }
       <p class="section-sub">The more context you give, the more personalised and accurate your roadmap will be.</p>
     </div>
 
-    <div style="margin-top: 40px;">
+    <div style="margin-top:40px">
       <div class="input-grid">
         <!-- LEFT -->
         <div>
@@ -1003,18 +361,16 @@ input::placeholder, textarea::placeholder { color: var(--text-3); }
             <div class="form-label">🔗 GitHub Profile URL <span>optional but recommended</span></div>
             <div style="display:flex;gap:10px">
               <input type="text" id="githubUrl" placeholder="https://github.com/your-username" style="flex:1">
-              <button onclick="connectGitHub()" style="background:rgba(59,158,255,0.15);border:1px solid rgba(59,158,255,0.3);color:var(--sky);padding:12px 18px;border-radius:10px;font-weight:600;font-size:0.82rem;white-space:nowrap;transition:all 0.2s" onmouseover="this.style.background='rgba(59,158,255,0.25)'" onmouseout="this.style.background='rgba(59,158,255,0.15)'">
-                Connect →
-              </button>
+              <button id="gh-connect-btn" onclick="connectGitHub()" style="background:rgba(59,158,255,.15);border:1px solid rgba(59,158,255,.3);color:var(--sky);padding:12px 18px;border-radius:10px;font-weight:600;font-size:.82rem;white-space:nowrap;transition:all .2s">Connect →</button>
             </div>
-            <div id="github-status" style="display:none;margin-top:8px;padding:10px 14px;background:rgba(0,200,150,0.07);border:1px solid rgba(0,200,150,0.2);border-radius:8px;font-size:0.8rem;color:var(--emerald)">
-              ✅ Connected — 23 repos · Top skills: React, TypeScript, Node.js auto-detected
+            <div id="github-status" style="display:none;margin-top:8px;padding:10px 14px;background:rgba(0,200,150,.07);border:1px solid rgba(0,200,150,.2);border-radius:8px;font-size:.8rem;color:var(--emerald)">
+              ✅ Connected — <span id="gh-info">Loading...</span>
             </div>
           </div>
 
           <div class="form-group">
             <div class="form-label">💼 Target Role <span>what you want to become</span></div>
-            <input type="text" id="targetRole" placeholder="e.g. Backend Developer, ML Engineer, Product Manager..." value="Frontend Engineer @ Startup">
+            <input type="text" id="targetRole" placeholder="e.g. Backend Developer, ML Engineer, Product Manager...">
           </div>
 
           <div class="form-group">
@@ -1041,25 +397,21 @@ input::placeholder, textarea::placeholder { color: var(--text-3); }
           <div class="form-group">
             <div class="form-label">🛠 Current Skills <span>press Enter to add</span></div>
             <div class="tags-input-wrap" id="skills-wrap" onclick="document.getElementById('skills-input').focus()">
-              <div class="tag-chip">React <button onclick="removeTag(event,this)">×</button></div>
-              <div class="tag-chip">TypeScript <button onclick="removeTag(event,this)">×</button></div>
-              <div class="tag-chip">HTML/CSS <button onclick="removeTag(event,this)">×</button></div>
-              <div class="tag-chip">Git <button onclick="removeTag(event,this)">×</button></div>
-              <input class="tags-input-field" id="skills-input" placeholder="Add a skill..." onkeydown="handleTagInput(event,'skills-wrap')">
+              <input class="tags-input-field" id="skills-input" placeholder="Type a skill and press Enter..." onkeydown="handleTagInput(event,'skills-wrap')">
             </div>
           </div>
 
           <div class="form-group">
             <div class="form-label">🎯 Interests & Focus Areas</div>
             <div class="interest-grid" id="interests-grid">
-              <div class="interest-chip active" onclick="this.classList.toggle('active')">🖥 Frontend Dev</div>
+              <div class="interest-chip" onclick="this.classList.toggle('active')">🖥 Frontend Dev</div>
               <div class="interest-chip" onclick="this.classList.toggle('active')">⚙️ Backend Dev</div>
               <div class="interest-chip" onclick="this.classList.toggle('active')">📱 Mobile</div>
-              <div class="interest-chip active" onclick="this.classList.toggle('active')">☁️ Cloud / DevOps</div>
+              <div class="interest-chip" onclick="this.classList.toggle('active')">☁️ Cloud / DevOps</div>
               <div class="interest-chip" onclick="this.classList.toggle('active')">🤖 ML / AI</div>
               <div class="interest-chip" onclick="this.classList.toggle('active')">📊 Data Science</div>
               <div class="interest-chip" onclick="this.classList.toggle('active')">🔐 Security</div>
-              <div class="interest-chip active" onclick="this.classList.toggle('active')">🚀 Startups</div>
+              <div class="interest-chip" onclick="this.classList.toggle('active')">🚀 Startups</div>
               <div class="interest-chip" onclick="this.classList.toggle('active')">🎨 Design Systems</div>
               <div class="interest-chip" onclick="this.classList.toggle('active')">📡 Web3</div>
             </div>
@@ -1072,25 +424,23 @@ input::placeholder, textarea::placeholder { color: var(--text-3); }
         </div>
       </div>
 
-      <button class="generate-btn" onclick="generateRoadmap()">
+      <button class="generate-btn" id="generate-btn" onclick="generateRoadmap()">
         <span>🗺️</span> <span>Generate My Personalised Roadmap</span> <span>→</span>
       </button>
     </div>
   </div>
 </div>
 
-<!-- ============================================================
-     LOADING STATE
-============================================================ -->
+<!-- LOADING SECTION -->
 <div id="loading-section" style="display:none;background:var(--surface);border-top:1px solid var(--border);border-bottom:1px solid var(--border)">
   <div class="section-wrap" style="text-align:center;padding:80px 32px">
     <div style="display:inline-block;width:80px;height:80px;border-radius:50%;border:3px solid var(--border);border-top-color:var(--sky);animation:spin 1s linear infinite;margin-bottom:28px"></div>
     <div style="font-family:var(--font-display);font-size:1.4rem;font-weight:800;margin-bottom:8px" id="loading-title">Generating your personalised roadmap...</div>
-    <div style="font-size:0.875rem;color:var(--text-3);font-family:var(--font-mono);margin-bottom:8px" id="loading-sub">Gemini is analysing your profile</div>
+    <div style="font-size:.875rem;color:var(--text-3);font-family:var(--font-mono);margin-bottom:8px" id="loading-sub">Gemini is analysing your profile</div>
     <div class="loader-dots" style="margin:10px auto 40px"><span></span><span></span><span></span></div>
-    <div class="loader-steps" id="loader-steps">
-      <div class="loader-step done" id="ls-1"><div class="loader-step-icon">🔗</div><div>GitHub scan</div></div>
-      <div class="loader-step active" id="ls-2"><div class="loader-step-icon">🧠</div><div>Skill analysis</div></div>
+    <div class="loader-steps">
+      <div class="loader-step" id="ls-1"><div class="loader-step-icon">🔗</div><div>GitHub scan</div></div>
+      <div class="loader-step" id="ls-2"><div class="loader-step-icon">🧠</div><div>Skill analysis</div></div>
       <div class="loader-step" id="ls-3"><div class="loader-step-icon">⚡</div><div>Gap detection</div></div>
       <div class="loader-step" id="ls-4"><div class="loader-step-icon">🗺️</div><div>Roadmap build</div></div>
       <div class="loader-step" id="ls-5"><div class="loader-step-icon">✨</div><div>AI insights</div></div>
@@ -1098,10 +448,8 @@ input::placeholder, textarea::placeholder { color: var(--text-3); }
   </div>
 </div>
 
-<!-- ============================================================
-     ROADMAP SECTION (hidden until generated)
-============================================================ -->
-<div id="roadmap-section" style="display:none">
+<!-- ROADMAP SECTION — rendered dynamically from DB -->
+<div id="roadmap-section" class="{% if roadmap %}is-visible{% else %}is-hidden{% endif %}">
 
   <!-- Progress Band -->
   <div style="background:var(--surface);border-top:1px solid var(--border);border-bottom:1px solid var(--border)">
@@ -1110,23 +458,37 @@ input::placeholder, textarea::placeholder { color: var(--text-3); }
         <div class="progress-circle">
           <svg width="72" height="72" viewBox="0 0 72 72">
             <circle cx="36" cy="36" r="30" fill="none" stroke="var(--border)" stroke-width="5"/>
-            <circle cx="36" cy="36" r="30" fill="none" stroke="var(--sky)" stroke-width="5" stroke-dasharray="188.5" stroke-dashoffset="60" stroke-linecap="round" id="progress-ring"/>
+            <circle cx="36" cy="36" r="30" fill="none" stroke="var(--sky)" stroke-width="5"
+              stroke-dasharray="188.5"
+              stroke-dashoffset="188.5"
+              data-initial-pct="{% if roadmap %}{{ roadmap.progress_pct|floatformat:0 }}{% else %}0{% endif %}"
+              stroke-linecap="round" id="progress-ring"/>
           </svg>
-          <div class="progress-circle-text">68%<small>done</small></div>
+          <div class="progress-circle-text" id="progress-pct-text">
+            {% if roadmap %}{{ roadmap.progress_pct|floatformat:0 }}%{% else %}0%{% endif %}
+            <small>done</small>
+          </div>
         </div>
         <div class="progress-details" style="flex:1">
-          <div class="progress-title">Frontend Engineer @ Startup — 6-Month Blueprint</div>
-          <div style="font-size:0.8rem;color:var(--text-2);margin-top:2px">Week 16 of 24 · Next.js & Performance Optimisation</div>
-          <div class="progress-track"><div class="progress-fill" style="width:68%" id="main-progress-fill"></div></div>
-          <div class="progress-tags">
-            <span style="padding:3px 10px;border-radius:100px;font-size:0.72rem;background:rgba(0,200,150,0.1);color:var(--emerald);border:1px solid rgba(0,200,150,0.2)">✓ 15 weeks done</span>
-            <span style="padding:3px 10px;border-radius:100px;font-size:0.72rem;background:rgba(59,158,255,0.1);color:var(--sky);border:1px solid rgba(59,158,255,0.2)">⦿ Week 16 active</span>
-            <span style="padding:3px 10px;border-radius:100px;font-size:0.72rem;background:var(--card-2);color:var(--text-3);border:1px solid var(--border)">○ 8 upcoming</span>
+          <div style="font-family:var(--font-display);font-weight:700;margin-bottom:6px" id="roadmap-title-display">
+            {% if roadmap %}{{ roadmap.title }}{% else %}Your Roadmap{% endif %}
+          </div>
+          <div style="font-size:.8rem;color:var(--text-2);margin-top:2px" id="roadmap-sub-display">
+            {% if roadmap %}Week {{ roadmap.current_week }} of {{ roadmap.total_weeks }}{% else %}Generate your roadmap to start{% endif %}
+          </div>
+          <div class="progress-track"><div class="progress-fill" id="main-progress-fill" data-initial-pct="{% if roadmap %}{{ roadmap.progress_pct|default_if_none:0 }}{% else %}0{% endif %}"></div></div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px" id="progress-tags-display">
+            {% if roadmap %}
+              <span style="padding:3px 10px;border-radius:100px;font-size:.72rem;background:rgba(0,200,150,.1);color:var(--emerald);border:1px solid rgba(0,200,150,.2)">✓ {{ roadmap.completed_weeks }} weeks done</span>
+              <span style="padding:3px 10px;border-radius:100px;font-size:.72rem;background:rgba(59,158,255,.1);color:var(--sky);border:1px solid rgba(59,158,255,.2)">⦿ Week {{ roadmap.current_week }} active</span>
+            {% endif %}
           </div>
         </div>
         <div style="display:flex;gap:10px">
-          <button class="btn-action btn-sky" onclick="showToast('Roadmap updated with latest skill data 🔄','🔄')">🔄 Update Roadmap</button>
-          <button class="btn-action btn-emerald" onclick="saveProgress()">💾 Save Progress</button>
+          {% if roadmap %}
+          <button class="btn-action btn-sky" data-roadmap-id="{{ roadmap.id }}" onclick="updateRoadmapFromButton(this)">🔄 Update Roadmap</button>
+          <button class="btn-action btn-emerald" data-roadmap-id="{{ roadmap.id }}" onclick="saveProgressFromButton(this)">💾 Save Progress</button>
+          {% endif %}
         </div>
       </div>
     </div>
@@ -1148,432 +510,389 @@ input::placeholder, textarea::placeholder { color: var(--text-3); }
       </div>
 
       <div class="roadmap-main-grid">
-        <!-- Timeline -->
+        <!-- TIMELINE from Django -->
         <div>
           <div class="roadmap-timeline" id="roadmap-timeline">
+            {% if roadmap %}
+              {% for week in roadmap.weeks.all %}
+              <div class="roadmap-week {% if week.status == 'completed' %}completed{% elif week.status == 'active' %}active-week{% endif %}"
+                   data-week-id="{{ week.id }}"
+                   onclick="toggleWeekUI(this)">
+                <div class="roadmap-week-header">
+                  <div>
+                    <div class="roadmap-week-label">
+                      {{ week.week_label }}
+                      {% if week.status == 'completed' %}· Completed ✓
+                      {% elif week.status == 'active' %}· 🔵 Active Now
+                      {% else %}· Upcoming{% endif %}
+                    </div>
+                    <div class="roadmap-week-title">{{ week.title }}</div>
+                  </div>
+                  <div class="roadmap-week-check"
+                       data-week-id="{{ week.id }}"
+                       onclick="toggleWeekCompleteFromButton(event, this)">
+                    {% if week.status == 'completed' %}✓{% else %}○{% endif %}
+                  </div>
+                </div>
+                <div class="roadmap-week-body">{{ week.description }}</div>
 
-            <!-- COMPLETED -->
-            <div class="roadmap-week completed" onclick="toggleWeek(this)">
-              <div class="roadmap-week-header">
-                <div>
-                  <div class="roadmap-week-label">Weeks 1–4 · Completed ✓</div>
-                  <div class="roadmap-week-title">HTML, CSS & JavaScript Deep Dive</div>
+                <!-- Resource tags (quick view) -->
+                <div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:10px">
+                  {% for res in week.resources.all %}
+                  <span class="week-resource-tag {% if week.status == 'completed' %}completed{% endif %}">
+                    {{ res.emoji }} {{ res.name }}
+                  </span>
+                  {% endfor %}
                 </div>
-                <div class="roadmap-week-check" onclick="event.stopPropagation()">✓</div>
-              </div>
-              <div class="roadmap-week-body">Master semantic HTML5, CSS Grid/Flexbox, and ES6+ JavaScript. Build a personal portfolio as your first project milestone.</div>
-              <div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:10px">
-                <span style="padding:3px 9px;border-radius:6px;font-size:0.7rem;background:rgba(0,200,150,0.08);border:1px solid rgba(0,200,150,0.2);color:var(--emerald)">MDN Web Docs</span>
-                <span style="padding:3px 9px;border-radius:6px;font-size:0.7rem;background:rgba(0,200,150,0.08);border:1px solid rgba(0,200,150,0.2);color:var(--emerald)">javascript.info</span>
-                <span style="padding:3px 9px;border-radius:6px;font-size:0.7rem;background:rgba(0,200,150,0.08);border:1px solid rgba(0,200,150,0.2);color:var(--emerald)">CSS Tricks</span>
-              </div>
-              <div class="week-details">
-                <div class="week-detail-grid">
-                  <div class="week-detail-box"><div class="week-detail-label">Mini Project</div><div class="week-detail-val">Personal Portfolio Site</div></div>
-                  <div class="week-detail-box"><div class="week-detail-label">Key Skills</div><div class="week-detail-val">HTML5, CSS Grid, ES6+</div></div>
-                </div>
-                <div class="week-resources">
-                  <span class="week-resource-link">📖 MDN Web Docs ↗</span>
-                  <span class="week-resource-link">🎮 JavaScript.info ↗</span>
-                  <span class="week-resource-link">🎨 CSS Tricks ↗</span>
-                </div>
-                <div class="week-project">Build & deploy a personal portfolio site with responsive design and animations</div>
-              </div>
-            </div>
 
-            <div class="roadmap-week completed" onclick="toggleWeek(this)">
-              <div class="roadmap-week-header">
-                <div>
-                  <div class="roadmap-week-label">Weeks 5–8 · Completed ✓</div>
-                  <div class="roadmap-week-title">React Fundamentals & Component Architecture</div>
-                </div>
-                <div class="roadmap-week-check" onclick="event.stopPropagation()">✓</div>
-              </div>
-              <div class="roadmap-week-body">Components, props, state, hooks (useState, useEffect, useContext). Build a full task manager app and explore folder structure best practices.</div>
-              <div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:10px">
-                <span style="padding:3px 9px;border-radius:6px;font-size:0.7rem;background:rgba(0,200,150,0.08);border:1px solid rgba(0,200,150,0.2);color:var(--emerald)">React Docs</span>
-                <span style="padding:3px 9px;border-radius:6px;font-size:0.7rem;background:rgba(0,200,150,0.08);border:1px solid rgba(0,200,150,0.2);color:var(--emerald)">Scrimba</span>
-              </div>
-              <div class="week-details">
-                <div class="week-detail-grid">
-                  <div class="week-detail-box"><div class="week-detail-label">Mini Project</div><div class="week-detail-val">Full Task Manager App</div></div>
-                  <div class="week-detail-box"><div class="week-detail-label">Key Skills</div><div class="week-detail-val">React Hooks, Components</div></div>
-                </div>
-                <div class="week-resources">
-                  <span class="week-resource-link">⚛️ React Docs ↗</span>
-                  <span class="week-resource-link">🎓 Scrimba React Course ↗</span>
-                </div>
-                <div class="week-project">Full-featured task manager with drag-and-drop, filters, and local storage persistence</div>
-              </div>
-            </div>
+                <!-- Expandable details -->
+                <div class="week-details {% if week.status == 'active' %}open{% endif %}">
+                  {% if week.mini_project or week.key_skills %}
+                  <div class="week-detail-grid">
+                    {% if week.mini_project %}
+                    <div class="week-detail-box">
+                      <div class="week-detail-label">Mini Project</div>
+                      <div class="week-detail-val">{{ week.mini_project }}</div>
+                    </div>
+                    {% endif %}
+                    {% if week.key_skills %}
+                    <div class="week-detail-box">
+                      <div class="week-detail-label">Key Skills</div>
+                      <div class="week-detail-val">{{ week.key_skills }}</div>
+                    </div>
+                    {% endif %}
+                  </div>
+                  {% endif %}
 
-            <div class="roadmap-week completed" onclick="toggleWeek(this)">
-              <div class="roadmap-week-header">
-                <div>
-                  <div class="roadmap-week-label">Weeks 9–12 · Completed ✓</div>
-                  <div class="roadmap-week-title">TypeScript, Testing & Advanced React Patterns</div>
-                </div>
-                <div class="roadmap-week-check" onclick="event.stopPropagation()">✓</div>
-              </div>
-              <div class="roadmap-week-body">Add TypeScript to React projects. Jest & React Testing Library. Custom hooks, useMemo, useCallback (skill gap detected from GitHub).</div>
-              <div class="week-details">
-                <div class="week-detail-grid">
-                  <div class="week-detail-box"><div class="week-detail-label">Mini Project</div><div class="week-detail-val">TypeScript React Dashboard</div></div>
-                  <div class="week-detail-box"><div class="week-detail-label">Key Skills</div><div class="week-detail-val">TS, Jest, Custom Hooks</div></div>
-                </div>
-                <div class="week-resources">
-                  <span class="week-resource-link">📘 TypeScript Handbook ↗</span>
-                  <span class="week-resource-link">🧪 Kent C. Dodds Testing ↗</span>
-                  <span class="week-resource-link">📐 patterns.dev ↗</span>
-                </div>
-                <div class="week-project">Convert a previous JS project to TypeScript and write full test suite achieving 80%+ coverage</div>
-              </div>
-            </div>
+                  <!-- Resource links -->
+                  <div class="week-resources">
+                    {% for res in week.resources.all %}
+                    <a href="{{ res.url }}" target="_blank" rel="noopener" class="week-resource-link">
+                      {{ res.emoji }} {{ res.name }} ↗
+                    </a>
+                    {% endfor %}
+                  </div>
 
-            <div class="roadmap-week completed" onclick="toggleWeek(this)">
-              <div class="roadmap-week-header">
-                <div>
-                  <div class="roadmap-week-label">Weeks 13–15 · Completed ✓</div>
-                  <div class="roadmap-week-title">API Integration, React Router & State Management</div>
-                </div>
-                <div class="roadmap-week-check" onclick="event.stopPropagation()">✓</div>
-              </div>
-              <div class="roadmap-week-body">REST APIs, React Router v6, Zustand. Build a multi-page GitHub explorer app using the GitHub API.</div>
-              <div class="week-details">
-                <div class="week-resources">
-                  <span class="week-resource-link">🔀 React Router Docs ↗</span>
-                  <span class="week-resource-link">🐻 Zustand GitHub ↗</span>
-                  <span class="week-resource-link">🐙 GitHub REST API ↗</span>
-                </div>
-                <div class="week-project">Multi-page GitHub explorer with user search, repo stats, and contribution graphs</div>
-              </div>
-            </div>
+                  <!-- Task checklist -->
+                  <div style="display:flex;flex-direction:column;gap:8px;margin-top:10px">
+                    {% for task in week.tasks.all %}
+                    <label class="tracker-item {% if task.is_done %}done{% endif %}"
+                           data-task-id="{{ task.id }}"
+                           onclick="toggleTaskDoneFromRow(event, this)">
+                      <div class="tracker-check">{% if task.is_done %}✓{% else %}○{% endif %}</div>
+                      <div>
+                        <div class="tracker-label {% if task.is_done %}done-label{% endif %}">{{ task.description }}</div>
+                        <div class="tracker-meta">
+                          {% if task.est_hours %}Est. {{ task.est_hours }}{% endif %}
+                          {% if task.task_type %} · {{ task.task_type }}{% endif %}
+                        </div>
+                      </div>
+                    </label>
+                    {% endfor %}
+                  </div>
 
-            <!-- ACTIVE -->
-            <div class="roadmap-week active-week" onclick="toggleWeek(this)">
-              <div class="roadmap-week-header">
-                <div>
-                  <div class="roadmap-week-label">Week 16 · 🔵 Active Now</div>
-                  <div class="roadmap-week-title">Performance Optimisation & Next.js Introduction</div>
+                  {% if week.mini_project %}
+                  <div class="week-project" style="margin-top:10px">{{ week.mini_project }}</div>
+                  {% endif %}
                 </div>
-                <div class="roadmap-week-check" onclick="toggleComplete(event,this)" style="border-color:rgba(59,158,255,0.4)">○</div>
               </div>
-              <div class="roadmap-week-body">Core Web Vitals, lazy loading, code splitting, image optimisation. Start with Next.js: file-based routing, SSR vs SSG, App Router. Deploy on Vercel.</div>
-              <div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:10px">
-                <span style="padding:3px 9px;border-radius:6px;font-size:0.7rem;background:rgba(59,158,255,0.1);border:1px solid rgba(59,158,255,0.25);color:var(--sky)">Next.js Docs</span>
-                <span style="padding:3px 9px;border-radius:6px;font-size:0.7rem;background:rgba(59,158,255,0.1);border:1px solid rgba(59,158,255,0.25);color:var(--sky)">web.dev</span>
-                <span style="padding:3px 9px;border-radius:6px;font-size:0.7rem;background:rgba(59,158,255,0.1);border:1px solid rgba(59,158,255,0.25);color:var(--sky)">Vercel</span>
-              </div>
-              <div class="week-details open">
-                <div class="week-detail-grid">
-                  <div class="week-detail-box"><div class="week-detail-label">Mini Project</div><div class="week-detail-val">Next.js Blog with MDX</div></div>
-                  <div class="week-detail-box"><div class="week-detail-label">Key Skills</div><div class="week-detail-val">Next.js, SSR/SSG, CWV</div></div>
-                </div>
-                <div class="week-resources">
-                  <span class="week-resource-link">▲ Next.js Docs ↗</span>
-                  <span class="week-resource-link">🌐 web.dev/performance ↗</span>
-                  <span class="week-resource-link">🚀 Vercel Platform ↗</span>
-                </div>
-                <div style="display:flex;flex-direction:column;gap:8px;margin-top:10px">
-                  <label style="display:flex;gap:10px;align-items:center;padding:9px 12px;background:var(--card-2);border-radius:8px;cursor:pointer;font-size:0.82rem">
-                    <input type="checkbox" style="width:auto;accent-color:var(--sky)"> Build a Next.js blog with MDX and dynamic routing
-                  </label>
-                  <label style="display:flex;gap:10px;align-items:center;padding:9px 12px;background:var(--card-2);border-radius:8px;cursor:pointer;font-size:0.82rem">
-                    <input type="checkbox" style="width:auto;accent-color:var(--sky)" checked> Read Next.js App Router documentation
-                  </label>
-                  <label style="display:flex;gap:10px;align-items:center;padding:9px 12px;background:var(--card-2);border-radius:8px;cursor:pointer;font-size:0.82rem">
-                    <input type="checkbox" style="width:auto;accent-color:var(--sky)"> Lighthouse audit on portfolio — hit 90+ score
-                  </label>
-                </div>
-                <div class="week-project" style="margin-top:10px">Next.js personal blog with MDX, dark mode, and Lighthouse score ≥ 90</div>
-              </div>
-            </div>
-
-            <!-- UPCOMING -->
-            <div class="roadmap-week" style="opacity:0.65" onclick="toggleWeek(this)">
-              <div class="roadmap-week-header">
-                <div>
-                  <div class="roadmap-week-label">Weeks 17–20 · Upcoming</div>
-                  <div class="roadmap-week-title">Full-Stack: Node.js, Express & Databases</div>
-                </div>
-                <div class="roadmap-week-check">○</div>
-              </div>
-              <div class="roadmap-week-body">Backend fundamentals: REST API design, Express.js, PostgreSQL with Prisma ORM. Build an end-to-end full-stack project.</div>
-              <div class="week-details">
-                <div class="week-resources">
-                  <span class="week-resource-link">🟢 Node.js Docs ↗</span>
-                  <span class="week-resource-link">🔷 Prisma Docs ↗</span>
-                </div>
-                <div class="week-project">Full-stack URL shortener with auth, analytics, and PostgreSQL backend</div>
-              </div>
-            </div>
-
-            <div class="roadmap-week" style="opacity:0.5" onclick="toggleWeek(this)">
-              <div class="roadmap-week-header">
-                <div>
-                  <div class="roadmap-week-label">Weeks 21–22 · Upcoming</div>
-                  <div class="roadmap-week-title">System Design Fundamentals</div>
-                </div>
-                <div class="roadmap-week-check">○</div>
-              </div>
-              <div class="roadmap-week-body">⚠️ Skill gap detected — no architecture diagrams in your repos. Load balancers, caching, microservices, CAP theorem. Essential for senior roles.</div>
-              <div class="week-details">
-                <div class="week-resources">
-                  <span class="week-resource-link">📐 System Design Primer ↗</span>
-                  <span class="week-resource-link">✏️ Excalidraw ↗</span>
-                </div>
-                <div class="week-project">Design and diagram 3 real-world systems: URL shortener, Twitter feed, Uber dispatch</div>
-              </div>
-            </div>
-
-            <div class="roadmap-week" style="opacity:0.4" onclick="toggleWeek(this)">
-              <div class="roadmap-week-header">
-                <div>
-                  <div class="roadmap-week-label">Weeks 23–24 · Upcoming</div>
-                  <div class="roadmap-week-title">Interview Prep & Portfolio Finalisation</div>
-                </div>
-                <div class="roadmap-week-check">○</div>
-              </div>
-              <div class="roadmap-week-body">DSA in JavaScript, mock interviews via CrackAI, 3 portfolio projects polished, resume & LinkedIn, warm outreach strategy for startup roles.</div>
-              <div class="week-details">
-                <div class="week-resources">
-                  <span class="week-resource-link">📚 Coding Interview Handbook ↗</span>
-                  <span class="week-resource-link">🎙 CrackAI Mock Interviews ↗</span>
-                </div>
-                <div class="week-project">Final capstone: full-stack SaaS app with auth, payments, and deployed on Vercel</div>
-              </div>
-            </div>
-
+              {% endfor %}
+            {% endif %}
           </div>
 
-          <!-- Actions -->
+          <!-- Action buttons -->
           <div class="actions-bar">
-            <button class="btn-action btn-sky" onclick="showToast('Roadmap updated with latest market data 🔄','🔄')">🔄 Update Roadmap</button>
-            <button class="btn-action btn-emerald" onclick="saveProgress()">💾 Save Progress</button>
+            {% if roadmap %}
+            <button class="btn-action btn-sky" data-roadmap-id="{{ roadmap.id }}" onclick="updateRoadmapFromButton(this)">🔄 Update Roadmap</button>
+            <button class="btn-action btn-emerald" data-roadmap-id="{{ roadmap.id }}" onclick="saveProgressFromButton(this)">💾 Save Progress</button>
+            {% endif %}
             <button class="btn-action btn-ghost" onclick="toggleHistory()">📄 View History</button>
-            <button class="btn-action btn-ghost" onclick="showToast('PDF exported successfully 📄','📄')" style="margin-left:auto">↓ Export PDF</button>
+            <button class="btn-action btn-ghost" style="margin-left:auto" onclick="showToast('PDF export coming soon!','📄')">↓ Export PDF</button>
           </div>
 
-          <!-- History (hidden by default) -->
+          <!-- History panel -->
           <div id="history-section" style="display:none;margin-top:24px">
             <div class="panel">
               <div class="panel-title">📄 Session History</div>
-              <div class="history-item">
+              {% for rm in all_roadmaps %}
+              <a href="{% url 'campuspath:roadmap_detail' rm.id %}" class="history-item">
                 <div class="history-dot">🗺️</div>
-                <div><div class="history-title">Frontend Engineer Roadmap — v2</div><div class="history-meta">Updated 2 days ago · Week 16 active</div></div>
-                <div class="history-score">68%</div>
-              </div>
-              <div class="history-item">
-                <div class="history-dot">🗺️</div>
-                <div><div class="history-title">Frontend Engineer Roadmap — v1</div><div class="history-meta">Created 3 weeks ago · Archived</div></div>
-                <div class="history-score">42%</div>
-              </div>
-              <div class="history-item">
-                <div class="history-dot">🚀</div>
-                <div><div class="history-title">Full-Stack Developer — Draft</div><div class="history-meta">Created 1 month ago · Not started</div></div>
-                <div class="history-score">0%</div>
-              </div>
+                <div>
+                  <div class="history-title">{{ rm.title }}</div>
+                  <div class="history-meta">
+                    {{ rm.created_at|timesince }} ago · v{{ rm.version }}
+                    {% if rm.status == 'active' %} · Active{% elif rm.status == 'archived' %} · Archived{% endif %}
+                  </div>
+                </div>
+                <div class="history-score">{{ rm.progress_pct|floatformat:0 }}%</div>
+              </a>
+              {% empty %}
+              <div style="color:var(--text-3);font-size:.875rem;text-align:center;padding:20px">No previous roadmaps yet.</div>
+              {% endfor %}
             </div>
           </div>
         </div>
 
-        <!-- Sidebar -->
+        <!-- SIDEBAR -->
         <div class="tracker-panel">
-          <!-- GitHub -->
+          <!-- GitHub panel -->
           <div class="panel">
             <div class="panel-title">🔗 GitHub Profile</div>
+            {% if profile and profile.github_connected %}
             <div style="display:flex;align-items:center;gap:12px;padding:12px;background:var(--card-2);border-radius:10px;margin-bottom:14px">
               <div style="width:40px;height:40px;border-radius:50%;background:var(--card);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:20px">👨‍💻</div>
-              <div><div style="font-weight:600;font-size:0.875rem">@arjun-sharma</div><div style="font-size:0.72rem;color:var(--emerald)">● Connected</div></div>
+              <div>
+                <div style="font-weight:600;font-size:.875rem">@{{ profile.github_username }}</div>
+                <div style="font-size:.72rem;color:var(--emerald)">● Connected</div>
+              </div>
             </div>
             <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
-              <div style="text-align:center;padding:10px;background:var(--card-2);border-radius:8px"><div style="font-family:var(--font-display);font-weight:700;color:var(--sky)">23</div><div style="font-size:0.65rem;color:var(--text-3)">Repositories</div></div>
-              <div style="text-align:center;padding:10px;background:var(--card-2);border-radius:8px"><div style="font-family:var(--font-display);font-weight:700;color:var(--sky)">847</div><div style="font-size:0.65rem;color:var(--text-3)">Contributions</div></div>
+              <div style="text-align:center;padding:10px;background:var(--card-2);border-radius:8px">
+                <div style="font-family:var(--font-display);font-weight:700;color:var(--sky)">{{ profile.github_repos }}</div>
+                <div style="font-size:.65rem;color:var(--text-3)">Repositories</div>
+              </div>
+              <div style="text-align:center;padding:10px;background:var(--card-2);border-radius:8px">
+                <div style="font-family:var(--font-display);font-weight:700;color:var(--sky)">{{ profile.github_contribs }}</div>
+                <div style="font-size:.65rem;color:var(--text-3)">Contributions</div>
+              </div>
             </div>
+            {% else %}
+            <div style="color:var(--text-3);font-size:.875rem;text-align:center;padding:20px">Not connected yet. Enter your GitHub URL above.</div>
+            {% endif %}
           </div>
 
           <!-- Skill Progress -->
+          {% if roadmap %}
           <div class="panel">
             <div class="panel-title">📈 Skill Progress</div>
+            {% for sp in roadmap.skill_progress.all %}
             <div class="skill-progress">
-              <div class="skill-progress-header"><span style="font-size:0.83rem;font-weight:500">React / Frontend</span><span class="skill-progress-pct">88%</span></div>
-              <div class="skill-progress-bar"><div class="skill-progress-fill" style="width:88%;background:linear-gradient(90deg,var(--sky),#8b5cf6)"></div></div>
+              <div class="skill-progress-header">
+                <span style="font-size:.83rem;font-weight:500">{{ sp.skill_name }}</span>
+                <span class="skill-progress-pct">{{ sp.percentage }}%</span>
+              </div>
+              <div class="skill-progress-bar">
+                <div class="skill-progress-fill" data-skill-pct="{{ sp.percentage }}" data-color-start="{{ sp.color_start }}" data-color-end="{{ sp.color_end }}"></div>
+              </div>
             </div>
-            <div class="skill-progress">
-              <div class="skill-progress-header"><span style="font-size:0.83rem;font-weight:500">TypeScript</span><span class="skill-progress-pct">75%</span></div>
-              <div class="skill-progress-bar"><div class="skill-progress-fill" style="width:75%;background:linear-gradient(90deg,var(--emerald),var(--sky))"></div></div>
-            </div>
-            <div class="skill-progress">
-              <div class="skill-progress-header"><span style="font-size:0.83rem;font-weight:500">Node.js / Backend</span><span class="skill-progress-pct">42%</span></div>
-              <div class="skill-progress-bar"><div class="skill-progress-fill" style="width:42%;background:linear-gradient(90deg,var(--coral),var(--gold))"></div></div>
-            </div>
-            <div class="skill-progress">
-              <div class="skill-progress-header"><span style="font-size:0.83rem;font-weight:500">System Design</span><span class="skill-progress-pct">22%</span></div>
-              <div class="skill-progress-bar"><div class="skill-progress-fill" style="width:22%;background:linear-gradient(90deg,var(--coral),rgba(255,107,53,0.5))"></div></div>
-            </div>
-            <div class="skill-progress">
-              <div class="skill-progress-header"><span style="font-size:0.83rem;font-weight:500">Testing</span><span class="skill-progress-pct">55%</span></div>
-              <div class="skill-progress-bar"><div class="skill-progress-fill" style="width:55%;background:linear-gradient(90deg,var(--gold),var(--emerald))"></div></div>
-            </div>
+            {% endfor %}
           </div>
 
           <!-- This Week's Tasks -->
+          {% with active_week=roadmap.weeks.all|dictsort:"order" %}
+          {% for week in roadmap.weeks.all %}
+          {% if week.status == 'active' %}
           <div class="panel">
             <div class="panel-title">🎯 This Week's Tasks</div>
             <div style="display:flex;flex-direction:column;gap:8px">
-              <div class="tracker-item">
-                <div class="tracker-check">○</div>
-                <div><div class="tracker-label">Build Next.js blog with MDX</div><div class="tracker-meta">Est. 4–6 hrs · Core task</div></div>
+              {% for task in week.tasks.all %}
+              <div class="tracker-item {% if task.is_done %}done{% endif %}" data-task-id="{{ task.id }}" onclick="toggleTaskDoneFromRow(event, this)">
+                <div class="tracker-check">{% if task.is_done %}✓{% else %}○{% endif %}</div>
+                <div>
+                  <div class="tracker-label">{{ task.description }}</div>
+                  <div class="tracker-meta">{% if task.est_hours %}Est. {{ task.est_hours }}{% endif %} {% if task.task_type %}· {{ task.task_type }}{% endif %}</div>
+                </div>
               </div>
-              <div class="tracker-item done">
-                <div class="tracker-check">✓</div>
-                <div><div class="tracker-label" style="text-decoration:line-through;color:var(--text-3)">Read App Router docs</div><div class="tracker-meta">Done ✓</div></div>
-              </div>
-              <div class="tracker-item">
-                <div class="tracker-check">○</div>
-                <div><div class="tracker-label">Lighthouse audit ≥ 90</div><div class="tracker-meta">Est. 1–2 hrs · Polish</div></div>
-              </div>
-              <div class="tracker-item">
-                <div class="tracker-check">○</div>
-                <div><div class="tracker-label">Deploy on Vercel</div><div class="tracker-meta">Est. 30 min · CI/CD</div></div>
-              </div>
+              {% endfor %}
             </div>
           </div>
+          {% endif %}
+          {% endfor %}
+          {% endwith %}
+          {% endif %}
         </div>
       </div>
     </div>
   </div>
 
-  <!-- ============================================================
-       SKILL GAP ANALYSIS
-  ============================================================ -->
+  <!-- SKILL GAP ANALYSIS -->
+  {% if roadmap %}
   <div style="background:var(--surface);border-top:1px solid var(--border);border-bottom:1px solid var(--border)">
     <div class="section-wrap">
       <div class="reveal">
         <div class="section-label">Skill Gap Analysis</div>
         <h2 class="section-title">Where You Stand vs. Where You Need to Be</h2>
-        <p class="section-sub">Gemini compared your GitHub activity and self-reported skills against live job descriptions for Frontend Engineer roles.</p>
+        <p class="section-sub">Gemini compared your skills against live job descriptions for {{ roadmap.target_role }}.</p>
       </div>
-
       <div class="skill-gap-grid" style="margin-top:36px">
         <div>
           <div class="skill-gap-col-title" style="color:var(--emerald)">✅ Skills You Have</div>
-          <div class="skill-item have"><div class="skill-item-dot"></div> React.js <span class="skill-level">Expert</span></div>
-          <div class="skill-item have"><div class="skill-item-dot"></div> TypeScript <span class="skill-level">Proficient</span></div>
-          <div class="skill-item have"><div class="skill-item-dot"></div> HTML5 / CSS3 <span class="skill-level">Expert</span></div>
-          <div class="skill-item have"><div class="skill-item-dot"></div> Git / Version Control <span class="skill-level">Proficient</span></div>
-          <div class="skill-item have"><div class="skill-item-dot"></div> REST APIs <span class="skill-level">Proficient</span></div>
-          <div class="skill-item partial"><div class="skill-item-dot"></div> Testing (Jest) <span class="skill-level">Developing</span></div>
-          <div class="skill-item partial"><div class="skill-item-dot"></div> Next.js <span class="skill-level">Learning</span></div>
-          <div class="skill-item partial"><div class="skill-item-dot"></div> Node.js <span class="skill-level">Beginner</span></div>
+          {% for gap in roadmap.skill_gaps.all %}
+          {% if gap.status == 'have' or gap.status == 'partial' %}
+          <div class="skill-item {{ gap.status }}">
+            <div class="skill-item-dot"></div>
+            {{ gap.skill_name }}
+            <span class="skill-level">{{ gap.level }}</span>
+          </div>
+          {% endif %}
+          {% endfor %}
         </div>
         <div>
           <div class="skill-gap-col-title" style="color:var(--coral)">⚠️ Gaps to Fill</div>
-          <div class="skill-item missing"><div class="skill-item-dot"></div> System Design <span class="skill-level">Missing</span></div>
-          <div class="skill-item missing"><div class="skill-item-dot"></div> CI/CD Pipelines <span class="skill-level">Missing</span></div>
-          <div class="skill-item missing"><div class="skill-item-dot"></div> Databases (SQL/NoSQL) <span class="skill-level">Missing</span></div>
-          <div class="skill-item missing"><div class="skill-item-dot"></div> Docker / Containers <span class="skill-level">Missing</span></div>
-          <div class="skill-item partial"><div class="skill-item-dot"></div> Performance (CWV) <span class="skill-level">In progress</span></div>
-          <div class="skill-item partial"><div class="skill-item-dot"></div> Accessibility (a11y) <span class="skill-level">Basic</span></div>
-
-          <div style="margin-top:20px;padding:16px;background:rgba(255,107,53,0.06);border:1px solid rgba(255,107,53,0.18);border-radius:12px">
-            <div style="font-weight:700;font-size:0.875rem;color:var(--coral);margin-bottom:8px">🎯 Gemini's Priority Order</div>
-            <div style="font-size:0.82rem;color:var(--text-2);line-height:1.65">
-              Focus on <strong style="color:var(--text-1)">System Design</strong> first — it's in 78% of Frontend job descriptions at the senior level. Then <strong style="color:var(--text-1)">Next.js</strong> (already in progress), followed by <strong style="color:var(--text-1)">databases</strong> for full-stack readiness.
-            </div>
+          {% for gap in roadmap.skill_gaps.all %}
+          {% if gap.status == 'missing' %}
+          <div class="skill-item missing">
+            <div class="skill-item-dot"></div>
+            {{ gap.skill_name }}
+            <span class="skill-level">{{ gap.level }}</span>
           </div>
+          {% endif %}
+          {% endfor %}
+          {% if roadmap.gap_priority %}
+          <div style="margin-top:20px;padding:16px;background:rgba(255,107,53,.06);border:1px solid rgba(255,107,53,.18);border-radius:12px">
+            <div style="font-weight:700;font-size:.875rem;color:var(--coral);margin-bottom:8px">🎯 Gemini's Priority Order</div>
+            <div style="font-size:.82rem;color:var(--text-2);line-height:1.65">{{ roadmap.gap_priority.priority_text }}</div>
+          </div>
+          {% endif %}
         </div>
       </div>
     </div>
   </div>
 
-  <!-- ============================================================
-       AI INSIGHTS
-  ============================================================ -->
+  <!-- AI INSIGHTS -->
   <div class="section-wrap">
     <div class="reveal">
       <div class="section-label">AI Insights</div>
       <h2 class="section-title">Gemini's Personalised Recommendations</h2>
-      <p class="section-sub">Adaptive suggestions based on your progress, market trends, and your GitHub activity patterns.</p>
+      <p class="section-sub">Adaptive suggestions based on your progress, market trends, and GitHub activity.</p>
     </div>
-
-    <div class="ai-message-box">
-      Based on your GitHub commits and the <strong>3 missing skills</strong> I identified, I've made 2 adaptive changes to your roadmap: added a System Design week at Week 21–22, and extended the Next.js module by 1 week since your recent commits show you're spending more time on it than average. You're on track for your 6-month goal if you maintain your current 5–6 hrs/week pace. 🎯<br><br>
-      <strong>Market signal:</strong> Startup Frontend roles in India are increasingly expecting Next.js + basic backend knowledge. Your roadmap already covers both — you're ahead of 72% of applicants for your target role.
-    </div>
-
-    <div class="ai-insights-grid" style="margin-top:28px stagger" id="insights-grid">
+    {% if roadmap.ai_summary %}
+    <div class="ai-message-box">{{ roadmap.ai_summary }}</div>
+    {% endif %}
+    <div class="ai-insights-grid" style="margin-top:28px">
+      {% for insight in roadmap.insights.all %}
       <div class="ai-insight-card">
-        <div class="ai-insight-icon">📈</div>
-        <div class="ai-insight-title">Pace Recommendation</div>
-        <div class="ai-insight-body">You're averaging 5.2 hrs/week — ideal for your 6-month target. Consider increasing to 7 hrs for Weeks 21–22 (System Design is dense). Your weekend coding sessions show 40% better retention.</div>
+        <div class="ai-insight-icon">{{ insight.icon }}</div>
+        <div class="ai-insight-title">{{ insight.title }}</div>
+        <div class="ai-insight-body">{{ insight.body }}</div>
       </div>
-      <div class="ai-insight-card">
-        <div class="ai-insight-icon">🏗</div>
-        <div class="ai-insight-title">Project Strategy</div>
-        <div class="ai-insight-body">Your portfolio has 23 repos but most are small experiments. Recruiters at startups prefer depth over breadth — focus on 3 polished, deployed projects with READMEs, live demos, and test coverage.</div>
-      </div>
-      <div class="ai-insight-card">
-        <div class="ai-insight-icon">🎯</div>
-        <div class="ai-insight-title">Interview Readiness</div>
-        <div class="ai-insight-body">Start CrackAI mock interviews from Week 20 onwards. Based on your profile, your biggest interview risk is System Design questions — our data shows students who practice SD from Week 20 score 23% higher.</div>
-      </div>
-      <div class="ai-insight-card">
-        <div class="ai-insight-icon">⚡</div>
-        <div class="ai-insight-title">Quick Win This Week</div>
-        <div class="ai-insight-body">Your portfolio Lighthouse score is 67. Running a performance audit on it this week (Task 3) would immediately demonstrate CWV knowledge — a talking point interviewers love. Takes ~1 hour.</div>
-      </div>
-      <div class="ai-insight-card">
-        <div class="ai-insight-icon">🌐</div>
-        <div class="ai-insight-title">Market Intelligence</div>
-        <div class="ai-insight-body">Next.js job listings in India grew 42% in the last 6 months. TypeScript is now required (not preferred) in 89% of startup frontend roles. You're well-positioned — keep your current trajectory.</div>
-      </div>
-      <div class="ai-insight-card">
-        <div class="ai-insight-icon">🔄</div>
-        <div class="ai-insight-title">Adaptive Adjustment</div>
-        <div class="ai-insight-body">Your Week 9–12 TypeScript module took 5.5 weeks instead of 4. Roadmap has been auto-adjusted: Node.js module compressed to 3 weeks, and the recovered time reassigned to System Design prep.</div>
-      </div>
+      {% endfor %}
     </div>
   </div>
+  {% endif %}
 
 </div><!-- /roadmap-section -->
 
-<!-- ============================================================
-     FOOTER
-============================================================ -->
+<!-- FOOTER -->
 <footer style="background:var(--bg-2);border-top:1px solid var(--border);padding:48px 32px 28px">
   <div style="max-width:1300px;margin:0 auto">
     <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:20px;margin-bottom:32px">
       <div style="display:flex;align-items:center;gap:10px">
         <div style="width:32px;height:32px;background:linear-gradient(135deg,var(--sky),#8b5cf6);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:15px">🗺️</div>
         <span style="font-family:var(--font-display);font-size:1.1rem;font-weight:800;background:linear-gradient(90deg,var(--sky),#8b5cf6);background-clip:text;-webkit-background-clip:text;-webkit-text-fill-color:transparent">CampusPath AI</span>
-        <span style="font-size:0.78rem;color:var(--text-3);padding:2px 10px;border-radius:100px;border:1px solid var(--border)">Part of Pathforge</span>
       </div>
-      <div style="display:flex;gap:20px;font-size:0.82rem;color:var(--text-3)">
-        <a href="{% url 'privacy' %}" style="cursor:pointer;transition:color 0.2s" onmouseover="this.style.color='var(--sky)'" onmouseout="this.style.color='var(--text-3)'">Privacy</a>
-        <a href="{% url 'terms' %}" style="cursor:pointer;transition:color 0.2s" onmouseover="this.style.color='var(--sky)'" onmouseout="this.style.color='var(--text-3)'">Terms</a>
-        <a href="https://github.com/lakshminarayanverma91-bot" target="_blank" rel="noopener noreferrer" style="cursor:pointer;transition:color 0.2s" onmouseover="this.style.color='var(--sky)'" onmouseout="this.style.color='var(--text-3)'">GitHub</a>
-        <a href="{% url 'contact' %}" style="cursor:pointer;transition:color 0.2s" onmouseover="this.style.color='var(--sky)'" onmouseout="this.style.color='var(--text-3)'">Contact</a>
+      <div style="display:flex;gap:20px;font-size:.82rem;color:var(--text-3)">
+        <a href="{% url 'privacy' %}">Privacy</a>
+        <a href="{% url 'terms' %}">Terms</a>
+        <a href="{% url 'contact' %}">Contact</a>
       </div>
     </div>
-    <div style="border-top:1px solid var(--border);padding-top:24px;font-size:0.78rem;color:var(--text-3);display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px">
-      <div>© 2025 CampusPath AI — Powered by Gemini · Built for ambitious students everywhere.</div>
-      <div style="display:flex;align-items:center;gap:6px"><span style="width:6px;height:6px;background:var(--emerald);border-radius:50%;display:inline-block"></span> All data is private & encrypted</div>
+    <div style="border-top:1px solid var(--border);padding-top:24px;font-size:.78rem;color:var(--text-3);display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px">
+      <div>© 2025 CampusPath AI — Powered by Gemini · Built for ambitious students.</div>
+      <div style="display:flex;align-items:center;gap:6px"><span style="width:6px;height:6px;background:var(--emerald);border-radius:50%;display:inline-block"></span> All data private & encrypted</div>
     </div>
   </div>
 </footer>
 
 <!-- ============================================================
-     JAVASCRIPT
+     JAVASCRIPT — All API calls to Django backend
 ============================================================ -->
 <script>
-// ===== THEME =====
+// ── Helpers ────────────────────────────────────────────────
+function getCsrf() { return CSRF_TOKEN; }
+
+const API_URLS = {
+  roadmapDetailTemplate: "{% url 'campuspath:roadmap_detail' 0 %}",
+  toggleWeekTemplate: "{% url 'campuspath:toggle_week' 0 %}",
+  toggleTaskTemplate: "{% url 'campuspath:toggle_task' 0 %}",
+  updateRoadmapTemplate: "{% url 'campuspath:update_roadmap' 0 %}",
+  saveProgress: "{% url 'campuspath:save_progress' %}",
+};
+
+function urlWithId(template, id) {
+  return template.replace('/0/', `/${id}/`);
+}
+
+function showToast(msg, icon = '✓') {
+  const toast = document.getElementById('toast');
+  document.getElementById('toastMsg').textContent = msg;
+  document.getElementById('toastIcon').textContent = icon;
+  toast.classList.add('show');
+  clearTimeout(toast._timer);
+  toast._timer = setTimeout(() => toast.classList.remove('show'), 3200);
+}
+
+async function postJSON(url, data) {
+  const res = await fetch(url, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'X-CSRFToken': getCsrf() },
+    body: JSON.stringify(data),
+  });
+  return res.json();
+}
+
+function initializeRoadmapProgress() {
+  const fill = document.getElementById('main-progress-fill');
+  if (fill) {
+    const pct = Number.parseFloat(fill.dataset.initialPct || '0') || 0;
+    fill.style.width = pct + '%';
+  }
+
+  const ring = document.getElementById('progress-ring');
+  if (ring) {
+    const pct = Number.parseFloat(ring.dataset.initialPct || '0') || 0;
+    const offset = 188.5 * (1 - pct / 100);
+    ring.setAttribute('stroke-dashoffset', offset.toFixed(1));
+  }
+}
+
+function initializeSkillProgressBars() {
+  document.querySelectorAll('.skill-progress-fill[data-skill-pct]').forEach(bar => {
+    const pct = Number.parseFloat(bar.dataset.skillPct || '0') || 0;
+    bar.style.width = pct + '%';
+
+    const colorStart = bar.dataset.colorStart;
+    const colorEnd = bar.dataset.colorEnd;
+    if (colorStart && colorEnd) {
+      bar.style.background = `linear-gradient(90deg,${colorStart},${colorEnd})`;
+    }
+  });
+}
+
+function updateRoadmapFromButton(btn) {
+  const roadmapId = Number.parseInt(btn?.dataset?.roadmapId || '', 10);
+  if (!roadmapId) return;
+  updateRoadmap(roadmapId);
+}
+
+function saveProgressFromButton(btn) {
+  const roadmapId = Number.parseInt(btn?.dataset?.roadmapId || '', 10);
+  if (!roadmapId) return;
+  saveProgress(roadmapId);
+}
+
+function toggleWeekCompleteFromButton(e, btn) {
+  const weekId = Number.parseInt(btn?.dataset?.weekId || '', 10);
+  if (!weekId) return;
+  toggleWeekComplete(e, btn, weekId);
+}
+
+function toggleTaskDoneFromRow(e, el) {
+  if (e) {
+    e.preventDefault();
+    e.stopPropagation();
+  }
+  const taskId = Number.parseInt(el?.dataset?.taskId || '', 10);
+  if (!taskId) return;
+  toggleTaskDone(taskId, el);
+}
+
+// ── Theme toggle ───────────────────────────────────────────
 const html = document.documentElement;
-const themeToggle = document.getElementById('themeToggle');
 let currentTheme = localStorage.getItem('campuspath-theme') || 'dark';
 function applyTheme(t) {
   html.setAttribute('data-theme', t);
-  themeToggle.textContent = t === 'dark' ? '🌙' : '☀️';
+  document.getElementById('themeToggle').textContent = t === 'dark' ? '🌙' : '☀️';
   currentTheme = t;
   localStorage.setItem('campuspath-theme', t);
 }
@@ -1583,241 +902,305 @@ function toggleTheme() {
 }
 applyTheme(currentTheme);
 
-// ===== CANVAS =====
+// ── Canvas particles ───────────────────────────────────────
 const canvas = document.getElementById('hero-canvas');
-const ctx = canvas.getContext('2d');
+const ctx    = canvas.getContext('2d');
 let particles = [];
-
-function resizeCanvas() {
-  canvas.width = canvas.offsetWidth;
-  canvas.height = canvas.offsetHeight;
-}
-
+function resizeCanvas() { canvas.width = canvas.offsetWidth; canvas.height = canvas.offsetHeight; }
 class Particle {
   constructor() { this.reset(); }
   reset() {
-    this.x = Math.random() * canvas.width;
-    this.y = Math.random() * canvas.height;
-    this.size = Math.random() * 1.8 + 0.4;
-    this.speedX = (Math.random() - 0.5) * 0.35;
-    this.speedY = (Math.random() - 0.5) * 0.35;
-    this.opacity = Math.random() * 0.5 + 0.1;
-    const colors = ['#3B9EFF','#8b5cf6','#06D6A0','#B084CC'];
-    this.color = colors[Math.floor(Math.random() * colors.length)];
+    this.x = Math.random() * canvas.width; this.y = Math.random() * canvas.height;
+    this.size = Math.random() * 1.8 + .4; this.speedX = (Math.random() - .5) * .35;
+    this.speedY = (Math.random() - .5) * .35; this.opacity = Math.random() * .5 + .1;
+    const c = ['#3B9EFF','#8b5cf6','#06D6A0','#B084CC'];
+    this.color = c[Math.floor(Math.random() * c.length)];
   }
   update() {
-    this.x += this.speedX;
-    this.y += this.speedY;
+    this.x += this.speedX; this.y += this.speedY;
     if (this.x < 0 || this.x > canvas.width || this.y < 0 || this.y > canvas.height) this.reset();
   }
   draw() {
-    ctx.save();
-    ctx.globalAlpha = this.opacity;
-    ctx.fillStyle = this.color;
-    ctx.beginPath();
-    ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-    ctx.fill();
-    ctx.restore();
+    ctx.save(); ctx.globalAlpha = this.opacity; ctx.fillStyle = this.color;
+    ctx.beginPath(); ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2); ctx.fill(); ctx.restore();
   }
 }
-
-function initParticles() {
-  particles = [];
-  for (let i = 0; i < 100; i++) particles.push(new Particle());
-}
-
+function initParticles() { particles = []; for (let i = 0; i < 100; i++) particles.push(new Particle()); }
 function animateParticles() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   particles.forEach(p => { p.update(); p.draw(); });
   particles.forEach((p1, i) => {
-    particles.slice(i+1, i+4).forEach(p2 => {
-      const dist = Math.hypot(p1.x - p2.x, p1.y - p2.y);
-      if (dist < 90) {
-        ctx.save();
-        ctx.globalAlpha = (1 - dist/90) * 0.07;
-        ctx.strokeStyle = '#3B9EFF';
-        ctx.lineWidth = 0.5;
-        ctx.beginPath();
-        ctx.moveTo(p1.x, p1.y);
-        ctx.lineTo(p2.x, p2.y);
-        ctx.stroke();
-        ctx.restore();
+    particles.slice(i + 1, i + 4).forEach(p2 => {
+      const d = Math.hypot(p1.x - p2.x, p1.y - p2.y);
+      if (d < 90) {
+        ctx.save(); ctx.globalAlpha = (1 - d / 90) * .07; ctx.strokeStyle = '#3B9EFF';
+        ctx.lineWidth = .5; ctx.beginPath(); ctx.moveTo(p1.x, p1.y); ctx.lineTo(p2.x, p2.y); ctx.stroke(); ctx.restore();
       }
     });
   });
   requestAnimationFrame(animateParticles);
 }
-
-resizeCanvas();
-initParticles();
-animateParticles();
+resizeCanvas(); initParticles(); animateParticles();
 window.addEventListener('resize', () => { resizeCanvas(); initParticles(); });
 
-// ===== SCROLL REVEAL =====
+// ── Scroll reveal ──────────────────────────────────────────
 function triggerReveal() {
-  document.querySelectorAll('.reveal, .stagger').forEach(el => {
-    const rect = el.getBoundingClientRect();
-    if (rect.top < window.innerHeight - 60) el.classList.add('visible');
+  document.querySelectorAll('.reveal').forEach(el => {
+    if (el.getBoundingClientRect().top < window.innerHeight - 60) el.classList.add('visible');
   });
 }
-const revealObserver = new IntersectionObserver((entries) => {
-  entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); } });
-}, { threshold: 0.1 });
-document.querySelectorAll('.reveal, .stagger').forEach(el => revealObserver.observe(el));
 window.addEventListener('scroll', triggerReveal);
 triggerReveal();
 
-// ===== TOAST =====
-function showToast(msg, icon = '✓') {
-  const toast = document.getElementById('toast');
-  document.getElementById('toastMsg').textContent = msg;
-  document.getElementById('toastIcon').textContent = icon;
-  toast.classList.add('show');
-  clearTimeout(toast._timer);
-  toast._timer = setTimeout(() => toast.classList.remove('show'), 3000);
-}
-
-// ===== TAGS INPUT =====
+// ── Tags input ─────────────────────────────────────────────
 function handleTagInput(e, wrapId) {
-  if (e.key === 'Enter' || e.key === ',') {
-    e.preventDefault();
-    const input = e.target;
-    const val = input.value.trim().replace(',','');
-    if (!val) return;
-    const wrap = document.getElementById(wrapId);
-    const chip = document.createElement('div');
-    chip.className = 'tag-chip';
-    chip.innerHTML = `${val} <button onclick="removeTag(event,this)">×</button>`;
-    wrap.insertBefore(chip, input);
-    input.value = '';
-  }
+  if (e.key !== 'Enter' && e.key !== ',') return;
+  e.preventDefault();
+  const input = e.target;
+  const val   = input.value.trim().replace(',', '');
+  if (!val) return;
+  const wrap  = document.getElementById(wrapId);
+  const chip  = document.createElement('div');
+  chip.className = 'tag-chip';
+  chip.innerHTML = `${val} <button onclick="removeTag(event,this)">×</button>`;
+  wrap.insertBefore(chip, input);
+  input.value = '';
 }
-function removeTag(e, btn) {
-  e.stopPropagation();
-  btn.parentElement.remove();
-}
+function removeTag(e, btn) { e.stopPropagation(); btn.parentElement.remove(); }
 
-// ===== LEVEL SELECTOR =====
+// ── Level selector ─────────────────────────────────────────
 function selectLevel(el) {
   document.querySelectorAll('[data-level]').forEach(e => e.classList.remove('active'));
   el.classList.add('active');
 }
 
-// ===== GITHUB CONNECT =====
-function connectGitHub() {
-  const url = document.getElementById('githubUrl').value.trim();
-  if (!url) { showToast('Please enter your GitHub URL', '⚠️'); return; }
-  showToast('Scanning GitHub profile... 🔍', '🔗');
-  setTimeout(() => {
-    document.getElementById('github-status').style.display = 'block';
-    showToast('GitHub connected! Skills auto-detected ✅', '✅');
-  }, 1800);
+// ── Collect form data ──────────────────────────────────────
+function getSkills() {
+  return [...document.querySelectorAll('#skills-wrap .tag-chip')]
+    .map(c => c.textContent.replace('×', '').trim())
+    .filter(Boolean);
+}
+function getInterests() {
+  return [...document.querySelectorAll('#interests-grid .interest-chip.active')]
+    .map(c => c.textContent.trim());
+}
+function getExperience() {
+  const active = document.querySelector('[data-level].active');
+  return active ? active.dataset.level : 'intermediate';
 }
 
-// ===== GENERATE ROADMAP =====
-function generateRoadmap() {
-  const role = document.getElementById('targetRole').value.trim();
-  if (!role) { showToast('Please enter a target role', '⚠️'); return; }
+// ── GitHub connect ─────────────────────────────────────────
+let githubData = null;
 
-  // Show loading
-  document.getElementById('loading-section').style.display = 'block';
-  document.getElementById('roadmap-section').style.display = 'none';
-  document.getElementById('loading-section').scrollIntoView({ behavior: 'smooth' });
+async function connectGitHub() {
+  const url = document.getElementById('githubUrl').value.trim();
+  if (!url) { showToast('Enter your GitHub URL first', '⚠️'); return; }
 
-  const steps = ['ls-1','ls-2','ls-3','ls-4','ls-5'];
+  const btn = document.getElementById('gh-connect-btn');
+  btn.textContent = 'Connecting...';
+  btn.disabled    = true;
+
+  try {
+    const data = await postJSON("{% url 'campuspath:connect_github' %}", { github_url: url });
+
+    if (data.success) {
+      githubData = data.github_data;
+      document.getElementById('github-status').style.display = 'block';
+      document.getElementById('gh-info').textContent =
+        `${data.github_data.username} · ${data.github_data.repos} repos · Top: ${data.github_data.languages.join(', ') || 'N/A'}`;
+      showToast('GitHub connected! Skills auto-detected ✅', '✅');
+    } else {
+      showToast(data.error || 'Connection failed', '❌');
+    }
+  } catch (err) {
+    showToast('GitHub connection failed. Check URL.', '❌');
+  }
+
+  btn.textContent = 'Connect →';
+  btn.disabled    = false;
+}
+
+// ── Loading steps animation ────────────────────────────────
+function animateLoadingSteps() {
+  const steps  = ['ls-1','ls-2','ls-3','ls-4','ls-5'];
   const titles = [
-    ['GitHub scan','Scanning your repositories...'],
-    ['Skill analysis','Mapping your current skills...'],
-    ['Gap detection','Finding missing skills for your role...'],
-    ['Roadmap build','Generating week-by-week plan...'],
-    ['AI insights','Personalising recommendations...']
+    ['GitHub scan',     'Scanning your repositories...'],
+    ['Skill analysis',  'Mapping your current skills...'],
+    ['Gap detection',   'Finding missing skills for your role...'],
+    ['Roadmap build',   'Generating week-by-week plan...'],
+    ['AI insights',     'Personalising recommendations...'],
   ];
-  let current = 0;
-
-  // Activate ls-1 immediately
+  let i = 0;
+  steps.forEach(s => { document.getElementById(s).className = 'loader-step'; });
   document.getElementById(steps[0]).classList.add('active');
   document.getElementById('loading-title').textContent = titles[0][0];
-  document.getElementById('loading-sub').textContent = titles[0][1];
+  document.getElementById('loading-sub').textContent   = titles[0][1];
 
-  const interval = setInterval(() => {
-    document.getElementById(steps[current]).classList.remove('active');
-    document.getElementById(steps[current]).classList.add('done');
-    current++;
-    if (current >= steps.length) {
-      clearInterval(interval);
-      setTimeout(() => {
-        document.getElementById('loading-section').style.display = 'none';
-        document.getElementById('roadmap-section').style.display = 'block';
-        document.getElementById('roadmap-section').scrollIntoView({ behavior: 'smooth' });
-        triggerReveal();
-        showToast('Your roadmap is ready! 🗺️', '🎉');
-        animateProgress();
-      }, 600);
-      return;
+  return setInterval(() => {
+    document.getElementById(steps[i]).classList.replace('active', 'done');
+    i++;
+    if (i < steps.length) {
+      document.getElementById(steps[i]).classList.add('active');
+      document.getElementById('loading-title').textContent = titles[i][0];
+      document.getElementById('loading-sub').textContent   = titles[i][1];
     }
-    document.getElementById(steps[current]).classList.add('active');
-    document.getElementById('loading-title').textContent = titles[current][0];
-    document.getElementById('loading-sub').textContent = titles[current][1];
   }, 900);
 }
 
-function animateProgress() {
+// ── MAIN: Generate roadmap ─────────────────────────────────
+async function generateRoadmap() {
+  const role = document.getElementById('targetRole').value.trim();
+  if (!role) { showToast('Please enter a target role', '⚠️'); return; }
+
+  const btn = document.getElementById('generate-btn');
+  btn.disabled = true;
+
+  // Show loading
+  document.getElementById('loading-section').style.display = 'block';
+  document.getElementById('roadmap-section').style.display  = 'none';
+  document.getElementById('loading-section').scrollIntoView({ behavior: 'smooth' });
+
+  const intervalId = animateLoadingSteps();
+
+  try {
+    const result = await postJSON("{% url 'campuspath:generate_roadmap' %}", {
+      target_role:    role,
+      skills:         getSkills(),
+      interests:      getInterests(),
+      experience:     getExperience(),
+      timeline:       parseInt(document.getElementById('timeline').value),
+      additional_ctx: document.getElementById('additionalCtx').value.trim(),
+      github_data:    githubData,
+    });
+
+    clearInterval(intervalId);
+
+    if (result.success) {
+      // Redirect to the same page — Django will now render the roadmap
+      showToast('Roadmap generated! 🗺️', '🎉');
+      setTimeout(() => {
+        window.location.href = urlWithId(API_URLS.roadmapDetailTemplate, result.roadmap_id);
+      }, 800);
+    } else {
+      document.getElementById('loading-section').style.display = 'none';
+      showToast(result.error || 'Generation failed. Try again.', '❌');
+    }
+  } catch (err) {
+    clearInterval(intervalId);
+    document.getElementById('loading-section').style.display = 'none';
+    showToast('Something went wrong. Please try again.', '❌');
+  }
+
+  btn.disabled = false;
+}
+
+// ── Toggle week open/close (UI only) ──────────────────────
+function toggleWeekUI(el) {
+  const details = el.querySelector('.week-details');
+  if (details) details.classList.toggle('open');
+}
+
+// ── Mark week complete (API call) ─────────────────────────
+async function toggleWeekComplete(e, btn, weekId) {
+  e.stopPropagation();
+  try {
+    const data = await postJSON(urlWithId(API_URLS.toggleWeekTemplate, weekId), {});
+    if (data.success) {
+      const week = btn.closest('.roadmap-week');
+      if (data.new_status === 'completed') {
+        week.classList.add('completed');
+        week.classList.remove('active-week');
+        btn.textContent = '✓';
+      } else {
+        week.classList.remove('completed');
+        btn.textContent = '○';
+      }
+      // Update progress ring
+      updateProgressUI(data.progress, data.completed);
+      showToast(data.new_status === 'completed' ? 'Week complete! 🎉' : 'Marked incomplete', '📅');
+    }
+  } catch (err) {
+    showToast('Could not update week status', '❌');
+  }
+}
+
+// ── Toggle task done (API call) ────────────────────────────
+async function toggleTaskDone(taskId, el) {
+  try {
+    const data = await postJSON(urlWithId(API_URLS.toggleTaskTemplate, taskId), {});
+    if (data.success) {
+      if (data.is_done) {
+        el.classList.add('done');
+        el.querySelector('.tracker-check').textContent = '✓';
+      } else {
+        el.classList.remove('done');
+        el.querySelector('.tracker-check').textContent = '○';
+      }
+    }
+  } catch (err) {
+    showToast('Could not update task', '❌');
+  }
+}
+
+// ── Update roadmap (re-run Gemini) ────────────────────────
+async function updateRoadmap(roadmapId) {
+  showToast('Updating roadmap with latest data... 🔄', '🔄');
+  try {
+    const data = await postJSON(urlWithId(API_URLS.updateRoadmapTemplate, roadmapId), {});
+    if (data.success) {
+      showToast('Roadmap updated! 🎉', '🎉');
+      setTimeout(() => {
+        window.location.href = urlWithId(API_URLS.roadmapDetailTemplate, data.roadmap_id);
+      }, 800);
+    } else {
+      showToast(data.error || 'Update failed', '❌');
+    }
+  } catch (err) {
+    showToast('Update failed. Please try again.', '❌');
+  }
+}
+
+// ── Save progress ──────────────────────────────────────────
+async function saveProgress(roadmapId) {
+  try {
+    const data = await postJSON(API_URLS.saveProgress, { roadmap_id: roadmapId });
+    if (data.success) {
+      showToast(`Progress saved! ${data.completed}/${data.total} weeks done 💾`, '💾');
+    }
+  } catch (err) {
+    showToast('Save failed', '❌');
+  }
+}
+
+// ── Update progress circle UI ──────────────────────────────
+function updateProgressUI(pct, completed) {
   const ring = document.getElementById('progress-ring');
   const fill = document.getElementById('main-progress-fill');
+  const text = document.getElementById('progress-pct-text');
   if (ring) {
-    // 68% of circumference 188.5 = 127.5 offset → 188.5*(1-0.68) = 60.3
-    ring.style.transition = 'stroke-dashoffset 1.2s cubic-bezier(0.16,1,0.3,1)';
-    ring.setAttribute('stroke-dashoffset', '60');
+    const offset = 188.5 * (1 - pct / 100);
+    ring.setAttribute('stroke-dashoffset', offset.toFixed(1));
   }
-  if (fill) {
-    fill.style.width = '68%';
-  }
+  if (fill) fill.style.width = pct + '%';
+  if (text) text.childNodes[0].textContent = Math.round(pct) + '%';
 }
 
-// ===== TOGGLE WEEK DETAILS =====
-function toggleWeek(el) {
-  const details = el.querySelector('.week-details');
-  if (!details) return;
-  details.classList.toggle('open');
-}
-
-// ===== TOGGLE COMPLETE =====
-function toggleComplete(e, btn) {
-  e.stopPropagation();
-  const week = btn.closest('.roadmap-week');
-  week.classList.toggle('completed');
-  week.classList.remove('active-week');
-  btn.textContent = week.classList.contains('completed') ? '✓' : '○';
-  showToast(week.classList.contains('completed') ? 'Week marked complete! 🎉' : 'Marked as incomplete', '📅');
-}
-
-// ===== ROADMAP TABS =====
+// ── Tabs ───────────────────────────────────────────────────
 function setView(view, tab) {
   document.querySelectorAll('.roadmap-tab').forEach(t => t.classList.remove('active'));
   tab.classList.add('active');
   showToast(`Switched to ${view} view`, '📅');
 }
 
-// ===== SAVE PROGRESS =====
-function saveProgress() {
-  showToast('Progress saved! 💾', '💾');
-}
-
-// ===== HISTORY TOGGLE =====
+// ── History toggle ─────────────────────────────────────────
 function toggleHistory() {
   const h = document.getElementById('history-section');
   h.style.display = h.style.display === 'none' ? 'block' : 'none';
-  if (h.style.display === 'block') h.scrollIntoView({ behavior:'smooth', block:'nearest' });
+  if (h.style.display === 'block') h.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
 }
 
-// ===== TRACKER ITEMS =====
-document.querySelectorAll('.tracker-item').forEach(item => {
-  item.addEventListener('click', () => {
-    item.classList.toggle('done');
-    const check = item.querySelector('.tracker-check');
-    check.textContent = item.classList.contains('done') ? '✓' : '○';
-  });
-});
+initializeRoadmapProgress();
+initializeSkillProgressBars();
 </script>
 </body>
 </html>

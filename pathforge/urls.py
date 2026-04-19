@@ -9,7 +9,9 @@ urlpatterns = [
     path("", include("home.urls")),
     path("dashboard/", include("dashboard.urls")),
     path("accounts/", include("accounts.urls")),
-    path("accounts/", include("allauth.urls"))
+    path("ventureIQ/", include("ventureIQ.urls")),
+    path("campuspathAI/", include("campuspathAI.urls")),
+    path("crackAI/", include("crackAI.urls"))
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

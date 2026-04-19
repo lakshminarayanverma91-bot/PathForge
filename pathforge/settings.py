@@ -1,4 +1,6 @@
 from pathlib import Path
+from dotenv import load_dotenv
+import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -25,29 +27,22 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'django.contrib.sites',
-    'allauth',
-    'allauth.account',
-    'allauth.socialaccount',
-    'allauth.socialaccount.providers.google',
-    'allauth.socialaccount.providers.github',
 
     'home.apps.HomeConfig',
     'dashboard.apps.DashboardConfig',
-    'accounts.apps.AccountsConfig'
+    'accounts.apps.AccountsConfig',
+    'ventureIQ.apps.VentureiqConfig',
+    'campuspathAI.apps.CampuspathaiConfig',
+    'crackAI.apps.CrackaiConfig'
 ]
 
-SITE_ID = 1
-
 AUTHENTICATION_BACKENDS = [
-    'django.contrib.auth.backends.ModelBackend',
-    'allauth.account.auth_backends.AuthenticationBackend'
+    'django.contrib.auth.backends.ModelBackend'
 ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
-    'allauth.account.middleware.AccountMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -130,30 +125,6 @@ MEDIA_ROOT = BASE_DIR / 'media'
 # LOGIN
 LOGIN_REDIRECT_URL = "dashboard"
 LOGOUT_REDIRECT_URL = "login"
-# Allauth settings
-SOCIALACCOUNT_LOGIN_ON_GET = True
-
-# ACCOUNT SETTINGS
-ACCOUNT_LOGIN_METHODS = {'email'}
-ACCOUNT_SIGNUP_FIELDS = ['email*', 'password1*', 'password2*']
-ACCOUNT_EMAIL_VERIFICATION = 'none'   # testing ke liye
-
-# SOCIAL ACCOUNT SETTINGS
-SOCIALACCOUNT_AUTO_SIGNUP = True
-SOCIALACCOUNT_EMAIL_REQUIRED = True
-SOCIALACCOUNT_QUERY_EMAIL = True
-
-SOCIALACCOUNT_PROVIDERS = {
-    'google': {
-        'SCOPE': [
-            'profile',
-            'email',
-        ],
-        'AUTH_PARAMS': {
-            'access_type': 'online',
-        }
-    }
-}
 
 # Email
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
@@ -166,3 +137,7 @@ EMAIL_HOST_PASSWORD = 'wjzyoahfuneohuvl'
 
 DEFAULT_FROM_EMAIL = 'PathForge Team <aipathforge@gmail.com>'
 CONTACT_RECEIVER_EMAIL = 'aipathforge@gmail.com'
+
+# API
+load_dotenv()
+GEMINI_API_KEY = os.getenv('GEMINI_API_KEY')

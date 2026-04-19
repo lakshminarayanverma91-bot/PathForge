@@ -1,12 +1,10 @@
-﻿<!DOCTYPE html>
-<html lang="en" data-theme="dark">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>CrackAI — AI Mock Interview System</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,300&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+﻿{% extends 'dashboard/base.html' %}
+{% load static %}
 
+{% block title %}CrackAI — Mock Interview{% endblock %}
+{% block page_label %}CrackAI{% endblock %}
+
+{% block page_styles %}
 <style>
 /* ============================================================
    CSS VARIABLES & THEME
@@ -44,7 +42,6 @@
   --text-2:    #a09ec0;
   --text-3:    #6a6888;
   --nav-bg:    rgba(7,7,17,0.9);
-  --glow-coral: rgba(255,107,53,0.15);
 }
 
 [data-theme="light"] {
@@ -59,130 +56,39 @@
   --text-1:    #1a1426;
   --text-2:    #4a4060;
   --text-3:    #8a80a8;
-  --nav-bg:    rgba(245,242,255,0.92);
-  --glow-coral: rgba(255,107,53,0.08);
 }
 
-/* ============================================================
-   RESET & BASE
-============================================================ */
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-html { scroll-behavior: smooth; }
-body {
-  font-family: var(--font-body);
-  background: var(--bg);
-  color: var(--text-1);
-  line-height: 1.6;
-  overflow-x: hidden;
-  transition: background 0.4s var(--ease-out), color 0.4s var(--ease-out);
-  min-height: 100vh;
-}
-a { text-decoration: none; color: inherit; }
-button { cursor: pointer; border: none; background: none; font-family: inherit; }
-input, textarea, select {
-  font-family: var(--font-body);
-  background: var(--card);
-  border: 1px solid var(--border);
-  color: var(--text-1);
-  border-radius: 10px;
-  padding: 12px 16px;
-  width: 100%;
-  outline: none;
-  transition: border 0.2s, box-shadow 0.2s;
-  font-size: 0.9rem;
-}
-input:focus, textarea:focus, select:focus {
-  border-color: var(--coral);
-  box-shadow: 0 0 0 3px rgba(255,107,53,0.12);
-}
-select { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' fill='none'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%236a6888' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 14px center; padding-right: 36px; cursor: pointer; }
+/* ── Override page-body padding for full-width interview screen ── */
+.page-body { padding: 0 !important; max-width: 100% !important; }
 
 /* Screen router */
 .screen { display: none; }
 .screen.active { display: block; }
 
 /* ============================================================
-   NAVIGATION
+   SETUP SCREEN
 ============================================================ */
-.nav {
-  position: fixed; top: 0; left: 0; right: 0; z-index: 999;
-  background: var(--nav-bg);
-  backdrop-filter: blur(24px) saturate(180%);
-  border-bottom: 1px solid var(--border);
-  transition: background 0.4s;
-}
-.nav-inner {
-  max-width: 1400px; margin: 0 auto; padding: 0 28px;
-  height: 64px; display: flex; align-items: center; justify-content: space-between;
-}
-.nav-logo {
-  display: flex; align-items: center; gap: 10px;
-  font-family: var(--font-display); font-size: 1.1rem; font-weight: 800; cursor: pointer;
-}
-.nav-logo-icon {
-  width: 34px; height: 34px;
-  background: linear-gradient(135deg, var(--coral), var(--gold));
-  border-radius: 10px;
-  display: flex; align-items: center; justify-content: center; font-size: 16px;
-}
-.nav-logo .brand { background: linear-gradient(90deg, var(--coral), var(--gold)); background-clip: text; -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-.nav-back {
-  display: flex; align-items: center; gap: 6px;
-  font-size: 0.8rem; color: var(--text-3); padding: 6px 14px;
-  border: 1px solid var(--border); border-radius: 8px; cursor: pointer; transition: all 0.2s;
-}
-.nav-back:hover { color: var(--text-1); border-color: var(--border-h); background: var(--card); }
-.nav-actions { display: flex; align-items: center; gap: 10px; }
-.theme-toggle {
-  width: 38px; height: 38px; border-radius: 9px;
-  background: var(--card); border: 1px solid var(--border);
-  display: flex; align-items: center; justify-content: center;
-  font-size: 16px; cursor: pointer; transition: all 0.2s;
-}
-.theme-toggle:hover { border-color: var(--border-h); transform: scale(1.05); }
-.session-badge {
-  display: flex; align-items: center; gap: 7px; padding: 6px 14px;
-  background: rgba(255,107,53,0.1); border: 1px solid rgba(255,107,53,0.25);
-  border-radius: 100px; font-size: 0.75rem; font-weight: 600; color: var(--coral);
-  font-family: var(--font-mono);
-}
-.session-badge-dot { width: 6px; height: 6px; background: var(--coral); border-radius: 50%; animation: blink 1.5s infinite; }
-@keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.3} }
-
-/* ============================================================
-   HERO SECTION (Setup Screen)
-============================================================ */
-.page-hero {
-  padding: 120px 28px 60px;
-  max-width: 1400px; margin: 0 auto;
-  position: relative;
-}
-.hero-bg-mesh {
-  position: fixed; inset: 0; pointer-events: none; z-index: 0;
-  background:
-    radial-gradient(ellipse 70% 50% at 15% 30%, rgba(255,107,53,0.07) 0%, transparent 65%),
-    radial-gradient(ellipse 50% 40% at 85% 70%, rgba(176,132,204,0.05) 0%, transparent 65%),
-    radial-gradient(ellipse 60% 60% at 50% 100%, rgba(255,107,53,0.04) 0%, transparent 60%);
-}
-[data-theme="light"] .hero-bg-mesh {
-  background:
-    radial-gradient(ellipse 70% 50% at 15% 30%, rgba(255,107,53,0.04) 0%, transparent 65%),
-    radial-gradient(ellipse 50% 40% at 85% 70%, rgba(176,132,204,0.03) 0%, transparent 65%);
+.setup-wrapper {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 32px 28px 80px;
 }
 
+/* Hero */
+.setup-hero {
+  margin-bottom: 36px;
+}
 .hero-eyebrow {
   display: inline-flex; align-items: center; gap: 8px;
   background: var(--card); border: 1px solid rgba(255,107,53,0.25);
-  border-radius: 100px; padding: 5px 16px; margin-bottom: 24px;
+  border-radius: 100px; padding: 5px 16px; margin-bottom: 20px;
   font-size: 0.75rem; font-weight: 600; color: var(--coral);
   font-family: var(--font-mono); letter-spacing: 0.05em;
   opacity: 0; animation: fadeUp 0.6s 0.1s var(--ease-out) forwards;
 }
-.hero-eyebrow-icon { font-size: 14px; }
-
 .hero-title {
-  font-family: var(--font-display); font-size: clamp(2.8rem, 5.5vw, 5rem);
-  font-weight: 800; letter-spacing: -0.035em; line-height: 1.0; margin-bottom: 20px;
+  font-family: var(--font-display); font-size: clamp(2rem, 4vw, 3.4rem);
+  font-weight: 800; letter-spacing: -0.035em; line-height: 1.05; margin-bottom: 14px;
   opacity: 0; animation: fadeUp 0.7s 0.2s var(--ease-out) forwards;
 }
 .hero-title .line-2 {
@@ -191,42 +97,31 @@ select { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmln
   display: block;
 }
 .hero-desc {
-  font-size: 1.05rem; color: var(--text-2); line-height: 1.75; max-width: 540px;
-  margin-bottom: 0;
+  font-size: 0.95rem; color: var(--text-2); line-height: 1.75; max-width: 520px;
   opacity: 0; animation: fadeUp 0.7s 0.3s var(--ease-out) forwards;
 }
 
-/* Hero Stats Row */
+/* Stats row */
 .hero-stats-row {
-  display: flex; gap: 0; margin-top: 40px;
-  border: 1px solid var(--border); border-radius: 16px; overflow: hidden;
-  background: var(--card);
-  opacity: 0; animation: fadeUp 0.7s 0.45s var(--ease-out) forwards;
-  max-width: 540px;
+  display: flex; gap: 0; margin-top: 28px;
+  border: 1px solid var(--border); border-radius: 14px; overflow: hidden;
+  background: var(--card); max-width: 480px;
+  opacity: 0; animation: fadeUp 0.7s 0.4s var(--ease-out) forwards;
 }
-.hero-stat {
-  flex: 1; padding: 18px 20px; text-align: center;
-  border-right: 1px solid var(--border); transition: background 0.2s;
-}
+.hero-stat { flex: 1; padding: 16px 18px; text-align: center; border-right: 1px solid var(--border); }
 .hero-stat:last-child { border-right: none; }
-.hero-stat:hover { background: var(--card-2); }
-.hero-stat-val { font-family: var(--font-display); font-size: 1.5rem; font-weight: 800; color: var(--coral); }
-.hero-stat-label { font-size: 0.7rem; color: var(--text-3); margin-top: 3px; font-family: var(--font-mono); }
+.hero-stat-val { font-family: var(--font-display); font-size: 1.35rem; font-weight: 800; color: var(--coral); }
+.hero-stat-label { font-size: 0.65rem; color: var(--text-3); margin-top: 2px; font-family: var(--font-mono); }
 
-/* ============================================================
-   SETUP CARD
-============================================================ */
-.setup-section {
-  max-width: 1400px; margin: 0 auto; padding: 0 28px 80px;
-  position: relative; z-index: 1;
-}
+/* Setup Grid */
 .setup-grid {
-  display: grid; grid-template-columns: 1fr 400px; gap: 28px; align-items: start;
-  opacity: 0; animation: fadeUp 0.7s 0.5s var(--ease-out) forwards;
+  display: grid; grid-template-columns: 1fr 380px; gap: 24px; align-items: start;
+  opacity: 0; animation: fadeUp 0.7s 0.45s var(--ease-out) forwards;
 }
 
+/* Setup Card */
 .setup-card {
-  background: var(--card); border: 1px solid var(--border); border-radius: 24px;
+  background: var(--card); border: 1px solid var(--border); border-radius: 22px;
   overflow: hidden; position: relative;
 }
 .setup-card::before {
@@ -234,46 +129,47 @@ select { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmln
   background: linear-gradient(90deg, var(--coral), var(--gold), var(--coral-2));
 }
 .setup-card-header {
-  padding: 28px 28px 0;
-  display: flex; align-items: center; gap: 12px; margin-bottom: 28px;
+  padding: 26px 26px 0;
+  display: flex; align-items: center; gap: 12px; margin-bottom: 24px;
 }
 .setup-card-icon {
-  width: 44px; height: 44px; border-radius: 12px;
+  width: 42px; height: 42px; border-radius: 12px;
   background: rgba(255,107,53,0.12); display: flex; align-items: center; justify-content: center;
   font-size: 20px;
 }
-.setup-card-title { font-family: var(--font-display); font-size: 1.15rem; font-weight: 700; }
-.setup-card-sub { font-size: 0.78rem; color: var(--text-3); margin-top: 2px; }
-.setup-card-body { padding: 0 28px 28px; }
+.setup-card-title { font-family: var(--font-display); font-size: 1.1rem; font-weight: 700; }
+.setup-card-sub { font-size: 0.76rem; color: var(--text-3); margin-top: 2px; }
+.setup-card-body { padding: 0 26px 26px; }
 
-.field-group { margin-bottom: 20px; }
+.field-group { margin-bottom: 18px; }
 .field-label {
-  font-size: 0.78rem; font-weight: 600; color: var(--text-2);
+  font-size: 0.76rem; font-weight: 600; color: var(--text-2);
   margin-bottom: 8px; display: flex; align-items: center; gap: 6px;
   font-family: var(--font-mono); letter-spacing: 0.03em;
 }
-.field-label .field-icon { font-size: 13px; }
 
 /* Role Pills */
-.role-pills { display: flex; flex-wrap: wrap; gap: 8px; }
+.role-pills { display: flex; flex-wrap: wrap; gap: 7px; }
 .role-pill {
-  padding: 8px 16px; border-radius: 100px;
+  padding: 7px 14px; border-radius: 100px;
   border: 1px solid var(--border); background: var(--card-2);
-  font-size: 0.78rem; font-weight: 500; cursor: pointer;
+  font-size: 0.76rem; font-weight: 500; cursor: pointer;
   transition: all 0.2s var(--ease-out); color: var(--text-2);
-  display: flex; align-items: center; gap: 6px;
+  display: flex; align-items: center; gap: 5px;
 }
 .role-pill:hover { border-color: rgba(255,107,53,0.4); color: var(--coral); }
 .role-pill.active {
   border-color: var(--coral); background: rgba(255,107,53,0.1);
   color: var(--coral); font-weight: 600;
-  box-shadow: 0 0 0 3px rgba(255,107,53,0.08);
 }
 
 /* Toggle group */
-.toggle-group { display: flex; gap: 0; background: var(--card-2); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; padding: 4px; }
+.toggle-group {
+  display: flex; gap: 0; background: var(--card-2);
+  border: 1px solid var(--border); border-radius: 11px; overflow: hidden; padding: 3px;
+}
 .toggle-btn {
-  flex: 1; padding: 9px 12px; border-radius: 9px; font-size: 0.8rem;
+  flex: 1; padding: 8px 10px; border-radius: 8px; font-size: 0.78rem;
   font-weight: 500; cursor: pointer; transition: all 0.2s; text-align: center;
   color: var(--text-3); display: flex; align-items: center; justify-content: center; gap: 5px;
 }
@@ -286,125 +182,119 @@ select { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmln
 /* Difficulty slider */
 .difficulty-track {
   height: 6px; background: var(--card-2); border-radius: 100px;
-  position: relative; margin: 12px 0;
+  position: relative; margin: 12px 0; cursor: pointer;
 }
 .difficulty-fill {
   height: 100%; border-radius: 100px;
   background: linear-gradient(90deg, var(--emerald), var(--gold), var(--coral));
-  transition: width 0.3s var(--ease-out);
+  transition: width 0.3s var(--ease-out); pointer-events: none;
 }
 .difficulty-thumb {
   position: absolute; top: 50%; transform: translate(-50%, -50%);
   width: 18px; height: 18px; border-radius: 50%;
   background: var(--coral); border: 2px solid var(--bg);
   box-shadow: 0 0 0 3px rgba(255,107,53,0.25);
-  cursor: pointer; transition: left 0.3s var(--ease-out);
+  cursor: pointer; transition: left 0.3s var(--ease-out); pointer-events: none;
 }
-.difficulty-labels { display: flex; justify-content: space-between; font-size: 0.68rem; color: var(--text-3); margin-top: 8px; font-family: var(--font-mono); }
+.difficulty-labels {
+  display: flex; justify-content: space-between;
+  font-size: 0.67rem; color: var(--text-3); margin-top: 6px; font-family: var(--font-mono);
+}
 .difficulty-label-active { color: var(--coral); font-weight: 700; }
 
 /* Start button */
 .btn-start {
-  width: 100%; padding: 15px 24px; border-radius: 14px;
+  width: 100%; padding: 14px 24px; border-radius: 13px;
   background: linear-gradient(135deg, var(--coral), #ff8c35);
-  color: #fff; font-family: var(--font-display); font-size: 1rem; font-weight: 700;
+  color: #fff; font-family: var(--font-display); font-size: 0.95rem; font-weight: 700;
   display: flex; align-items: center; justify-content: center; gap: 10px;
-  transition: all 0.3s var(--ease-out); position: relative; overflow: hidden;
-  cursor: pointer;
-}
-.btn-start::before {
-  content: ''; position: absolute; inset: 0;
-  background: linear-gradient(135deg, rgba(255,255,255,0.1), transparent);
-  opacity: 0; transition: opacity 0.2s;
+  transition: all 0.3s var(--ease-out); cursor: pointer;
 }
 .btn-start:hover { transform: translateY(-2px); box-shadow: 0 12px 32px rgba(255,107,53,0.4); }
-.btn-start:hover::before { opacity: 1; }
-.btn-start:active { transform: translateY(0); }
+.btn-start:disabled { opacity: 0.6; cursor: not-allowed; transform: none; box-shadow: none; }
 
 /* Preview Card */
 .preview-card {
-  background: var(--card); border: 1px solid var(--border); border-radius: 24px;
-  padding: 28px; position: sticky; top: 80px;
+  background: var(--card); border: 1px solid var(--border); border-radius: 22px;
+  padding: 26px; position: sticky; top: 80px;
 }
-.preview-title { font-family: var(--font-display); font-weight: 700; margin-bottom: 20px; font-size: 0.95rem; display: flex; align-items: center; gap: 8px; }
-.session-preview { display: flex; flex-direction: column; gap: 12px; margin-bottom: 20px; }
-.preview-row { display: flex; align-items: center; justify-content: space-between; padding: 10px 14px; background: var(--card-2); border-radius: 10px; font-size: 0.82rem; }
-.preview-row-label { color: var(--text-3); font-family: var(--font-mono); font-size: 0.72rem; }
+.preview-title { font-family: var(--font-display); font-weight: 700; margin-bottom: 18px; font-size: 0.92rem; display: flex; align-items: center; gap: 8px; }
+.session-preview { display: flex; flex-direction: column; gap: 10px; margin-bottom: 18px; }
+.preview-row {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 9px 13px; background: var(--card-2); border-radius: 10px; font-size: 0.8rem;
+}
+.preview-row-label { color: var(--text-3); font-family: var(--font-mono); font-size: 0.68rem; }
 .preview-row-val { font-weight: 600; color: var(--coral); }
 .session-q-count {
-  text-align: center; padding: 20px; background: rgba(255,107,53,0.06);
-  border: 1px solid rgba(255,107,53,0.15); border-radius: 14px; margin-bottom: 16px;
+  text-align: center; padding: 18px;
+  background: rgba(255,107,53,0.06); border: 1px solid rgba(255,107,53,0.15);
+  border-radius: 13px; margin-bottom: 14px;
 }
-.session-q-count .big { font-family: var(--font-display); font-size: 3rem; font-weight: 800; color: var(--coral); line-height: 1; }
-.session-q-count .label { font-size: 0.75rem; color: var(--text-3); margin-top: 4px; }
+.session-q-count .big { font-family: var(--font-display); font-size: 2.8rem; font-weight: 800; color: var(--coral); line-height: 1; }
+.session-q-count .label { font-size: 0.72rem; color: var(--text-3); margin-top: 4px; }
 
 /* Past Sessions */
 .past-session-item {
-  display: flex; align-items: center; gap: 12px; padding: 11px 14px;
+  display: flex; align-items: center; gap: 11px; padding: 10px 13px;
   background: var(--card-2); border-radius: 10px; margin-bottom: 8px;
   cursor: pointer; transition: all 0.2s; border: 1px solid transparent;
 }
 .past-session-item:hover { border-color: rgba(255,107,53,0.2); background: rgba(255,107,53,0.04); }
 .past-session-score { font-family: var(--font-display); font-weight: 700; color: var(--coral); font-size: 1rem; }
 .past-session-meta { flex: 1; }
-.past-session-role { font-size: 0.82rem; font-weight: 600; margin-bottom: 2px; }
-.past-session-date { font-size: 0.7rem; color: var(--text-3); font-family: var(--font-mono); }
+.past-session-role { font-size: 0.8rem; font-weight: 600; margin-bottom: 2px; }
+.past-session-date { font-size: 0.68rem; color: var(--text-3); font-family: var(--font-mono); }
 
 /* ============================================================
    INTERVIEW SCREEN
 ============================================================ */
-#screen-interview { padding-top: 64px; height: 100vh; overflow: hidden; }
+#screen-interview { height: calc(100vh - 62px); overflow: hidden; }
 
 .interview-wrapper {
-  display: grid; grid-template-columns: 1fr 320px;
-  height: calc(100vh - 64px);
+  display: grid; grid-template-columns: 1fr 310px;
+  height: 100%;
 }
 
-/* Main Chat Area */
 .chat-area {
   display: flex; flex-direction: column;
   background: var(--bg); border-right: 1px solid var(--border);
+  overflow: hidden;
 }
 
-/* Interview Header Bar */
 .interview-topbar {
   background: var(--surface); border-bottom: 1px solid var(--border);
-  padding: 0 24px; height: 60px;
-  display: flex; align-items: center; gap: 16px; flex-shrink: 0;
+  padding: 0 22px; height: 56px;
+  display: flex; align-items: center; gap: 14px; flex-shrink: 0;
 }
 .interview-role-tag {
-  display: flex; align-items: center; gap: 8px; padding: 5px 14px;
+  display: flex; align-items: center; gap: 7px; padding: 4px 13px;
   background: rgba(255,107,53,0.1); border: 1px solid rgba(255,107,53,0.25);
-  border-radius: 100px; font-size: 0.75rem; font-weight: 600; color: var(--coral);
+  border-radius: 100px; font-size: 0.72rem; font-weight: 600; color: var(--coral);
   font-family: var(--font-mono);
 }
 .interview-type-tag {
-  padding: 5px 12px; border-radius: 100px; font-size: 0.72rem; font-weight: 600;
+  padding: 4px 11px; border-radius: 100px; font-size: 0.7rem; font-weight: 600;
   font-family: var(--font-mono); background: rgba(59,158,255,0.1);
   border: 1px solid rgba(59,158,255,0.2); color: var(--sky);
 }
 .interview-diff-tag {
-  padding: 5px 12px; border-radius: 100px; font-size: 0.72rem; font-weight: 600;
+  padding: 4px 11px; border-radius: 100px; font-size: 0.7rem; font-weight: 600;
   font-family: var(--font-mono); background: rgba(255,209,102,0.1);
   border: 1px solid rgba(255,209,102,0.2); color: var(--gold);
 }
-
-/* Timer */
 .timer-display {
-  margin-left: auto; display: flex; align-items: center; gap: 8px;
-  font-family: var(--font-mono); font-size: 0.9rem; font-weight: 700; color: var(--text-2);
+  margin-left: auto; display: flex; align-items: center; gap: 7px;
+  font-family: var(--font-mono); font-size: 0.88rem; font-weight: 700; color: var(--text-2);
 }
-.timer-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--coral); animation: blink 1s infinite; }
+.timer-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--coral); animation: blink 1s infinite; }
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.3} }
 
-/* Progress Bar */
-.progress-strip {
-  height: 3px; background: var(--card-2); flex-shrink: 0; position: relative;
-}
+.progress-strip { height: 3px; background: var(--card-2); flex-shrink: 0; position: relative; }
 .progress-strip-fill {
   height: 100%;
   background: linear-gradient(90deg, var(--coral), var(--gold));
-  transition: width 0.6s var(--ease-out);
-  position: relative;
+  transition: width 0.6s var(--ease-out); position: relative;
 }
 .progress-strip-fill::after {
   content: ''; position: absolute; right: 0; top: -2px;
@@ -414,41 +304,36 @@ select { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmln
 .progress-label {
   height: 28px; background: var(--surface); border-bottom: 1px solid var(--border);
   display: flex; align-items: center; justify-content: space-between;
-  padding: 0 24px; flex-shrink: 0;
+  padding: 0 22px; flex-shrink: 0;
 }
-.progress-label span { font-size: 0.68rem; color: var(--text-3); font-family: var(--font-mono); }
-.progress-steps {
-  display: flex; gap: 4px;
-}
-.progress-step {
-  width: 20px; height: 4px; border-radius: 2px;
-  background: var(--card-2); transition: all 0.3s;
-}
+.progress-label span { font-size: 0.66rem; color: var(--text-3); font-family: var(--font-mono); }
+.progress-steps { display: flex; gap: 4px; }
+.progress-step { width: 18px; height: 4px; border-radius: 2px; background: var(--card-2); transition: all 0.3s; }
 .progress-step.done { background: var(--emerald); }
 .progress-step.active { background: var(--coral); }
 
-/* Chat Messages */
 .chat-messages {
-  flex: 1; overflow-y: auto; padding: 24px;
-  display: flex; flex-direction: column; gap: 16px;
+  flex: 1; overflow-y: auto; padding: 20px;
+  display: flex; flex-direction: column; gap: 14px;
 }
 .chat-messages::-webkit-scrollbar { width: 4px; }
 .chat-messages::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
 
-.chat-msg { display: flex; gap: 12px; max-width: 85%; animation: msgFadeUp 0.4s var(--ease-out) forwards; }
+.chat-msg { display: flex; gap: 11px; max-width: 85%; animation: msgFadeUp 0.4s var(--ease-out) forwards; }
 .chat-msg.ai { align-self: flex-start; }
 .chat-msg.user { align-self: flex-end; flex-direction: row-reverse; }
 
 .chat-avatar {
-  width: 36px; height: 36px; border-radius: 50%; flex-shrink: 0;
-  display: flex; align-items: center; justify-content: center; font-size: 15px;
+  width: 34px; height: 34px; border-radius: 50%; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center; font-size: 14px;
 }
-.chat-avatar.ai-avatar { background: rgba(255,107,53,0.15); border: 1px solid rgba(255,107,53,0.25); font-size: 16px; }
-.chat-avatar.user-avatar { background: linear-gradient(135deg, var(--coral), var(--gold)); color: #fff; font-family: var(--font-display); font-weight: 700; font-size: 13px; }
+.chat-avatar.ai-avatar { background: rgba(255,107,53,0.15); border: 1px solid rgba(255,107,53,0.25); font-size: 15px; }
+.chat-avatar.user-avatar {
+  background: linear-gradient(135deg, var(--coral), var(--gold));
+  color: #fff; font-family: var(--font-display); font-weight: 700; font-size: 12px;
+}
 
-.chat-bubble {
-  padding: 14px 18px; border-radius: 18px; font-size: 0.88rem; line-height: 1.65;
-}
+.chat-bubble { padding: 13px 17px; border-radius: 18px; font-size: 0.86rem; line-height: 1.65; }
 .chat-bubble.ai {
   background: var(--card); border: 1px solid var(--border);
   border-radius: 4px 18px 18px 18px; color: var(--text-1);
@@ -457,32 +342,19 @@ select { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmln
   background: linear-gradient(135deg, #ff6b35, #ff9130);
   border-radius: 18px 4px 18px 18px; color: #fff;
 }
-.chat-bubble code {
-  background: rgba(255,107,53,0.12); padding: 2px 6px; border-radius: 4px;
-  font-family: var(--font-mono); font-size: 0.82rem; color: var(--coral-2);
-}
-.chat-msg.user .chat-bubble code { background: rgba(255,255,255,0.2); color: #fff; }
+.chat-time { font-size: 0.63rem; color: var(--text-3); margin-top: 4px; font-family: var(--font-mono); }
 
-.chat-time { font-size: 0.65rem; color: var(--text-3); margin-top: 5px; font-family: var(--font-mono); }
+.q-chips { display: flex; gap: 6px; margin-bottom: 9px; flex-wrap: wrap; }
+.q-chip { padding: 2px 9px; border-radius: 100px; font-size: 0.66rem; font-weight: 600; font-family: var(--font-mono); }
 
-/* Q badges in chat */
-.q-chips { display: flex; gap: 7px; margin-bottom: 10px; flex-wrap: wrap; }
-.q-chip {
-  padding: 3px 10px; border-radius: 100px; font-size: 0.68rem; font-weight: 600;
-  font-family: var(--font-mono);
-}
-
-/* AI Typing */
-.typing-bubble {
-  display: flex; gap: 12px; align-items: flex-end; animation: msgFadeUp 0.3s var(--ease-out);
-}
+.typing-bubble { display: flex; gap: 11px; align-items: flex-end; animation: msgFadeUp 0.3s var(--ease-out); }
 .typing-dots {
-  padding: 14px 18px; background: var(--card); border: 1px solid var(--border);
+  padding: 13px 17px; background: var(--card); border: 1px solid var(--border);
   border-radius: 4px 18px 18px 18px;
   display: flex; align-items: center; gap: 5px;
 }
 .typing-dot {
-  width: 7px; height: 7px; border-radius: 50%; background: var(--text-3);
+  width: 6px; height: 6px; border-radius: 50%; background: var(--text-3);
   animation: typingBounce 1.4s ease-in-out infinite;
 }
 .typing-dot:nth-child(2) { animation-delay: 0.18s; }
@@ -492,436 +364,264 @@ select { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmln
   30% { transform: translateY(-7px); opacity: 1; }
 }
 
-/* Input Area */
 .chat-input-area {
-  padding: 16px 24px; background: var(--surface); border-top: 1px solid var(--border);
+  padding: 14px 22px; background: var(--surface); border-top: 1px solid var(--border);
   flex-shrink: 0;
 }
 .chat-input-hint {
-  font-size: 0.68rem; color: var(--text-3); margin-bottom: 10px;
+  font-size: 0.66rem; color: var(--text-3); margin-bottom: 9px;
   font-family: var(--font-mono); display: flex; align-items: center; gap: 6px;
 }
-.chat-input-row { display: flex; gap: 10px; align-items: flex-end; }
+.chat-input-row { display: flex; gap: 9px; align-items: flex-end; }
 .chat-textarea-wrap { flex: 1; position: relative; }
 .chat-textarea {
-  resize: none; height: 54px; border-radius: 14px;
-  padding: 16px 16px; font-size: 0.875rem; line-height: 1.4;
-  transition: height 0.2s; min-height: 54px; max-height: 140px;
+  resize: none; height: 52px; border-radius: 13px;
+  padding: 15px 15px; font-size: 0.85rem; line-height: 1.4;
+  min-height: 52px; max-height: 130px;
+  background: var(--card); border: 1px solid var(--border); color: var(--text-1);
+  width: 100%; outline: none; font-family: var(--font-body);
+  transition: border 0.2s, box-shadow 0.2s;
 }
-.chat-input-actions { display: flex; flex-direction: column; gap: 8px; }
+.chat-textarea:focus { border-color: var(--coral); box-shadow: 0 0 0 3px rgba(255,107,53,0.1); }
+.chat-textarea::placeholder { color: var(--text-3); }
+.chat-input-actions { display: flex; flex-direction: column; gap: 7px; }
 .chat-btn {
-  width: 44px; height: 44px; border-radius: 12px;
+  width: 42px; height: 42px; border-radius: 11px;
   display: flex; align-items: center; justify-content: center;
-  font-size: 16px; transition: all 0.2s; cursor: pointer; border: none;
+  font-size: 15px; transition: all 0.2s; cursor: pointer; border: none;
 }
 .chat-btn-send {
   background: linear-gradient(135deg, var(--coral), #ff9130);
   color: #fff; box-shadow: 0 4px 12px rgba(255,107,53,0.3);
 }
 .chat-btn-send:hover { transform: scale(1.05); box-shadow: 0 6px 20px rgba(255,107,53,0.45); }
-.chat-btn-send:active { transform: scale(0.97); }
-.chat-btn-mic {
-  background: var(--card); border: 1px solid var(--border); color: var(--text-2);
-}
+.chat-btn-send:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+.chat-btn-mic { background: var(--card); border: 1px solid var(--border); color: var(--text-2); }
 .chat-btn-mic:hover { border-color: var(--coral); color: var(--coral); }
 .chat-btn-skip {
   background: var(--card-2); border: 1px solid var(--border);
-  color: var(--text-3); font-size: 0.7rem; width: auto; padding: 0 12px; font-family: var(--font-mono); border-radius: 8px; height: 32px; font-size: 0.68rem;
+  color: var(--text-3); width: auto; padding: 0 11px; font-family: var(--font-mono);
+  border-radius: 8px; height: 30px; font-size: 0.66rem; cursor: pointer;
 }
 .chat-btn-skip:hover { border-color: var(--border-h); color: var(--text-1); }
-
-.chat-bottom-row { display: flex; align-items: center; justify-content: space-between; margin-top: 10px; }
-.word-counter { font-size: 0.68rem; color: var(--text-3); font-family: var(--font-mono); }
+.chat-bottom-row { display: flex; align-items: center; justify-content: space-between; margin-top: 8px; }
+.word-counter { font-size: 0.66rem; color: var(--text-3); font-family: var(--font-mono); }
 .end-interview-btn {
-  font-size: 0.72rem; color: var(--text-3); padding: 5px 12px;
+  font-size: 0.7rem; color: var(--text-3); padding: 4px 11px;
   border: 1px solid var(--border); border-radius: 7px; cursor: pointer;
   transition: all 0.2s; display: flex; align-items: center; gap: 5px;
 }
 .end-interview-btn:hover { border-color: var(--coral); color: var(--coral); }
 
-/* ============================================================
-   LIVE INSIGHTS PANEL
-============================================================ */
+/* ── LIVE INSIGHTS PANEL ── */
 .insights-panel {
   background: var(--surface); overflow-y: auto;
   display: flex; flex-direction: column;
 }
 .insights-panel::-webkit-scrollbar { width: 4px; }
 .insights-panel::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
-
 .insights-header {
-  padding: 16px 20px; border-bottom: 1px solid var(--border);
-  font-family: var(--font-display); font-weight: 700; font-size: 0.9rem;
-  display: flex; align-items: center; gap: 8px; flex-shrink: 0;
-  height: 60px;
+  padding: 14px 18px; border-bottom: 1px solid var(--border);
+  font-family: var(--font-display); font-weight: 700; font-size: 0.88rem;
+  display: flex; align-items: center; gap: 8px; flex-shrink: 0; height: 56px;
 }
 .insights-live {
   margin-left: auto; display: flex; align-items: center; gap: 5px;
-  font-family: var(--font-mono); font-size: 0.62rem; color: var(--emerald);
+  font-family: var(--font-mono); font-size: 0.6rem; color: var(--emerald);
   background: rgba(0,200,150,0.1); border: 1px solid rgba(0,200,150,0.2);
-  padding: 3px 9px; border-radius: 100px;
+  padding: 2px 8px; border-radius: 100px;
 }
 .insights-live-dot { width: 5px; height: 5px; background: var(--emerald); border-radius: 50%; animation: blink 1.2s infinite; }
-
-.insights-body { padding: 16px 20px; display: flex; flex-direction: column; gap: 20px; flex: 1; }
-
-/* Current Q */
+.insights-body { padding: 14px 18px; display: flex; flex-direction: column; gap: 18px; flex: 1; }
 .current-q-card {
-  padding: 14px; background: rgba(255,107,53,0.06);
-  border: 1px solid rgba(255,107,53,0.2); border-radius: 12px;
+  padding: 13px; background: rgba(255,107,53,0.06);
+  border: 1px solid rgba(255,107,53,0.2); border-radius: 11px;
 }
-.current-q-label { font-family: var(--font-mono); font-size: 0.62rem; color: var(--coral); letter-spacing: 0.08em; margin-bottom: 6px; }
-.current-q-text { font-size: 0.78rem; color: var(--text-2); line-height: 1.5; }
-
-/* Score rings */
-.score-rings { display: flex; justify-content: space-between; gap: 8px; }
+.current-q-label { font-family: var(--font-mono); font-size: 0.6rem; color: var(--coral); letter-spacing: 0.08em; margin-bottom: 5px; }
+.current-q-text { font-size: 0.76rem; color: var(--text-2); line-height: 1.5; }
+.score-rings { display: flex; justify-content: space-between; gap: 6px; }
 .score-ring-item { text-align: center; flex: 1; }
-.score-ring-label { font-size: 0.65rem; color: var(--text-3); margin-bottom: 8px; font-family: var(--font-mono); }
-.ring-wrap { position: relative; width: 64px; height: 64px; margin: 0 auto 6px; }
+.score-ring-label { font-size: 0.63rem; color: var(--text-3); margin-bottom: 7px; font-family: var(--font-mono); }
+.ring-wrap { position: relative; width: 60px; height: 60px; margin: 0 auto 5px; }
 .ring-wrap svg { transform: rotate(-90deg); }
-.ring-val {
-  position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
-  font-family: var(--font-display); font-size: 0.95rem; font-weight: 700;
-}
-
-/* Mini bars */
-.insight-metric { margin-bottom: 12px; }
-.insight-metric-head { display: flex; justify-content: space-between; margin-bottom: 5px; font-size: 0.75rem; }
+.ring-val { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-family: var(--font-display); font-size: 0.9rem; font-weight: 700; }
+.insight-metric { margin-bottom: 10px; }
+.insight-metric-head { display: flex; justify-content: space-between; margin-bottom: 4px; font-size: 0.73rem; }
 .insight-metric-label { color: var(--text-2); }
-.insight-metric-val { color: var(--text-3); font-family: var(--font-mono); font-size: 0.7rem; }
+.insight-metric-val { color: var(--text-3); font-family: var(--font-mono); font-size: 0.68rem; }
 .metric-bar { height: 5px; background: var(--card-2); border-radius: 10px; overflow: hidden; }
 .metric-fill { height: 100%; border-radius: 10px; transition: width 0.8s var(--ease-out); }
-
-/* Q Progress */
-.q-progress-dots { display: flex; gap: 5px; flex-wrap: wrap; }
+.q-progress-dots { display: flex; gap: 4px; flex-wrap: wrap; }
 .q-dot {
-  width: 24px; height: 24px; border-radius: 8px;
+  width: 22px; height: 22px; border-radius: 7px;
   display: flex; align-items: center; justify-content: center;
-  font-size: 0.65rem; font-family: var(--font-mono); font-weight: 700;
-  transition: all 0.2s;
+  font-size: 0.63rem; font-family: var(--font-mono); font-weight: 700; transition: all 0.2s;
 }
 .q-dot.done { background: rgba(0,200,150,0.15); color: var(--emerald); border: 1px solid rgba(0,200,150,0.25); }
 .q-dot.active { background: rgba(255,107,53,0.15); color: var(--coral); border: 1px solid rgba(255,107,53,0.35); animation: pulseDot 1.5s ease-in-out infinite; }
 .q-dot.pending { background: var(--card-2); color: var(--text-3); border: 1px solid var(--border); }
 @keyframes pulseDot { 0%,100%{box-shadow:0 0 0 0 rgba(255,107,53,0)} 50%{box-shadow:0 0 0 4px rgba(255,107,53,0.15)} }
-
-/* Tip card */
 .insight-tip {
-  padding: 12px; background: rgba(255,209,102,0.06);
-  border: 1px solid rgba(255,209,102,0.15); border-radius: 10px; margin-top: 4px;
+  padding: 11px; background: rgba(255,209,102,0.06);
+  border: 1px solid rgba(255,209,102,0.15); border-radius: 9px; margin-top: 4px;
 }
-.insight-tip-label { font-size: 0.62rem; font-family: var(--font-mono); color: var(--gold); margin-bottom: 5px; }
-.insight-tip-text { font-size: 0.77rem; color: var(--text-2); line-height: 1.5; }
+.insight-tip-label { font-size: 0.6rem; font-family: var(--font-mono); color: var(--gold); margin-bottom: 4px; }
+.insight-tip-text { font-size: 0.75rem; color: var(--text-2); line-height: 1.5; }
 
 /* ============================================================
    RESULTS SCREEN
 ============================================================ */
-#screen-results {
-  padding-top: 64px; min-height: 100vh;
-  background: var(--bg);
-}
-.results-wrapper {
-  max-width: 1100px; margin: 0 auto; padding: 48px 28px 80px;
-}
+#screen-results { min-height: calc(100vh - 62px); background: var(--bg); overflow-y: auto; }
+.results-wrapper { max-width: 1100px; margin: 0 auto; padding: 36px 28px 80px; }
 
-.results-hero {
-  text-align: center; margin-bottom: 48px;
-  animation: fadeUp 0.6s var(--ease-out) forwards;
-}
-.results-hero-label {
-  font-family: var(--font-mono); font-size: 0.72rem; letter-spacing: 0.1em;
-  text-transform: uppercase; color: var(--coral); margin-bottom: 12px;
-}
-.results-hero-title {
-  font-family: var(--font-display); font-size: clamp(2rem, 4vw, 3.2rem);
-  font-weight: 800; letter-spacing: -0.025em; margin-bottom: 8px;
-}
-.results-hero-sub { font-size: 0.95rem; color: var(--text-2); }
+.results-hero { text-align: center; margin-bottom: 40px; animation: fadeUp 0.6s var(--ease-out) forwards; }
+.results-hero-label { font-family: var(--font-mono); font-size: 0.7rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--coral); margin-bottom: 10px; }
+.results-hero-title { font-family: var(--font-display); font-size: clamp(1.8rem, 3.5vw, 2.8rem); font-weight: 800; letter-spacing: -0.025em; margin-bottom: 7px; }
+.results-hero-sub { font-size: 0.9rem; color: var(--text-2); }
 
-/* Big Score */
 .big-score-card {
-  background: var(--card); border: 1px solid var(--border); border-radius: 28px;
-  padding: 40px; display: flex; align-items: center; gap: 40px;
-  margin-bottom: 28px; position: relative; overflow: hidden;
+  background: var(--card); border: 1px solid var(--border); border-radius: 26px;
+  padding: 36px; display: flex; align-items: center; gap: 36px;
+  margin-bottom: 24px; position: relative; overflow: hidden;
   animation: fadeUp 0.6s 0.1s var(--ease-out) both;
 }
 .big-score-card::before {
   content: ''; position: absolute; top: 0; left: 0; right: 0; height: 4px;
   background: linear-gradient(90deg, var(--coral), var(--gold));
 }
-.big-score-bg {
-  position: absolute; right: -60px; top: -60px;
-  width: 240px; height: 240px; border-radius: 50%;
-  background: radial-gradient(circle, rgba(255,107,53,0.06) 0%, transparent 70%);
-  pointer-events: none;
-}
+.big-score-bg { position: absolute; right: -60px; top: -60px; width: 220px; height: 220px; border-radius: 50%; background: radial-gradient(circle, rgba(255,107,53,0.06) 0%, transparent 70%); pointer-events: none; }
 .big-score-ring { position: relative; flex-shrink: 0; }
 .big-score-ring svg { transform: rotate(-90deg); }
-.big-score-num {
-  position: absolute; inset: 0; display: flex; flex-direction: column;
-  align-items: center; justify-content: center;
-  font-family: var(--font-display); font-size: 2.8rem; font-weight: 800; color: var(--coral);
-  line-height: 1;
-}
-.big-score-num span { font-size: 0.85rem; color: var(--text-3); font-weight: 500; }
+.big-score-num { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; font-family: var(--font-display); font-size: 2.6rem; font-weight: 800; color: var(--coral); line-height: 1; }
+.big-score-num span { font-size: 0.82rem; color: var(--text-3); font-weight: 500; }
 .big-score-info { flex: 1; }
-.big-score-grade {
-  display: inline-block; padding: 5px 16px; border-radius: 100px;
-  background: rgba(255,107,53,0.1); border: 1px solid rgba(255,107,53,0.25);
-  font-family: var(--font-mono); font-size: 0.78rem; font-weight: 700;
-  color: var(--coral); margin-bottom: 14px;
-}
-.big-score-title { font-family: var(--font-display); font-size: 1.8rem; font-weight: 800; margin-bottom: 6px; }
-.big-score-sub { font-size: 0.88rem; color: var(--text-2); line-height: 1.6; max-width: 400px; }
-.big-score-meta { display: flex; gap: 20px; margin-top: 20px; }
-.big-score-meta-item { display: flex; align-items: center; gap: 7px; font-size: 0.8rem; color: var(--text-3); }
+.big-score-grade { display: inline-block; padding: 4px 14px; border-radius: 100px; background: rgba(255,107,53,0.1); border: 1px solid rgba(255,107,53,0.25); font-family: var(--font-mono); font-size: 0.75rem; font-weight: 700; color: var(--coral); margin-bottom: 12px; }
+.big-score-title { font-family: var(--font-display); font-size: 1.65rem; font-weight: 800; margin-bottom: 5px; }
+.big-score-sub { font-size: 0.85rem; color: var(--text-2); line-height: 1.6; max-width: 380px; }
+.big-score-meta { display: flex; gap: 18px; margin-top: 18px; flex-wrap: wrap; }
+.big-score-meta-item { display: flex; align-items: center; gap: 6px; font-size: 0.78rem; color: var(--text-3); }
 .big-score-meta-item strong { color: var(--text-1); }
 
-/* Score Breakdown */
-.results-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 24px; }
-
-.result-card {
-  background: var(--card); border: 1px solid var(--border); border-radius: 20px; padding: 24px;
-  animation: fadeUp 0.6s var(--ease-out) both;
-}
-.result-card-title { font-family: var(--font-display); font-weight: 700; margin-bottom: 20px; font-size: 0.95rem; display: flex; align-items: center; gap: 8px; }
-
-/* Category bars */
-.cat-bar-item { margin-bottom: 18px; }
-.cat-bar-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
-.cat-bar-label { font-size: 0.82rem; font-weight: 500; }
-.cat-bar-score {
-  font-family: var(--font-display); font-size: 0.9rem; font-weight: 700;
-}
-.cat-bar-track { height: 8px; background: var(--card-2); border-radius: 100px; overflow: hidden; }
+.results-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; margin-bottom: 20px; }
+.result-card { background: var(--card); border: 1px solid var(--border); border-radius: 18px; padding: 22px; animation: fadeUp 0.6s var(--ease-out) both; }
+.result-card-title { font-family: var(--font-display); font-weight: 700; margin-bottom: 18px; font-size: 0.92rem; display: flex; align-items: center; gap: 8px; }
+.cat-bar-item { margin-bottom: 16px; }
+.cat-bar-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 7px; }
+.cat-bar-label { font-size: 0.8rem; font-weight: 500; }
+.cat-bar-score { font-family: var(--font-display); font-size: 0.88rem; font-weight: 700; }
+.cat-bar-track { height: 7px; background: var(--card-2); border-radius: 100px; overflow: hidden; }
 .cat-bar-fill { height: 100%; border-radius: 100px; transition: width 1.2s var(--ease-out); }
-
-/* Strengths / Weaknesses */
-.sw-item {
-  display: flex; align-items: flex-start; gap: 10px; padding: 10px 0;
-  border-bottom: 1px solid var(--border); font-size: 0.83rem;
-}
+.sw-item { display: flex; align-items: flex-start; gap: 9px; padding: 9px 0; border-bottom: 1px solid var(--border); font-size: 0.81rem; }
 .sw-item:last-child { border-bottom: none; padding-bottom: 0; }
-.sw-icon { font-size: 15px; margin-top: 1px; flex-shrink: 0; }
+.sw-icon { font-size: 14px; margin-top: 1px; flex-shrink: 0; }
 .sw-text { color: var(--text-2); line-height: 1.5; }
 .sw-text strong { color: var(--text-1); }
 
-/* AI Feedback Card */
-.feedback-card {
-  background: var(--card); border: 1px solid var(--border); border-radius: 20px;
-  padding: 28px; margin-bottom: 24px;
-  animation: fadeUp 0.6s 0.2s var(--ease-out) both;
-}
-.feedback-card-title { font-family: var(--font-display); font-weight: 700; margin-bottom: 16px; font-size: 0.95rem; display: flex; align-items: center; gap: 8px; }
-.feedback-body {
-  background: rgba(255,107,53,0.04); border: 1px solid rgba(255,107,53,0.12);
-  border-radius: 12px; padding: 18px;
-  font-size: 0.875rem; color: var(--text-2); line-height: 1.75;
-}
-.feedback-body p { margin-bottom: 10px; }
+.feedback-card { background: var(--card); border: 1px solid var(--border); border-radius: 18px; padding: 26px; margin-bottom: 20px; animation: fadeUp 0.6s 0.2s var(--ease-out) both; }
+.feedback-card-title { font-family: var(--font-display); font-weight: 700; margin-bottom: 14px; font-size: 0.92rem; display: flex; align-items: center; gap: 8px; }
+.feedback-body { background: rgba(255,107,53,0.04); border: 1px solid rgba(255,107,53,0.12); border-radius: 11px; padding: 16px; font-size: 0.85rem; color: var(--text-2); line-height: 1.75; }
+.feedback-body p { margin-bottom: 9px; }
 .feedback-body p:last-child { margin-bottom: 0; }
 
-/* Improvement suggestions */
-.improvements { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-bottom: 24px; }
-.improve-card {
-  background: var(--card); border: 1px solid var(--border); border-radius: 16px;
-  padding: 18px; transition: all 0.2s;
-  animation: fadeUp 0.6s 0.3s var(--ease-out) both;
-}
+.improvements { display: grid; grid-template-columns: repeat(3, 1fr); gap: 13px; margin-bottom: 20px; }
+.improve-card { background: var(--card); border: 1px solid var(--border); border-radius: 15px; padding: 17px; transition: all 0.2s; animation: fadeUp 0.6s 0.3s var(--ease-out) both; }
 .improve-card:hover { border-color: var(--border-h); transform: translateY(-2px); }
-.improve-icon { font-size: 24px; margin-bottom: 10px; }
-.improve-title { font-family: var(--font-display); font-weight: 700; font-size: 0.85rem; margin-bottom: 6px; }
-.improve-desc { font-size: 0.78rem; color: var(--text-2); line-height: 1.55; }
-.improve-tag {
-  margin-top: 10px; padding: 3px 10px; border-radius: 100px;
-  font-size: 0.65rem; font-weight: 600; font-family: var(--font-mono);
-  display: inline-block;
-}
+.improve-icon { font-size: 22px; margin-bottom: 9px; }
+.improve-title { font-family: var(--font-display); font-weight: 700; font-size: 0.83rem; margin-bottom: 5px; }
+.improve-desc { font-size: 0.76rem; color: var(--text-2); line-height: 1.55; }
+.improve-tag { margin-top: 9px; padding: 2px 9px; border-radius: 100px; font-size: 0.63rem; font-weight: 600; font-family: var(--font-mono); display: inline-block; }
 
-/* Action Buttons */
-.results-actions {
-  display: flex; gap: 14px; flex-wrap: wrap;
-  animation: fadeUp 0.6s 0.35s var(--ease-out) both;
-}
-.btn-action {
-  padding: 12px 24px; border-radius: 12px; font-weight: 600; font-size: 0.875rem;
-  display: flex; align-items: center; gap: 8px; transition: all 0.25s var(--ease-out);
-  cursor: pointer;
-}
-.btn-action-primary {
-  background: linear-gradient(135deg, var(--coral), #ff9130);
-  color: #fff; box-shadow: 0 4px 14px rgba(255,107,53,0.3); border: none;
-}
+.results-actions { display: flex; gap: 12px; flex-wrap: wrap; animation: fadeUp 0.6s 0.35s var(--ease-out) both; }
+.btn-action { padding: 11px 22px; border-radius: 11px; font-weight: 600; font-size: 0.85rem; display: flex; align-items: center; gap: 7px; transition: all 0.25s var(--ease-out); cursor: pointer; }
+.btn-action-primary { background: linear-gradient(135deg, var(--coral), #ff9130); color: #fff; box-shadow: 0 4px 14px rgba(255,107,53,0.3); border: none; }
 .btn-action-primary:hover { transform: translateY(-1px); box-shadow: 0 8px 24px rgba(255,107,53,0.4); }
-.btn-action-outline {
-  background: var(--card); border: 1px solid var(--border); color: var(--text-1);
-}
+.btn-action-outline { background: var(--card); border: 1px solid var(--border); color: var(--text-1); }
 .btn-action-outline:hover { border-color: var(--border-h); transform: translateY(-1px); background: var(--card-2); }
-.btn-action-ghost {
-  background: transparent; border: 1px solid rgba(255,107,53,0.3); color: var(--coral);
-}
-.btn-action-ghost:hover { background: rgba(255,107,53,0.06); border-color: rgba(255,107,53,0.5); }
+.btn-action-ghost { background: transparent; border: 1px solid rgba(255,107,53,0.3); color: var(--coral); }
+.btn-action-ghost:hover { background: rgba(255,107,53,0.06); }
 
-/* History drawer */
-.history-card {
-  background: var(--card); border: 1px solid var(--border); border-radius: 20px;
-  padding: 24px; margin-bottom: 24px; display: none;
-  animation: fadeUp 0.4s var(--ease-out) forwards;
-}
+.history-card { background: var(--card); border: 1px solid var(--border); border-radius: 18px; padding: 22px; margin-top: 20px; display: none; animation: fadeUp 0.4s var(--ease-out) forwards; }
 .history-card.show { display: block; }
-.history-item {
-  display: flex; align-items: center; gap: 16px; padding: 14px 0;
-  border-bottom: 1px solid var(--border); cursor: pointer; transition: all 0.2s;
-}
+.history-item { display: flex; align-items: center; gap: 14px; padding: 13px 0; border-bottom: 1px solid var(--border); cursor: pointer; transition: all 0.2s; }
 .history-item:last-child { border-bottom: none; padding-bottom: 0; }
-.history-item:hover { padding-left: 6px; }
-.history-rank {
-  width: 36px; height: 36px; border-radius: 10px;
-  display: flex; align-items: center; justify-content: center;
-  font-family: var(--font-display); font-weight: 700; font-size: 0.85rem;
-  background: rgba(255,107,53,0.1); color: var(--coral);
-}
+.history-item:hover { padding-left: 5px; }
+.history-rank { width: 34px; height: 34px; border-radius: 9px; display: flex; align-items: center; justify-content: center; font-family: var(--font-display); font-weight: 700; font-size: 0.82rem; background: rgba(255,107,53,0.1); color: var(--coral); }
 .history-info { flex: 1; }
-.history-role { font-weight: 600; font-size: 0.85rem; margin-bottom: 3px; }
-.history-meta { font-size: 0.72rem; color: var(--text-3); font-family: var(--font-mono); }
-.history-score { font-family: var(--font-display); font-size: 1.3rem; font-weight: 800; }
+.history-role { font-weight: 600; font-size: 0.83rem; margin-bottom: 2px; }
+.history-meta { font-size: 0.7rem; color: var(--text-3); font-family: var(--font-mono); }
+.history-score { font-family: var(--font-display); font-size: 1.25rem; font-weight: 800; }
 
-/* ============================================================
-   ANIMATIONS
-============================================================ */
-@keyframes fadeUp {
-  from { opacity: 0; transform: translateY(24px); }
-  to   { opacity: 1; transform: translateY(0); }
-}
-@keyframes fadeIn {
-  from { opacity: 0; } to { opacity: 1; }
-}
-@keyframes msgFadeUp {
-  from { opacity: 0; transform: translateY(12px); }
-  to   { opacity: 1; transform: translateY(0); }
-}
+/* ── ANIMATIONS ── */
+@keyframes fadeUp { from { opacity: 0; transform: translateY(22px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes msgFadeUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-/* ============================================================
-   TOAST
-============================================================ */
-.toast {
-  position: fixed; bottom: 24px; right: 24px; z-index: 9999;
-  background: var(--surface); border: 1px solid var(--border);
-  border-radius: 12px; padding: 12px 18px;
-  display: flex; align-items: center; gap: 10px;
-  font-size: 0.845rem; box-shadow: var(--shadow-lg);
-  transform: translateY(80px); opacity: 0;
-  transition: all 0.4s var(--ease-out);
-}
-.toast.show { transform: translateY(0); opacity: 1; }
-.toast-icon { font-size: 16px; }
-
-/* ============================================================
-   SCROLLBAR
-============================================================ */
-::-webkit-scrollbar { width: 5px; }
-::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
-::selection { background: rgba(255,107,53,0.25); color: var(--text-1); }
-
-/* ============================================================
-   RESPONSIVE
-============================================================ */
+/* ── RESPONSIVE ── */
 @media (max-width: 1024px) {
   .setup-grid { grid-template-columns: 1fr; }
   .interview-wrapper { grid-template-columns: 1fr; }
   .insights-panel { display: none; }
   .results-grid { grid-template-columns: 1fr; }
   .improvements { grid-template-columns: 1fr 1fr; }
-  .big-score-card { flex-wrap: wrap; gap: 24px; }
+  .big-score-card { flex-wrap: wrap; gap: 22px; }
 }
 @media (max-width: 640px) {
-  .hero-title { font-size: 2.2rem; }
+  .setup-wrapper { padding: 20px 16px 60px; }
   .improvements { grid-template-columns: 1fr; }
   .results-actions { flex-direction: column; }
   .btn-action { width: 100%; justify-content: center; }
 }
 </style>
-</head>
-<body>
+{% endblock %}
 
-<!-- TOAST -->
-<div class="toast" id="toast">
-  <span class="toast-icon" id="toastIcon">✓</span>
-  <span id="toastMsg">Done</span>
+{% block topbar_actions %}
+<!-- Session Live badge — shown during interview -->
+<div id="nav-session-badge" style="display:none;align-items:center;gap:7px;padding:5px 13px;background:rgba(255,107,53,0.1);border:1px solid rgba(255,107,53,0.25);border-radius:100px;font-size:0.72rem;font-weight:600;color:var(--coral);font-family:'Space Mono',monospace;">
+  <div style="width:6px;height:6px;background:var(--coral);border-radius:50%;animation:pulse-status 1.5s infinite"></div>
+  SESSION LIVE
 </div>
+{% endblock %}
 
-<!-- Background -->
-<div class="hero-bg-mesh"></div>
+{% block page_content %}
 
-<!-- ============================================================
-     NAVIGATION
-============================================================ -->
-<nav class="nav">
-  <div class="nav-inner">
-    <div class="nav-logo">
-      <div class="nav-logo-icon">🎙️</div>
-      <span class="brand">CrackAI</span>
-      <span style="font-size:0.72rem;color:var(--text-3);font-family:var(--font-mono);margin-left:4px">by Pathforge</span>
-    </div>
+<!-- ── Django URL variables for JS ── -->
+<script>
+  const URLS = {
+    startSession:    "{% url 'crackai:start_session' %}",
+    submitAnswer:    "/crackai/answer/",      // + question_id + /
+    endSession:      "/crackai/end/",          // + session_id + /
+    abandonSession:  "/crackai/abandon/",      // + session_id + /
+    sessionHistory:  "{% url 'crackai:session_history' %}",
+    dashboard:       "{% url 'dashboard' %}",
+  };
+  const USER_INITIAL = "{{ user.first_name|default:'U'|slice:':1'|upper }}";
+</script>
 
-    <div style="display:flex;align-items:center;gap:8px" id="nav-center">
-      <!-- shown during interview -->
-      <div id="nav-session-badge" class="session-badge" style="display:none">
-        <div class="session-badge-dot"></div>
-        SESSION LIVE
-      </div>
-    </div>
-
-    <div class="nav-actions">
-      <div class="theme-toggle" id="themeToggle" onclick="toggleTheme()">🌙</div>
-      <div class="nav-back" onclick="goDashboard()" id="nav-home-btn">← Pathforge</div>
-    </div>
-  </div>
-</nav>
-
-<!-- ============================================================
+<!-- ══════════════════════════════════════════════════
      SETUP SCREEN
-============================================================ -->
+══════════════════════════════════════════════════ -->
 <div class="screen active" id="screen-setup">
+  <div class="setup-wrapper">
 
-  <!-- Hero -->
-  <div class="page-hero" style="position:relative;z-index:1">
-    <div class="hero-eyebrow">
-      <span class="hero-eyebrow-icon">🎙️</span>
-      AI-Based Mock Interview System
-    </div>
-    <h1 class="hero-title">
-      Practise. Improve.<br>
-      <span class="line-2">Get Hired.</span>
-    </h1>
-    <p class="hero-desc">Role-specific questions generated by Gemini AI. Real-time evaluation of your communication, technical depth, and confidence — with actionable feedback every session.</p>
-
-    <div class="hero-stats-row">
-      <div class="hero-stat">
-        <div class="hero-stat-val">8+</div>
-        <div class="hero-stat-label">Roles</div>
-      </div>
-      <div class="hero-stat">
-        <div class="hero-stat-val">3</div>
-        <div class="hero-stat-label">Difficulty Levels</div>
-      </div>
-      <div class="hero-stat">
-        <div class="hero-stat-val">Live</div>
-        <div class="hero-stat-label">AI Scoring</div>
-      </div>
-      <div class="hero-stat">
-        <div class="hero-stat-val">100%</div>
-        <div class="hero-stat-label">Personalised</div>
+    <!-- Hero -->
+    <div class="setup-hero">
+      <div class="hero-eyebrow">🎙️ AI-Based Mock Interview System</div>
+      <h1 class="hero-title">
+        Practise. Improve.<br>
+        <span class="line-2">Get Hired.</span>
+      </h1>
+      <p class="hero-desc">Role-specific questions generated by Gemini AI. Real-time evaluation of your communication, technical depth, and confidence — with actionable feedback every session.</p>
+      <div class="hero-stats-row">
+        <div class="hero-stat"><div class="hero-stat-val">8+</div><div class="hero-stat-label">Roles</div></div>
+        <div class="hero-stat"><div class="hero-stat-val">3</div><div class="hero-stat-label">Difficulty Levels</div></div>
+        <div class="hero-stat"><div class="hero-stat-val">Live</div><div class="hero-stat-label">AI Scoring</div></div>
+        <div class="hero-stat"><div class="hero-stat-val">100%</div><div class="hero-stat-label">Personalised</div></div>
       </div>
     </div>
-  </div>
 
-  <!-- Setup + Preview -->
-  <div class="setup-section">
+    <!-- Setup Grid -->
     <div class="setup-grid">
 
-      <!-- Setup Card -->
+      <!-- Left: Setup Card -->
       <div>
         <div class="setup-card">
           <div class="setup-card-header">
@@ -935,7 +635,7 @@ select { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmln
 
             <!-- Role -->
             <div class="field-group">
-              <div class="field-label"><span class="field-icon">🎯</span> Target Role</div>
+              <div class="field-label"><span>🎯</span> Target Role</div>
               <div class="role-pills" id="rolePills">
                 <div class="role-pill active" onclick="selectRole(this,'Frontend Developer')">💻 Frontend Dev</div>
                 <div class="role-pill" onclick="selectRole(this,'Backend Developer')">⚙️ Backend Dev</div>
@@ -950,7 +650,7 @@ select { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmln
 
             <!-- Interview Type -->
             <div class="field-group">
-              <div class="field-label"><span class="field-icon">📋</span> Interview Type</div>
+              <div class="field-label"><span>📋</span> Interview Type</div>
               <div class="toggle-group" id="typeToggle">
                 <div class="toggle-btn active" onclick="setToggle('typeToggle',this,'Technical')">🔧 Technical</div>
                 <div class="toggle-btn" onclick="setToggle('typeToggle',this,'Behavioural')">🤝 Behavioural</div>
@@ -961,17 +661,17 @@ select { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmln
 
             <!-- Mode -->
             <div class="field-group">
-              <div class="field-label"><span class="field-icon">💬</span> Interview Mode</div>
+              <div class="field-label"><span>💬</span> Interview Mode</div>
               <div class="toggle-group" id="modeToggle">
                 <div class="toggle-btn active" onclick="setToggle('modeToggle',this,'Text')">⌨️ Text Mode</div>
-                <div class="toggle-btn" onclick="setToggle('modeToggle',this,'Voice')">🎙️ Voice Mode (UI)</div>
+                <div class="toggle-btn" onclick="setToggle('modeToggle',this,'Voice')">🎙️ Voice Mode</div>
               </div>
             </div>
 
             <!-- Difficulty -->
             <div class="field-group">
-              <div class="field-label"><span class="field-icon">📈</span> Difficulty Level — <span id="diffLabel" style="color:var(--coral)">Medium</span></div>
-              <div class="difficulty-track" id="diffTrack" onclick="setDifficulty(event)">
+              <div class="field-label"><span>📈</span> Difficulty — <span id="diffLabel" style="color:var(--coral)">Medium</span></div>
+              <div class="difficulty-track" id="diffTrack">
                 <div class="difficulty-fill" id="diffFill" style="width:50%"></div>
                 <div class="difficulty-thumb" id="diffThumb" style="left:50%"></div>
               </div>
@@ -984,7 +684,7 @@ select { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmln
 
             <!-- Question Count -->
             <div class="field-group">
-              <div class="field-label"><span class="field-icon">❓</span> Number of Questions</div>
+              <div class="field-label"><span>❓</span> Number of Questions</div>
               <div class="toggle-group" id="qCountToggle">
                 <div class="toggle-btn" onclick="setToggle('qCountToggle',this,'5')">5 Qs</div>
                 <div class="toggle-btn active" onclick="setToggle('qCountToggle',this,'8')">8 Qs</div>
@@ -993,9 +693,9 @@ select { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmln
               </div>
             </div>
 
-            <!-- Time Limit -->
+            <!-- Time Per Question -->
             <div class="field-group">
-              <div class="field-label"><span class="field-icon">⏱️</span> Time Per Question</div>
+              <div class="field-label"><span>⏱️</span> Time Per Question</div>
               <div class="toggle-group" id="timeToggle">
                 <div class="toggle-btn" onclick="setToggle('timeToggle',this,'2min')">2 min</div>
                 <div class="toggle-btn active" onclick="setToggle('timeToggle',this,'5min')">5 min</div>
@@ -1004,86 +704,77 @@ select { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmln
               </div>
             </div>
 
-            <div style="height:1px;background:var(--border);margin:24px 0"></div>
+            <div style="height:1px;background:var(--border);margin:22px 0"></div>
 
-            <button class="btn-start" onclick="startInterview()">
-              <span style="font-size:18px">🎙️</span>
+            <button class="btn-start" id="startBtn" onclick="startInterview()">
+              <span style="font-size:17px">🎙️</span>
               <span>Start Interview Session</span>
               <span style="margin-left:auto;opacity:0.7">→</span>
             </button>
+
           </div>
         </div>
       </div>
 
-      <!-- Right Panel -->
+      <!-- Right: Preview + History -->
       <div>
-        <div class="preview-card" style="margin-bottom:20px">
+        <!-- Session Preview -->
+        <div class="preview-card" style="margin-bottom:18px">
           <div class="preview-title">📋 Session Preview</div>
           <div class="session-preview">
-            <div class="preview-row">
-              <span class="preview-row-label">ROLE</span>
-              <span class="preview-row-val" id="prev-role">Frontend Developer</span>
-            </div>
-            <div class="preview-row">
-              <span class="preview-row-label">TYPE</span>
-              <span class="preview-row-val" id="prev-type">Technical</span>
-            </div>
-            <div class="preview-row">
-              <span class="preview-row-label">MODE</span>
-              <span class="preview-row-val" id="prev-mode">Text Mode</span>
-            </div>
-            <div class="preview-row">
-              <span class="preview-row-label">DIFFICULTY</span>
-              <span class="preview-row-val" id="prev-diff">Medium</span>
-            </div>
-            <div class="preview-row">
-              <span class="preview-row-label">QUESTIONS</span>
-              <span class="preview-row-val" id="prev-count">8 Questions</span>
-            </div>
-            <div class="preview-row">
-              <span class="preview-row-label">TIME / Q</span>
-              <span class="preview-row-val" id="prev-time">5 min</span>
-            </div>
+            <div class="preview-row"><span class="preview-row-label">ROLE</span><span class="preview-row-val" id="prev-role">Frontend Developer</span></div>
+            <div class="preview-row"><span class="preview-row-label">TYPE</span><span class="preview-row-val" id="prev-type">Technical</span></div>
+            <div class="preview-row"><span class="preview-row-label">MODE</span><span class="preview-row-val" id="prev-mode">Text Mode</span></div>
+            <div class="preview-row"><span class="preview-row-label">DIFFICULTY</span><span class="preview-row-val" id="prev-diff">Medium</span></div>
+            <div class="preview-row"><span class="preview-row-label">QUESTIONS</span><span class="preview-row-val" id="prev-count">8 Questions</span></div>
+            <div class="preview-row"><span class="preview-row-label">TIME / Q</span><span class="preview-row-val" id="prev-time">5 min</span></div>
           </div>
           <div class="session-q-count">
             <div class="big" id="prev-big-q">8</div>
             <div class="label">AI-generated questions ready</div>
           </div>
-          <div style="font-size:0.72rem;color:var(--text-3);text-align:center;padding:8px 0;border-top:1px solid var(--border)">
-            🤖 Powered by Gemini AI · All sessions are private
+          <div style="font-size:0.7rem;color:var(--text-3);text-align:center;padding:7px 0;border-top:1px solid var(--border)">
+            🤖 Powered by Gemini 2.0 Flash · All sessions are private
           </div>
         </div>
 
-        <!-- Past Sessions -->
+        <!-- Recent Sessions from Django -->
         <div class="preview-card">
           <div class="preview-title">🕐 Recent Sessions</div>
-          <div class="past-session-item" onclick="showToast('Loading session report...','📋')">
-            <div style="width:36px;height:36px;border-radius:10px;background:rgba(255,107,53,0.12);display:flex;align-items:center;justify-content:center;font-size:15px">💻</div>
-            <div class="past-session-meta">
-              <div class="past-session-role">Frontend Developer</div>
-              <div class="past-session-date">Today · Technical · 8 Qs</div>
+          {% for session in recent_sessions %}
+          <div class="past-session-item" onclick="loadSessionDetail('{{ session.id }}')">
+            <div style="width:34px;height:34px;border-radius:9px;background:rgba(255,107,53,0.12);display:flex;align-items:center;justify-content:center;font-size:14px">
+              {% if session.role == 'Frontend Developer' %}💻
+              {% elif session.role == 'Backend Developer' %}⚙️
+              {% elif session.role == 'Full Stack' %}🔗
+              {% elif session.role == 'Data Analyst' %}📊
+              {% elif session.role == 'Product Manager' %}📋
+              {% elif session.role == 'UX Designer' %}🎨
+              {% elif session.role == 'ML Engineer' %}🤖
+              {% elif session.role == 'DevOps Engineer' %}🛠️
+              {% else %}🎙️{% endif %}
             </div>
-            <div class="past-session-score" style="color:var(--emerald)">82</div>
-          </div>
-          <div class="past-session-item" onclick="showToast('Loading session report...','📋')">
-            <div style="width:36px;height:36px;border-radius:10px;background:rgba(59,158,255,0.12);display:flex;align-items:center;justify-content:center;font-size:15px">📊</div>
             <div class="past-session-meta">
-              <div class="past-session-role">Product Manager</div>
-              <div class="past-session-date">Yesterday · Behavioural · 5 Qs</div>
+              <div class="past-session-role">{{ session.role }}</div>
+              <div class="past-session-date">
+                {{ session.created_at|timesince }} ago · {{ session.interview_type }} · {{ session.question_count }} Qs
+              </div>
             </div>
-            <div class="past-session-score" style="color:var(--gold)">74</div>
-          </div>
-          <div class="past-session-item" onclick="showToast('Loading session report...','📋')">
-            <div style="width:36px;height:36px;border-radius:10px;background:rgba(176,132,204,0.12);display:flex;align-items:center;justify-content:center;font-size:15px">🤖</div>
-            <div class="past-session-meta">
-              <div class="past-session-role">ML Engineer</div>
-              <div class="past-session-date">2 days ago · Technical · 8 Qs</div>
+            <div class="past-session-score"
+              style="color:{% if session.overall_score >= 80 %}var(--emerald){% elif session.overall_score >= 65 %}var(--gold){% else %}var(--coral){% endif %}">
+              {{ session.overall_score|floatformat:0 }}
             </div>
-            <div class="past-session-score" style="color:var(--coral)">68</div>
           </div>
-          <button class="btn-action btn-action-outline" style="width:100%;margin-top:14px;justify-content:center;font-size:0.78rem" onclick="showToast('Opening full history...','📊')">
+          {% empty %}
+          <div style="text-align:center;padding:20px;color:var(--text-3);font-size:0.82rem">
+            No sessions yet. Start your first interview! 🎙️
+          </div>
+          {% endfor %}
+          {% if recent_sessions %}
+          <button class="btn-action btn-action-outline" style="width:100%;margin-top:12px;justify-content:center;font-size:0.76rem" onclick="loadAllHistory()">
             View All Sessions →
           </button>
+          {% endif %}
         </div>
       </div>
 
@@ -1091,13 +782,14 @@ select { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmln
   </div>
 </div><!-- /screen-setup -->
 
-<!-- ============================================================
+
+<!-- ══════════════════════════════════════════════════
      INTERVIEW SCREEN
-============================================================ -->
+══════════════════════════════════════════════════ -->
 <div class="screen" id="screen-interview">
   <div class="interview-wrapper">
 
-    <!-- MAIN CHAT COLUMN -->
+    <!-- MAIN CHAT AREA -->
     <div class="chat-area">
 
       <!-- Top bar -->
@@ -1111,7 +803,7 @@ select { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmln
         </div>
       </div>
 
-      <!-- Progress bar -->
+      <!-- Progress strip -->
       <div class="progress-strip">
         <div class="progress-strip-fill" id="progressFill" style="width:0%"></div>
       </div>
@@ -1120,28 +812,28 @@ select { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmln
         <div class="progress-steps" id="progressSteps"></div>
       </div>
 
-      <!-- Chat messages -->
-      <div class="chat-messages" id="chatMessages">
-        <!-- Messages injected by JS -->
-      </div>
+      <!-- Messages -->
+      <div class="chat-messages" id="chatMessages"></div>
 
-      <!-- Input area -->
+      <!-- Input -->
       <div class="chat-input-area">
         <div class="chat-input-hint">
-          <span>⌨️</span> Type your answer clearly and press Send, or use the mic for voice input
+          <span>⌨️</span> Type your answer and press Send — or Shift+Enter for a new line
         </div>
         <div class="chat-input-row">
           <div class="chat-textarea-wrap">
-            <textarea class="chat-textarea" id="chatInput" placeholder="Write your answer here... Be specific and use real examples." oninput="updateWordCount(this)"></textarea>
+            <textarea class="chat-textarea" id="chatInput"
+              placeholder="Write your answer here... Be specific and use real examples."
+              oninput="updateWordCount(this)"></textarea>
           </div>
           <div class="chat-input-actions">
-            <button class="chat-btn chat-btn-send" onclick="sendAnswer()" title="Send answer">→</button>
-            <button class="chat-btn chat-btn-mic" onclick="showToast('🎙️ Voice mode: Click to record','🎙️')" title="Voice input (UI)">🎙️</button>
+            <button class="chat-btn chat-btn-send" id="sendBtn" onclick="sendAnswer()" title="Send">→</button>
+            <button class="chat-btn chat-btn-mic" onclick="showToast('Voice mode UI — coming soon!','🎙️')" title="Voice">🎙️</button>
           </div>
         </div>
         <div class="chat-bottom-row">
           <span class="word-counter" id="wordCounter">0 words</span>
-          <div style="display:flex;gap:8px;align-items:center">
+          <div style="display:flex;gap:7px;align-items:center">
             <button class="chat-btn-skip" onclick="skipQuestion()">Skip →</button>
             <button class="end-interview-btn" onclick="endInterview()">⏹ End Session</button>
           </div>
@@ -1153,33 +845,29 @@ select { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmln
     <div class="insights-panel">
       <div class="insights-header">
         📊 Live Insights
-        <div class="insights-live">
-          <div class="insights-live-dot"></div>
-          LIVE
-        </div>
+        <div class="insights-live"><div class="insights-live-dot"></div>LIVE</div>
       </div>
-
       <div class="insights-body">
 
-        <!-- Current Q card -->
+        <!-- Current Q -->
         <div>
-          <div style="font-size:0.72rem;font-family:var(--font-mono);color:var(--text-3);margin-bottom:8px;text-transform:uppercase;letter-spacing:0.08em">Current Question</div>
+          <div style="font-size:0.7rem;font-family:var(--font-mono);color:var(--text-3);margin-bottom:7px;text-transform:uppercase;letter-spacing:0.08em">Current Question</div>
           <div class="current-q-card">
             <div class="current-q-label">⬤ Q<span id="ins-qNum">1</span> · ACTIVE</div>
-            <div class="current-q-text" id="ins-qText">Explain the difference between useMemo and useCallback in React.</div>
+            <div class="current-q-text" id="ins-qText">Your question will appear here when you start.</div>
           </div>
         </div>
 
         <!-- Score Rings -->
         <div>
-          <div style="font-size:0.72rem;font-family:var(--font-mono);color:var(--text-3);margin-bottom:10px;text-transform:uppercase;letter-spacing:0.08em">Real-time Scores</div>
+          <div style="font-size:0.7rem;font-family:var(--font-mono);color:var(--text-3);margin-bottom:9px;text-transform:uppercase;letter-spacing:0.08em">Real-time Scores</div>
           <div class="score-rings">
             <div class="score-ring-item">
               <div class="score-ring-label">Comm.</div>
               <div class="ring-wrap">
-                <svg width="64" height="64" viewBox="0 0 64 64">
-                  <circle cx="32" cy="32" r="27" fill="none" stroke="rgba(255,107,53,0.12)" stroke-width="5"/>
-                  <circle cx="32" cy="32" r="27" fill="none" stroke="var(--coral)" stroke-width="5" stroke-dasharray="169.6" id="ring-comm" stroke-dashoffset="169.6" stroke-linecap="round"/>
+                <svg width="60" height="60" viewBox="0 0 60 60">
+                  <circle cx="30" cy="30" r="25" fill="none" stroke="rgba(255,107,53,0.12)" stroke-width="5"/>
+                  <circle cx="30" cy="30" r="25" fill="none" stroke="var(--coral)" stroke-width="5" stroke-dasharray="157.1" id="ring-comm" stroke-dashoffset="157.1" stroke-linecap="round"/>
                 </svg>
                 <div class="ring-val" id="ring-comm-val" style="color:var(--coral)">—</div>
               </div>
@@ -1187,9 +875,9 @@ select { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmln
             <div class="score-ring-item">
               <div class="score-ring-label">Tech.</div>
               <div class="ring-wrap">
-                <svg width="64" height="64" viewBox="0 0 64 64">
-                  <circle cx="32" cy="32" r="27" fill="none" stroke="rgba(59,158,255,0.12)" stroke-width="5"/>
-                  <circle cx="32" cy="32" r="27" fill="none" stroke="var(--sky)" stroke-width="5" stroke-dasharray="169.6" id="ring-tech" stroke-dashoffset="169.6" stroke-linecap="round"/>
+                <svg width="60" height="60" viewBox="0 0 60 60">
+                  <circle cx="30" cy="30" r="25" fill="none" stroke="rgba(59,158,255,0.12)" stroke-width="5"/>
+                  <circle cx="30" cy="30" r="25" fill="none" stroke="var(--sky)" stroke-width="5" stroke-dasharray="157.1" id="ring-tech" stroke-dashoffset="157.1" stroke-linecap="round"/>
                 </svg>
                 <div class="ring-val" id="ring-tech-val" style="color:var(--sky)">—</div>
               </div>
@@ -1197,9 +885,9 @@ select { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmln
             <div class="score-ring-item">
               <div class="score-ring-label">Conf.</div>
               <div class="ring-wrap">
-                <svg width="64" height="64" viewBox="0 0 64 64">
-                  <circle cx="32" cy="32" r="27" fill="none" stroke="rgba(0,200,150,0.12)" stroke-width="5"/>
-                  <circle cx="32" cy="32" r="27" fill="none" stroke="var(--emerald)" stroke-width="5" stroke-dasharray="169.6" id="ring-conf" stroke-dashoffset="169.6" stroke-linecap="round"/>
+                <svg width="60" height="60" viewBox="0 0 60 60">
+                  <circle cx="30" cy="30" r="25" fill="none" stroke="rgba(0,200,150,0.12)" stroke-width="5"/>
+                  <circle cx="30" cy="30" r="25" fill="none" stroke="var(--emerald)" stroke-width="5" stroke-dasharray="157.1" id="ring-conf" stroke-dashoffset="157.1" stroke-linecap="round"/>
                 </svg>
                 <div class="ring-val" id="ring-conf-val" style="color:var(--emerald)">—</div>
               </div>
@@ -1207,9 +895,9 @@ select { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmln
           </div>
         </div>
 
-        <!-- Metric bars -->
+        <!-- Metric Bars -->
         <div>
-          <div style="font-size:0.72rem;font-family:var(--font-mono);color:var(--text-3);margin-bottom:10px;text-transform:uppercase;letter-spacing:0.08em">Answer Quality</div>
+          <div style="font-size:0.7rem;font-family:var(--font-mono);color:var(--text-3);margin-bottom:9px;text-transform:uppercase;letter-spacing:0.08em">Answer Quality</div>
           <div class="insight-metric">
             <div class="insight-metric-head"><span class="insight-metric-label">Clarity & Structure</span><span class="insight-metric-val" id="m-clarity">—</span></div>
             <div class="metric-bar"><div class="metric-fill" id="mf-clarity" style="width:0%;background:linear-gradient(90deg,var(--coral),var(--gold))"></div></div>
@@ -1228,16 +916,16 @@ select { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmln
           </div>
         </div>
 
-        <!-- Q dots progress -->
+        <!-- Q Dots -->
         <div>
-          <div style="font-size:0.72rem;font-family:var(--font-mono);color:var(--text-3);margin-bottom:10px;text-transform:uppercase;letter-spacing:0.08em">Question Progress</div>
+          <div style="font-size:0.7rem;font-family:var(--font-mono);color:var(--text-3);margin-bottom:9px;text-transform:uppercase;letter-spacing:0.08em">Question Progress</div>
           <div class="q-progress-dots" id="qProgressDots"></div>
         </div>
 
         <!-- Tip -->
-        <div class="insight-tip" id="insightTip">
+        <div class="insight-tip">
           <div class="insight-tip-label">💡 GEMINI TIP</div>
-          <div class="insight-tip-text" id="insightTipText">Answer the first question — your live scores will appear here as you respond.</div>
+          <div class="insight-tip-text" id="insightTipText">Answer the first question — your live scores will appear here.</div>
         </div>
 
       </div>
@@ -1246,9 +934,10 @@ select { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmln
   </div>
 </div><!-- /screen-interview -->
 
-<!-- ============================================================
+
+<!-- ══════════════════════════════════════════════════
      RESULTS SCREEN
-============================================================ -->
+══════════════════════════════════════════════════ -->
 <div class="screen" id="screen-results">
   <div class="results-wrapper">
 
@@ -1263,9 +952,10 @@ select { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmln
     <div class="big-score-card">
       <div class="big-score-bg"></div>
       <div class="big-score-ring">
-        <svg width="160" height="160" viewBox="0 0 160 160">
-          <circle cx="80" cy="80" r="68" fill="none" stroke="rgba(255,107,53,0.1)" stroke-width="10"/>
-          <circle cx="80" cy="80" r="68" fill="none" stroke="url(#scoreGrad)" stroke-width="10" stroke-dasharray="427.3" id="bigScoreRing" stroke-dashoffset="120" stroke-linecap="round"/>
+        <svg width="150" height="150" viewBox="0 0 150 150">
+          <circle cx="75" cy="75" r="63" fill="none" stroke="rgba(255,107,53,0.1)" stroke-width="9"/>
+          <circle cx="75" cy="75" r="63" fill="none" stroke="url(#scoreGrad)" stroke-width="9"
+            stroke-dasharray="395.8" id="bigScoreRing" stroke-dashoffset="395.8" stroke-linecap="round"/>
           <defs>
             <linearGradient id="scoreGrad" x1="0" y1="0" x2="1" y2="0">
               <stop offset="0%" stop-color="#FF6B35"/>
@@ -1273,100 +963,53 @@ select { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmln
             </linearGradient>
           </defs>
         </svg>
-        <div class="big-score-num" id="bigScoreNum">
-          78
-          <span>/100</span>
-        </div>
+        <div class="big-score-num" id="bigScoreNum">—<span>/100</span></div>
       </div>
       <div class="big-score-info">
-        <div class="big-score-grade" id="bigScoreGrade">GOOD PERFORMANCE</div>
-        <div class="big-score-title" id="bigScoreTitle">Strong Foundation — Keep Practising</div>
-        <div class="big-score-sub" id="bigScoreSub">You demonstrated solid conceptual understanding and clear communication. Focus on adding specific examples and improving system design answers to reach the next level.</div>
+        <div class="big-score-grade" id="bigScoreGrade">ANALYSING...</div>
+        <div class="big-score-title" id="bigScoreTitle">Your results are being compiled</div>
+        <div class="big-score-sub" id="bigScoreSub">Gemini is generating your personalised feedback.</div>
         <div class="big-score-meta">
-          <div class="big-score-meta-item">⏱ Session: <strong id="res-duration">32 mins</strong></div>
-          <div class="big-score-meta-item">❓ Questions: <strong id="res-qcount">8 / 8</strong></div>
-          <div class="big-score-meta-item">🎯 Role: <strong id="res-role">Frontend Dev</strong></div>
+          <div class="big-score-meta-item">⏱ Session: <strong id="res-duration">—</strong></div>
+          <div class="big-score-meta-item">❓ Questions: <strong id="res-qcount">—</strong></div>
+          <div class="big-score-meta-item">🎯 Role: <strong id="res-role">—</strong></div>
         </div>
       </div>
     </div>
 
-    <!-- Score Breakdown + Strengths/Weaknesses -->
+    <!-- Score Breakdown -->
     <div class="results-grid">
-
-      <!-- Category Scores -->
       <div class="result-card" style="animation-delay:0.1s">
         <div class="result-card-title">📊 Category Breakdown</div>
-
         <div class="cat-bar-item">
-          <div class="cat-bar-head">
-            <span class="cat-bar-label">💬 Communication</span>
-            <span class="cat-bar-score" style="color:var(--coral)" id="score-comm">75</span>
-          </div>
-          <div class="cat-bar-track"><div class="cat-bar-fill" id="bar-comm" style="width:75%;background:linear-gradient(90deg,var(--coral),var(--coral-2))"></div></div>
+          <div class="cat-bar-head"><span class="cat-bar-label">💬 Communication</span><span class="cat-bar-score" style="color:var(--coral)" id="score-comm">—</span></div>
+          <div class="cat-bar-track"><div class="cat-bar-fill" id="bar-comm" style="width:0%;background:linear-gradient(90deg,var(--coral),var(--coral-2))"></div></div>
         </div>
-
         <div class="cat-bar-item">
-          <div class="cat-bar-head">
-            <span class="cat-bar-label">🔧 Technical Depth</span>
-            <span class="cat-bar-score" style="color:var(--sky)" id="score-tech">80</span>
-          </div>
-          <div class="cat-bar-track"><div class="cat-bar-fill" id="bar-tech" style="width:80%;background:linear-gradient(90deg,var(--sky),var(--mauve))"></div></div>
+          <div class="cat-bar-head"><span class="cat-bar-label">🔧 Technical Depth</span><span class="cat-bar-score" style="color:var(--sky)" id="score-tech">—</span></div>
+          <div class="cat-bar-track"><div class="cat-bar-fill" id="bar-tech" style="width:0%;background:linear-gradient(90deg,var(--sky),var(--mauve))"></div></div>
         </div>
-
         <div class="cat-bar-item">
-          <div class="cat-bar-head">
-            <span class="cat-bar-label">🔥 Confidence</span>
-            <span class="cat-bar-score" style="color:var(--emerald)" id="score-conf">72</span>
-          </div>
-          <div class="cat-bar-track"><div class="cat-bar-fill" id="bar-conf" style="width:72%;background:linear-gradient(90deg,var(--emerald),var(--global))"></div></div>
+          <div class="cat-bar-head"><span class="cat-bar-label">🔥 Confidence</span><span class="cat-bar-score" style="color:var(--emerald)" id="score-conf">—</span></div>
+          <div class="cat-bar-track"><div class="cat-bar-fill" id="bar-conf" style="width:0%;background:linear-gradient(90deg,var(--emerald),var(--global))"></div></div>
         </div>
-
         <div class="cat-bar-item">
-          <div class="cat-bar-head">
-            <span class="cat-bar-label">📚 Use of Examples</span>
-            <span class="cat-bar-score" style="color:var(--gold)" id="score-ex">68</span>
-          </div>
-          <div class="cat-bar-track"><div class="cat-bar-fill" id="bar-ex" style="width:68%;background:linear-gradient(90deg,var(--gold),var(--coral))"></div></div>
+          <div class="cat-bar-head"><span class="cat-bar-label">📚 Use of Examples</span><span class="cat-bar-score" style="color:var(--gold)" id="score-ex">—</span></div>
+          <div class="cat-bar-track"><div class="cat-bar-fill" id="bar-ex" style="width:0%;background:linear-gradient(90deg,var(--gold),var(--coral))"></div></div>
         </div>
-
         <div class="cat-bar-item">
-          <div class="cat-bar-head">
-            <span class="cat-bar-label">🧱 Answer Structure</span>
-            <span class="cat-bar-score" style="color:var(--mauve)" id="score-str">82</span>
-          </div>
-          <div class="cat-bar-track"><div class="cat-bar-fill" id="bar-str" style="width:82%;background:linear-gradient(90deg,var(--mauve),var(--sky))"></div></div>
+          <div class="cat-bar-head"><span class="cat-bar-label">🧱 Answer Structure</span><span class="cat-bar-score" style="color:var(--mauve)" id="score-str">—</span></div>
+          <div class="cat-bar-track"><div class="cat-bar-fill" id="bar-str" style="width:0%;background:linear-gradient(90deg,var(--mauve),var(--sky))"></div></div>
         </div>
       </div>
 
-      <!-- Strengths & Weaknesses -->
       <div class="result-card" style="animation-delay:0.15s">
         <div class="result-card-title">⚡ Strengths & Weaknesses</div>
-
-        <div style="font-size:0.72rem;font-family:var(--font-mono);color:var(--emerald);margin-bottom:10px;letter-spacing:0.06em">✓ STRENGTHS</div>
-        <div class="sw-item">
-          <span class="sw-icon">✅</span>
-          <div class="sw-text"><strong>Strong technical vocabulary</strong> — You used correct terminology (memoisation, referential equality, hooks) consistently throughout.</div>
-        </div>
-        <div class="sw-item">
-          <span class="sw-icon">✅</span>
-          <div class="sw-text"><strong>Logical answer structure</strong> — Your answers followed a clear pattern: definition → use case → example, which is interview-ready.</div>
-        </div>
-        <div class="sw-item">
-          <span class="sw-icon">✅</span>
-          <div class="sw-text"><strong>Calm under pressure</strong> — You maintained composure and didn't skip questions, showing good interview stamina.</div>
-        </div>
-
-        <div style="height:1px;background:var(--border);margin:16px 0"></div>
-
-        <div style="font-size:0.72rem;font-family:var(--font-mono);color:var(--coral);margin-bottom:10px;letter-spacing:0.06em">⚠ AREAS TO IMPROVE</div>
-        <div class="sw-item">
-          <span class="sw-icon">⚠️</span>
-          <div class="sw-text"><strong>Concrete examples are scarce</strong> — Only 2 of 8 answers referenced a real project or codebase. Interviewers want specifics.</div>
-        </div>
-        <div class="sw-item">
-          <span class="sw-icon">⚠️</span>
-          <div class="sw-text"><strong>System design depth</strong> — Performance trade-off discussions were surface-level. Study Big-O and architectural trade-offs more deeply.</div>
-        </div>
+        <div style="font-size:0.7rem;font-family:var(--font-mono);color:var(--emerald);margin-bottom:9px;letter-spacing:0.06em">✓ STRENGTHS</div>
+        <div id="strengths-list"></div>
+        <div style="height:1px;background:var(--border);margin:14px 0"></div>
+        <div style="font-size:0.7rem;font-family:var(--font-mono);color:var(--coral);margin-bottom:9px;letter-spacing:0.06em">⚠ AREAS TO IMPROVE</div>
+        <div id="weaknesses-list"></div>
       </div>
     </div>
 
@@ -1374,132 +1017,66 @@ select { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmln
     <div class="feedback-card">
       <div class="feedback-card-title">🤖 Gemini AI Feedback</div>
       <div class="feedback-body" id="aiFeedbackBody">
-        <p>Overall, this was a <strong>solid interview performance</strong> that demonstrates you have a good foundational understanding of frontend development concepts. Your ability to explain hooks like <code style="background:rgba(255,107,53,0.1);padding:2px 6px;border-radius:4px;font-family:var(--font-mono);font-size:0.8rem;color:var(--coral-2)">useMemo</code> and <code style="background:rgba(255,107,53,0.1);padding:2px 6px;border-radius:4px;font-family:var(--font-mono);font-size:0.8rem;color:var(--coral-2)">useCallback</code> correctly, and understanding when to apply each, shows real practical knowledge.</p>
-        <p>However, the most impactful improvement you can make is <strong>grounding every answer in a real project</strong>. When asked "when would you use useCallback?", instead of a general answer, say: "In my GitHub Explorer project, I wrapped an expensive filter function in useCallback to avoid re-creating it on every parent re-render, which improved list scrolling performance by 40ms." That level of specificity is what separates good candidates from great ones.</p>
-        <p>For system design questions, practice the <strong>RADIO framework</strong>: Requirements → Architecture → Data model → Interface design → Optimisations. This will give your answers a professional structure that mid-to-senior engineers use.</p>
-        <p>You're on a <strong>positive trajectory</strong>. Your score improved 4 points from your last session. Keep up daily practice sessions and focus on the improvement plan below. ✨</p>
+        <p>Your personalised feedback is being generated...</p>
       </div>
     </div>
 
     <!-- Improvements -->
-    <div style="font-family:var(--font-display);font-weight:700;font-size:1rem;margin-bottom:16px;display:flex;align-items:center;gap:8px;animation:fadeUp 0.5s 0.3s var(--ease-out) both">
+    <div style="font-family:var(--font-display);font-weight:700;font-size:0.98rem;margin-bottom:14px;display:flex;align-items:center;gap:8px;animation:fadeUp 0.5s 0.3s var(--ease-out) both">
       📈 Your Improvement Plan
     </div>
-    <div class="improvements">
-      <div class="improve-card">
-        <div class="improve-icon">💡</div>
-        <div class="improve-title">STAR Method Practice</div>
-        <div class="improve-desc">Use Situation–Task–Action–Result format for all behavioural questions. Write 10 STAR stories from your past projects this week.</div>
-        <div class="improve-tag" style="background:rgba(255,107,53,0.1);color:var(--coral);border:1px solid rgba(255,107,53,0.2)">HIGH IMPACT</div>
-      </div>
-      <div class="improve-card" style="animation-delay:0.05s">
-        <div class="improve-icon">🏗️</div>
-        <div class="improve-title">System Design Basics</div>
-        <div class="improve-desc">Study the Frontend System Design Handbook. Practice designing a YouTube player, Twitter feed, and an autocomplete input from scratch.</div>
-        <div class="improve-tag" style="background:rgba(59,158,255,0.1);color:var(--sky);border:1px solid rgba(59,158,255,0.2)">TECHNICAL</div>
-      </div>
-      <div class="improve-card" style="animation-delay:0.1s">
-        <div class="improve-icon">📖</div>
-        <div class="improve-title">Project Story Bank</div>
-        <div class="improve-desc">Document 5 projects with specific metrics: "Reduced bundle size by 32%", "Improved LCP from 4.2s to 1.8s". Numbers make answers memorable.</div>
-        <div class="improve-tag" style="background:rgba(0,200,150,0.1);color:var(--emerald);border:1px solid rgba(0,200,150,0.2)">STORYTELLING</div>
-      </div>
+    <div class="improvements" id="improvements-container">
+      <!-- Filled by JS from API -->
     </div>
 
-    <!-- Actions -->
-    <div class="results-actions" id="resultActions">
-      <button class="btn-action btn-action-primary" onclick="practiceAgain()">
-        🔄 Practice Again
-      </button>
-      <button class="btn-action btn-action-outline" onclick="toggleHistory()">
-        📋 View History
-      </button>
-      <button class="btn-action btn-action-ghost" onclick="downloadReport()">
-        ↓ Download Report
-      </button>
-      <button class="btn-action btn-action-outline" onclick="goHome()" style="margin-left:auto">
-        ← Back to Setup
-      </button>
+    <!-- Action Buttons -->
+    <div class="results-actions">
+      <button class="btn-action btn-action-primary" onclick="practiceAgain()">🔄 Practice Again</button>
+      <button class="btn-action btn-action-outline" onclick="toggleHistory()">📋 View History</button>
+      <button class="btn-action btn-action-ghost" onclick="showToast('PDF export coming soon!','📄')">↓ Download Report</button>
+      <button class="btn-action btn-action-outline" onclick="goSetup()" style="margin-left:auto">← Back to Setup</button>
     </div>
 
     <!-- History Drawer -->
-    <div class="history-card" id="historyCard" style="margin-top:20px">
+    <div class="history-card" id="historyCard">
       <div class="result-card-title">🕐 Session History</div>
-      <div class="history-item">
-        <div class="history-rank">1</div>
-        <div class="history-info">
-          <div class="history-role">Frontend Developer — Technical</div>
-          <div class="history-meta">Today · 8 Questions · 32 mins</div>
-        </div>
-        <div class="history-score" style="color:var(--coral)">78</div>
-      </div>
-      <div class="history-item">
-        <div class="history-rank" style="background:rgba(0,200,150,0.1);color:var(--emerald)">2</div>
-        <div class="history-info">
-          <div class="history-role">Frontend Developer — Technical</div>
-          <div class="history-meta">Yesterday · 8 Questions · 29 mins</div>
-        </div>
-        <div class="history-score" style="color:var(--emerald)">82</div>
-      </div>
-      <div class="history-item">
-        <div class="history-rank" style="background:rgba(255,209,102,0.1);color:var(--gold)">3</div>
-        <div class="history-info">
-          <div class="history-role">Product Manager — Behavioural</div>
-          <div class="history-meta">2 days ago · 5 Questions · 18 mins</div>
-        </div>
-        <div class="history-score" style="color:var(--gold)">74</div>
-      </div>
-      <div class="history-item">
-        <div class="history-rank" style="background:rgba(176,132,204,0.1);color:var(--mauve)">4</div>
-        <div class="history-info">
-          <div class="history-role">ML Engineer — Mixed</div>
-          <div class="history-meta">4 days ago · 8 Questions · 41 mins</div>
-        </div>
-        <div class="history-score" style="color:var(--mauve)">68</div>
+      <div id="historyList" style="color:var(--text-3);font-size:0.82rem;text-align:center;padding:16px">
+        Loading history...
       </div>
     </div>
 
   </div>
 </div><!-- /screen-results -->
 
-<!-- ============================================================
-     JAVASCRIPT
-============================================================ -->
+{% endblock %}
+
+
+{% block page_scripts %}
 <script>
-// ===== THEME =====
-const html = document.documentElement;
-let currentTheme = localStorage.getItem('theme') || 'dark';
+// ══════════════════════════════════════════════════════════════
+//  CrackAI — Full JavaScript (UI + API integration)
+// ══════════════════════════════════════════════════════════════
 
-function applyTheme(t) {
-  html.setAttribute('data-theme', t);
-  document.getElementById('themeToggle').textContent = t === 'dark' ? '🌙' : '☀️';
-  currentTheme = t;
-  localStorage.setItem('theme', t);
-}
-function toggleTheme() {
-  applyTheme(currentTheme === 'dark' ? 'light' : 'dark');
-  showToast(currentTheme === 'light' ? 'Light mode ☀️' : 'Dark mode 🌙');
-}
-applyTheme(currentTheme);
-
-// ===== TOAST =====
-function showToast(msg, icon='✓') {
-  const t = document.getElementById('toast');
-  document.getElementById('toastMsg').textContent = msg;
-  document.getElementById('toastIcon').textContent = icon;
-  t.classList.add('show');
-  clearTimeout(t._tid);
-  t._tid = setTimeout(() => t.classList.remove('show'), 3000);
+// ── CSRF helper ───────────────────────────────────────────────
+function getCsrf() {
+  return document.cookie.split(';')
+    .find(c => c.trim().startsWith('csrftoken='))
+    ?.split('=')[1] || '';
 }
 
-// ===== SCREEN ROUTER =====
-function showScreen(id) {
-  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-  document.getElementById('screen-' + id).classList.add('active');
-  window.scrollTo({ top: 0, behavior: 'instant' });
+async function postJSON(url, data) {
+  const res = await fetch(url, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'X-CSRFToken': getCsrf(),
+    },
+    body: JSON.stringify(data),
+  });
+  return res.json();
 }
 
-// ===== SESSION STATE =====
+// ── Session state ─────────────────────────────────────────────
 const state = {
   role: 'Frontend Developer',
   type: 'Technical',
@@ -1507,15 +1084,26 @@ const state = {
   difficulty: 'Medium',
   qCount: 8,
   timePerQ: '5min',
-  currentQ: 0,
-  answers: [],
   timerInterval: null,
   timeLeft: 300,
-  scores: [],
-  sessionStarted: false,
 };
 
-// ===== SETUP INTERACTIONS =====
+let activeSessionId    = null;   // UUID from backend
+let activeQuestions    = [];     // list from backend
+let currentQIndex      = 0;
+let sessionDuration    = 0;
+let sessionTimer       = null;
+let questionStartTime  = null;
+let isSubmitting       = false;  // prevent double sends
+
+// ── Screen router ─────────────────────────────────────────────
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById('screen-' + id).classList.add('active');
+  window.scrollTo({ top: 0, behavior: 'instant' });
+}
+
+// ── Setup interactions ────────────────────────────────────────
 function selectRole(el, role) {
   document.querySelectorAll('.role-pill').forEach(p => p.classList.remove('active'));
   el.classList.add('active');
@@ -1524,35 +1112,31 @@ function selectRole(el, role) {
 }
 
 function setToggle(groupId, el, val) {
-  const group = document.getElementById(groupId);
-  group.querySelectorAll('.toggle-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById(groupId).querySelectorAll('.toggle-btn').forEach(b => b.classList.remove('active'));
   el.classList.add('active');
-
-  if (groupId === 'typeToggle') { state.type = val; updatePreview(); }
-  if (groupId === 'modeToggle') { state.mode = val; updatePreview(); }
-  if (groupId === 'qCountToggle') { state.qCount = parseInt(val); updatePreview(); }
-  if (groupId === 'timeToggle') { state.timePerQ = val; updatePreview(); }
+  if (groupId === 'typeToggle')   { state.type = val; }
+  if (groupId === 'modeToggle')   { state.mode = val; }
+  if (groupId === 'qCountToggle') { state.qCount = parseInt(val); }
+  if (groupId === 'timeToggle')   { state.timePerQ = val; }
+  updatePreview();
 }
 
-// Difficulty via click
-let diffLevel = 1; // 0=Easy, 1=Medium, 2=Hard
-const diffNames = ['Easy', 'Medium', 'Hard'];
+// Difficulty click
+let diffLevel = 1; // 0=Easy 1=Medium 2=Hard
+const diffNames     = ['Easy', 'Medium', 'Hard'];
 const diffPositions = ['16%', '50%', '84%'];
-const diffFillWidths = ['16%', '50%', '84%'];
+const diffWidths    = ['16%', '50%', '84%'];
 
 document.getElementById('diffTrack').addEventListener('click', function(e) {
   const rect = this.getBoundingClientRect();
-  const x = e.clientX - rect.left;
-  const pct = x / rect.width;
-  if (pct < 0.33) diffLevel = 0;
-  else if (pct < 0.67) diffLevel = 1;
-  else diffLevel = 2;
+  const pct  = (e.clientX - rect.left) / rect.width;
+  diffLevel  = pct < 0.33 ? 0 : pct < 0.67 ? 1 : 2;
   applyDifficulty();
 });
 
 function applyDifficulty() {
-  document.getElementById('diffFill').style.width = diffFillWidths[diffLevel];
-  document.getElementById('diffThumb').style.left = diffPositions[diffLevel];
+  document.getElementById('diffFill').style.width  = diffWidths[diffLevel];
+  document.getElementById('diffThumb').style.left  = diffPositions[diffLevel];
   document.getElementById('diffLabel').textContent = diffNames[diffLevel];
   ['easy','medium','hard'].forEach((n,i) => {
     document.getElementById('lbl-'+n).className = i === diffLevel ? 'difficulty-label-active' : '';
@@ -1562,135 +1146,366 @@ function applyDifficulty() {
 }
 
 function updatePreview() {
-  document.getElementById('prev-role').textContent = state.role;
-  document.getElementById('prev-type').textContent = state.type;
-  document.getElementById('prev-mode').textContent = state.mode + ' Mode';
-  document.getElementById('prev-diff').textContent = state.difficulty;
+  document.getElementById('prev-role').textContent  = state.role;
+  document.getElementById('prev-type').textContent  = state.type;
+  document.getElementById('prev-mode').textContent  = state.mode + ' Mode';
+  document.getElementById('prev-diff').textContent  = state.difficulty;
   document.getElementById('prev-count').textContent = state.qCount + ' Questions';
-  document.getElementById('prev-time').textContent = state.timePerQ;
+  document.getElementById('prev-time').textContent  = state.timePerQ;
   document.getElementById('prev-big-q').textContent = state.qCount;
 }
 
-// ===== QUESTIONS DB =====
-const questionsDB = {
-  'Frontend Developer': {
-    Technical: [
-      { text: "Explain the difference between <code>useMemo</code> and <code>useCallback</code> in React. When would you use each, and what are the performance implications?", tags: ['React','Hooks','Medium'], hint: "Think about memoisation, referential equality, and preventing unnecessary re-renders." },
-      { text: "What is the Critical Rendering Path and how would you optimise it for a performance-critical page?", tags: ['Performance','Browser','Hard'], hint: "Consider render-blocking resources, lazy loading, and preloading strategies." },
-      { text: "Explain CSS specificity. How does the cascade work, and what is BEM?", tags: ['CSS','Architecture','Easy'], hint: "Walk through inline > ID > class > element, then explain the BEM naming convention." },
-      { text: "How would you architect a large-scale React application? Discuss folder structure, state management, and code splitting.", tags: ['Architecture','Hard'], hint: "Cover feature-based folders, Zustand vs Redux, dynamic imports." },
-      { text: "What are Web Workers and when would you use them? Give a real use case.", tags: ['Browser API','Medium'], hint: "Think about heavy computation tasks that block the main thread." },
-      { text: "Explain the difference between <code>null</code>, <code>undefined</code>, and <code>NaN</code> in JavaScript.", tags: ['JavaScript','Easy'], hint: "Cover type coercion, equality checks, and practical gotchas." },
-      { text: "What is TypeScript's structural typing system and how does it differ from nominal typing?", tags: ['TypeScript','Medium'], hint: "Think about duck typing and interfaces vs classes in TypeScript." },
-      { text: "How would you implement infinite scroll efficiently? What are the performance trade-offs?", tags: ['Performance','UX','Medium'], hint: "Compare IntersectionObserver vs scroll event listeners, and virtualisation." },
-    ],
-    Behavioural: [
-      { text: "Tell me about a time you disagreed with a technical decision made by your team. What did you do?", tags: ['Leadership','Conflict'], hint: "Use the STAR method: Situation, Task, Action, Result." },
-      { text: "Describe a project where you had to learn a new technology quickly. How did you approach it?", tags: ['Learning','Adaptability'], hint: "Focus on your learning strategy and the measurable outcome." },
-      { text: "How do you handle receiving critical feedback on your code during a code review?", tags: ['Growth','Teamwork'], hint: "Show both emotional intelligence and technical openness." },
-      { text: "Tell me about the most challenging bug you've debugged. Walk me through your process.", tags: ['Problem Solving'], hint: "Structure your answer: what it was, how you isolated it, how you fixed it, what you learned." },
-    ]
-  },
-  'Product Manager': {
-    Technical: [
-      { text: "Walk me through how you would prioritise a product backlog with 50+ items from multiple stakeholders.", tags: ['Prioritisation','Strategy','Hard'], hint: "Consider RICE, ICE, or Kano model frameworks." },
-      { text: "How do you define success metrics for a new feature before building it?", tags: ['Metrics','OKRs','Medium'], hint: "Think about leading vs lagging indicators and how they connect to business goals." },
-      { text: "How would you redesign the onboarding flow for a B2B SaaS product to reduce drop-off by 30%?", tags: ['UX','Retention','Hard'], hint: "Consider activation metrics, user research, and progressive onboarding." },
-      { text: "Describe how you would run an A/B test for a major feature change.", tags: ['Experimentation','Medium'], hint: "Cover hypothesis, sample size, statistical significance, and decision criteria." },
-    ],
-    Behavioural: [
-      { text: "Tell me about a time when data contradicted your product intuition. What did you do?", tags: ['Data','Decision Making'], hint: "Show that you can balance quantitative data with qualitative context." },
-      { text: "Describe a situation where you had to say no to an important stakeholder.", tags: ['Stakeholder','Communication'], hint: "Focus on how you communicated the why and offered alternatives." },
-    ]
-  },
-  default: {
-    Technical: [
-      { text: "Tell me about a complex technical problem you solved recently. Walk me through your approach.", tags: ['Problem Solving','Medium'], hint: "Use a structured problem-solving narrative with clear outcomes." },
-      { text: "How do you approach learning a completely new technology or tool?", tags: ['Learning','Adaptability'], hint: "Share your personal learning system and give a concrete example." },
-      { text: "Describe the most impactful project you've worked on. What was your specific contribution?", tags: ['Impact','Communication'], hint: "Use metrics where possible — numbers make answers memorable." },
-      { text: "How do you prioritise your work when multiple urgent tasks compete for your attention?", tags: ['Prioritisation','Time Management'], hint: "Share a framework you actually use, not just a theoretical answer." },
-    ]
-  }
-};
+// ── START INTERVIEW ───────────────────────────────────────────
+async function startInterview() {
+  const btn = document.getElementById('startBtn');
+  btn.disabled = true;
+  btn.innerHTML = '⏳ Generating questions with Gemini...';
 
-function getQuestions() {
-  const roleQ = questionsDB[state.role] || questionsDB.default;
-  const typeQ = roleQ[state.type] || roleQ.Technical || questionsDB.default.Technical;
-  const base = [...typeQ];
-  while (base.length < state.qCount) base.push(...typeQ);
-  return base.slice(0, state.qCount);
+  try {
+    const result = await postJSON(URLS.startSession, {
+      role:              state.role,
+      interview_type:    state.type,
+      difficulty:        state.difficulty,
+      question_count:    state.qCount,
+      time_per_question: state.timePerQ,
+    });
+
+    if (!result.success) {
+      showToast(result.error || 'Failed to start. Try again.', '❌');
+      btn.disabled = false;
+      btn.innerHTML = '🎙️ Start Interview Session →';
+      return;
+    }
+
+    // Store session data
+    activeSessionId   = result.session_id;
+    activeQuestions   = result.questions;
+    currentQIndex     = 0;
+    sessionDuration   = 0;
+    isSubmitting      = false;
+
+    // Setup interview header
+    document.getElementById('itv-role').textContent = state.role;
+    document.getElementById('itv-type').textContent = state.type;
+    document.getElementById('itv-diff').textContent = state.difficulty;
+    document.getElementById('qTotalLabel').textContent = activeQuestions.length;
+
+    // Build UI
+    buildProgressDots();
+    updateProgressSteps();
+    document.getElementById('chatMessages').innerHTML = '';
+    document.getElementById('chatInput').value = '';
+    document.getElementById('nav-session-badge').style.display = 'flex';
+
+    showScreen('interview');
+
+    // Welcome + first question
+    setTimeout(() => {
+      addAIMessage(`👋 Welcome to your <strong>${state.role}</strong> interview!<br><br>I'm your Gemini AI interviewer for today's <strong>${state.type}</strong> session on <strong>${state.difficulty}</strong> difficulty.<br><br>Take a breath — answer clearly, use real examples, and I'll give you live feedback after each answer. Let's begin! 🎯`);
+      setTimeout(() => askQuestion(), 1200);
+    }, 400);
+
+    // Session duration counter
+    sessionTimer = setInterval(() => sessionDuration++, 1000);
+    startQuestionTimer();
+
+  } catch (err) {
+    console.error('[CrackAI] startInterview error:', err);
+    showToast('Network error. Please try again.', '❌');
+    btn.disabled = false;
+    btn.innerHTML = '🎙️ Start Interview Session →';
+  }
 }
 
-let sessionQuestions = [];
-let currentQIndex = 0;
-let sessionDuration = 0;
-let sessionTimerInterval = null;
+// ── ASK QUESTION ─────────────────────────────────────────────
+function askQuestion() {
+  if (currentQIndex >= activeQuestions.length) {
+    endInterview();
+    return;
+  }
 
-// ===== START INTERVIEW =====
-function startInterview() {
-  sessionQuestions = getQuestions();
-  currentQIndex = 0;
-  state.scores = [];
-  state.answers = [];
-  sessionDuration = 0;
+  const q   = activeQuestions[currentQIndex];
+  const n   = currentQIndex + 1;
+  const tot = activeQuestions.length;
 
-  // Update interview header
-  document.getElementById('itv-role').textContent = state.role;
-  document.getElementById('itv-type').textContent = state.type;
-  document.getElementById('itv-diff').textContent = state.difficulty;
-  document.getElementById('qTotalLabel').textContent = state.qCount;
+  questionStartTime = Date.now();
+  document.getElementById('qCurrentLabel').textContent = n;
 
-  // Build progress dots
-  buildProgressDots();
+  const tagHtml = (q.tags || []).map(t =>
+    `<span class="q-chip" style="background:rgba(255,107,53,0.1);color:var(--coral);border:1px solid rgba(255,107,53,0.2)">${t}</span>`
+  ).join('');
+
+  addAIMessage(`
+    <div class="q-chips">
+      ${tagHtml}
+      <span class="q-chip" style="background:var(--card-2);color:var(--text-3);border:1px solid var(--border)">Q${n}/${tot}</span>
+    </div>
+    <strong>Question ${n}:</strong><br><br>${q.question_text}
+    ${q.hint ? `<br><br><span style="display:inline-block;margin-top:8px;padding:8px 12px;background:rgba(255,209,102,0.08);border:1px solid rgba(255,209,102,0.18);border-radius:8px;font-size:0.79rem;color:var(--text-2)">💡 Hint: ${q.hint}</span>` : ''}
+  `);
+
+  // Update insights panel
+  document.getElementById('ins-qNum').textContent  = n;
+  document.getElementById('ins-qText').textContent = q.question_text.replace(/<[^>]+>/g, '');
+
   updateProgressSteps();
-
-  // Show session badge
-  document.getElementById('nav-session-badge').style.display = 'flex';
-
-  // Clear chat
-  document.getElementById('chatMessages').innerHTML = '';
-  document.getElementById('chatInput').value = '';
-
-  showScreen('interview');
-
-  // Add welcome AI message
-  setTimeout(() => {
-    addAIMessage(`👋 Welcome to your <strong>${state.role}</strong> interview! I'm your Gemini AI interviewer for today's <strong>${state.type}</strong> session on <strong>${state.difficulty}</strong> difficulty.<br><br>Take a breath and remember — there's no rush. Answer clearly, use examples from your experience, and I'll give you detailed feedback after each answer.<br><br>Let's begin! 🎯`);
-    setTimeout(() => askQuestion(), 1200);
-  }, 500);
-
-  // Session duration timer
-  sessionTimerInterval = setInterval(() => sessionDuration++, 1000);
-
+  updateQDots();
+  document.getElementById('progressFill').style.width = ((currentQIndex / activeQuestions.length) * 100) + '%';
   startQuestionTimer();
+  document.getElementById('chatInput').focus();
 }
 
-function buildProgressDots() {
-  const wrap = document.getElementById('qProgressDots');
-  wrap.innerHTML = '';
-  for (let i = 0; i < state.qCount; i++) {
-    const dot = document.createElement('div');
-    dot.className = 'q-dot ' + (i === 0 ? 'active' : 'pending');
-    dot.textContent = i + 1;
-    dot.id = 'qdot-' + i;
-    wrap.appendChild(dot);
+// ── SEND ANSWER ───────────────────────────────────────────────
+async function sendAnswer() {
+  if (isSubmitting) return;
+  const input  = document.getElementById('chatInput');
+  const answer = input.value.trim();
+  if (!answer) { showToast('Please write your answer first!', '⚠️'); return; }
+
+  isSubmitting = true;
+  document.getElementById('sendBtn').disabled = true;
+  clearInterval(state.timerInterval);
+
+  const timeTaken = questionStartTime
+    ? Math.round((Date.now() - questionStartTime) / 1000)
+    : 0;
+
+  addUserMessage(answer);
+  input.value = '';
+  document.getElementById('wordCounter').textContent = '0 words';
+
+  showTyping();
+
+  try {
+    const q      = activeQuestions[currentQIndex];
+    const result = await postJSON(`${URLS.submitAnswer}${q.id}/`, {
+      answer,
+      time_taken_seconds: timeTaken,
+    });
+
+    removeTyping();
+
+    if (result.success) {
+      const {
+        communication_score, technical_score, confidence_score,
+        clarity_score, examples_score, depth_score, length_score,
+        overall_score, ai_feedback, tip,
+      } = result;
+
+      // Update live rings
+      updateRing('ring-comm', 'ring-comm-val', Math.round(communication_score), 'var(--coral)');
+      updateRing('ring-tech', 'ring-tech-val', Math.round(technical_score),     'var(--sky)');
+      updateRing('ring-conf', 'ring-conf-val', Math.round(confidence_score),    'var(--emerald)');
+
+      // Update metric bars
+      setMetric('clarity',  Math.round(clarity_score));
+      setMetric('examples', Math.round(examples_score));
+      setMetric('depth',    Math.round(depth_score));
+      setMetric('length',   Math.round(length_score));
+
+      if (tip) document.getElementById('insightTipText').textContent = tip;
+
+      addAIMessage(`✅ Score: <strong>${Math.round(overall_score)}/100</strong> — ${ai_feedback}`);
+    } else {
+      addAIMessage('✅ Answer recorded. Moving to the next question.');
+    }
+  } catch (err) {
+    removeTyping();
+    addAIMessage('✅ Answer recorded. Moving to the next question.');
+  }
+
+  isSubmitting = false;
+  document.getElementById('sendBtn').disabled = false;
+
+  currentQIndex++;
+  updateProgressSteps();
+  updateQDots();
+  document.getElementById('progressFill').style.width = ((currentQIndex / activeQuestions.length) * 100) + '%';
+
+  if (currentQIndex >= activeQuestions.length) {
+    setTimeout(() => {
+      addAIMessage("🎉 That's all the questions! Compiling your full report — please wait...");
+      setTimeout(() => endInterview(), 2000);
+    }, 600);
+  } else {
+    setTimeout(() => {
+      showTyping();
+      setTimeout(() => { removeTyping(); askQuestion(); }, 900);
+    }, 800);
   }
 }
 
-function updateProgressSteps() {
-  const wrap = document.getElementById('progressSteps');
-  wrap.innerHTML = '';
-  for (let i = 0; i < state.qCount; i++) {
-    const s = document.createElement('div');
-    let cls = 'progress-step pending';
-    if (i < currentQIndex) cls = 'progress-step done';
-    else if (i === currentQIndex) cls = 'progress-step active';
-    s.className = cls;
-    wrap.appendChild(s);
+// ── SKIP QUESTION ─────────────────────────────────────────────
+async function skipQuestion() {
+  if (isSubmitting) return;
+  clearInterval(state.timerInterval);
+
+  try {
+    const q = activeQuestions[currentQIndex];
+    await postJSON(`${URLS.submitAnswer}${q.id}/`, {
+      answer: '[SKIPPED]',
+      time_taken_seconds: 0,
+    });
+  } catch (err) { /* ignore */ }
+
+  addAIMessage('⏭ Question skipped. Moving on...');
+  currentQIndex++;
+  updateProgressSteps();
+  updateQDots();
+  document.getElementById('progressFill').style.width = ((currentQIndex / activeQuestions.length) * 100) + '%';
+  if (currentQIndex >= activeQuestions.length) { endInterview(); return; }
+  setTimeout(() => askQuestion(), 600);
+}
+
+// ── END SESSION ───────────────────────────────────────────────
+async function endInterview() {
+  clearInterval(state.timerInterval);
+  clearInterval(sessionTimer);
+  document.getElementById('nav-session-badge').style.display = 'none';
+  showScreen('results');
+  showToast('Generating your full report... ⏳', '⏳');
+
+  try {
+    const result = await postJSON(`${URLS.endSession}${activeSessionId}/`, {
+      duration_seconds: sessionDuration,
+    });
+
+    if (result.success) {
+      populateResults(result.result);
+    } else {
+      showToast('Could not generate report. Please try again.', '❌');
+    }
+  } catch (err) {
+    console.error('[CrackAI] endInterview error:', err);
+    showToast('Network error generating report.', '❌');
   }
 }
 
-// ===== QUESTION TIMER =====
+// ── POPULATE RESULTS FROM API ─────────────────────────────────
+function populateResults(data) {
+  const overall = Math.round(data.overall_score || 0);
+
+  // Big score ring
+  document.getElementById('bigScoreNum').innerHTML = `${overall}<span>/100</span>`;
+  const C = 395.8;
+  setTimeout(() => {
+    document.getElementById('bigScoreRing').style.strokeDashoffset = C - (C * overall / 100);
+  }, 400);
+
+  // Grade
+  document.getElementById('bigScoreGrade').textContent = data.grade_label || 'GOOD EFFORT';
+  document.getElementById('bigScoreTitle').textContent = data.grade_title || 'Keep Practising';
+  document.getElementById('bigScoreSub').textContent   = data.grade_message || '';
+
+  // Meta
+  const mins = Math.floor(sessionDuration / 60);
+  const secs  = sessionDuration % 60;
+  document.getElementById('res-duration').textContent = `${mins}m ${secs}s`;
+  document.getElementById('res-qcount').textContent   = `${data.questions_answered} / ${data.total_questions}`;
+  document.getElementById('res-role').textContent     = data.role || state.role;
+
+  // Category bars
+  const cats = {
+    comm: data.communication_score || 0,
+    tech: data.technical_score || 0,
+    conf: data.confidence_score || 0,
+    ex:   data.examples_score || 0,
+    str:  data.structure_score || 0,
+  };
+  setTimeout(() => {
+    ['comm','tech','conf','ex','str'].forEach(k => {
+      const val = Math.round(cats[k]);
+      document.getElementById('score-' + k).textContent = val;
+      document.getElementById('bar-'   + k).style.width  = val + '%';
+    });
+  }, 300);
+
+  // Strengths
+  const sList = document.getElementById('strengths-list');
+  sList.innerHTML = (data.strengths || []).map(s => `
+    <div class="sw-item">
+      <span class="sw-icon">✅</span>
+      <div class="sw-text">${s.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')}</div>
+    </div>`).join('');
+
+  // Weaknesses
+  const wList = document.getElementById('weaknesses-list');
+  wList.innerHTML = (data.weaknesses || []).map(w => `
+    <div class="sw-item">
+      <span class="sw-icon">⚠️</span>
+      <div class="sw-text">${w.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')}</div>
+    </div>`).join('');
+
+  // AI Feedback
+  if (data.ai_feedback) {
+    document.getElementById('aiFeedbackBody').innerHTML =
+      data.ai_feedback.split('\n\n').map(p => `<p>${p}</p>`).join('');
+  }
+
+  // Improvements
+  const tagCfg = {
+    coral:   { bg: 'rgba(255,107,53,0.1)',  text: 'var(--coral)',   border: 'rgba(255,107,53,0.2)'  },
+    sky:     { bg: 'rgba(59,158,255,0.1)',  text: 'var(--sky)',     border: 'rgba(59,158,255,0.2)'  },
+    emerald: { bg: 'rgba(0,200,150,0.1)',   text: 'var(--emerald)', border: 'rgba(0,200,150,0.2)'  },
+  };
+  const impContainer = document.getElementById('improvements-container');
+  impContainer.innerHTML = (data.improvements || []).map((imp, i) => {
+    const tc = tagCfg[imp.tag_color] || tagCfg.coral;
+    return `
+    <div class="improve-card" style="animation-delay:${i * 0.05}s">
+      <div class="improve-icon">${imp.icon}</div>
+      <div class="improve-title">${imp.title}</div>
+      <div class="improve-desc">${imp.description}</div>
+      <div class="improve-tag" style="background:${tc.bg};color:${tc.text};border:1px solid ${tc.border}">
+        ${imp.tag_label}
+      </div>
+    </div>`;
+  }).join('');
+
+  showToast('Report ready! 🎉', '🎉');
+}
+
+// ── HISTORY ───────────────────────────────────────────────────
+async function loadAllHistory() {
+  try {
+    const result = await fetch(URLS.sessionHistory).then(r => r.json());
+    if (result.success) {
+      const list = document.getElementById('historyList');
+      if (!result.sessions.length) {
+        list.innerHTML = '<div style="color:var(--text-3);text-align:center;padding:16px;font-size:0.82rem">No sessions yet.</div>';
+        return;
+      }
+      list.innerHTML = result.sessions.map((s, i) => `
+        <div class="history-item">
+          <div class="history-rank" style="background:rgba(255,107,53,0.1);color:var(--coral)">${i+1}</div>
+          <div class="history-info">
+            <div class="history-role">${s.role} — ${s.interview_type}</div>
+            <div class="history-meta">${s.created_at} · ${s.questions_answered}/${s.total_questions} Qs</div>
+          </div>
+          <div class="history-score" style="color:${s.overall_score >= 80 ? 'var(--emerald)' : s.overall_score >= 65 ? 'var(--gold)' : 'var(--coral)'}">
+            ${Math.round(s.overall_score)}
+          </div>
+        </div>`).join('');
+    }
+  } catch(err) {
+    console.error('[CrackAI] loadAllHistory error:', err);
+  }
+}
+
+async function loadSessionDetail(sessionId) {
+  showToast('Loading session...', '📋');
+}
+
+function toggleHistory() {
+  const card = document.getElementById('historyCard');
+  card.classList.toggle('show');
+  if (card.classList.contains('show')) {
+    loadAllHistory();
+    card.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  }
+}
+
+// ── QUESTION TIMER ────────────────────────────────────────────
 function startQuestionTimer() {
   clearInterval(state.timerInterval);
   const limits = { '2min': 120, '5min': 300, '10min': 600, 'No limit': 99999 };
@@ -1701,21 +1516,52 @@ function startQuestionTimer() {
     updateTimerDisplay();
     if (state.timeLeft <= 0) {
       clearInterval(state.timerInterval);
-      showToast("⏰ Time's up! Moving to next question.");
+      showToast("⏰ Time's up! Moving to next question.", '⏰');
       skipQuestion();
     }
   }, 1000);
 }
 
 function updateTimerDisplay() {
-  const m = Math.floor(state.timeLeft / 60).toString().padStart(2, '0');
-  const s = (state.timeLeft % 60).toString().padStart(2, '0');
+  const m    = Math.floor(state.timeLeft / 60).toString().padStart(2, '0');
+  const s    = (state.timeLeft % 60).toString().padStart(2, '0');
   const disp = document.getElementById('timerDisplay');
   disp.textContent = `${m}:${s}`;
-  disp.style.color = state.timeLeft < 60 ? 'var(--coral)' : 'var(--text-2)';
+  disp.style.color  = state.timeLeft < 60 ? 'var(--coral)' : 'var(--text-2)';
 }
 
-// ===== CHAT FUNCTIONS =====
+// ── PROGRESS DOTS & STEPS ─────────────────────────────────────
+function buildProgressDots() {
+  const wrap = document.getElementById('qProgressDots');
+  wrap.innerHTML = '';
+  activeQuestions.forEach((_, i) => {
+    const dot = document.createElement('div');
+    dot.className   = 'q-dot ' + (i === 0 ? 'active' : 'pending');
+    dot.textContent = i + 1;
+    dot.id = 'qdot-' + i;
+    wrap.appendChild(dot);
+  });
+}
+
+function updateProgressSteps() {
+  const wrap = document.getElementById('progressSteps');
+  wrap.innerHTML = '';
+  activeQuestions.forEach((_, i) => {
+    const s = document.createElement('div');
+    s.className = 'progress-step ' + (i < currentQIndex ? 'done' : i === currentQIndex ? 'active' : 'pending');
+    wrap.appendChild(s);
+  });
+}
+
+function updateQDots() {
+  activeQuestions.forEach((_, i) => {
+    const dot = document.getElementById('qdot-' + i);
+    if (!dot) return;
+    dot.className = 'q-dot ' + (i < currentQIndex ? 'done' : i === currentQIndex ? 'active' : 'pending');
+  });
+}
+
+// ── CHAT HELPERS ──────────────────────────────────────────────
 function addAIMessage(html) {
   const msgs = document.getElementById('chatMessages');
   const wrap = document.createElement('div');
@@ -1735,7 +1581,7 @@ function addUserMessage(text) {
   const wrap = document.createElement('div');
   wrap.className = 'chat-msg user';
   wrap.innerHTML = `
-    <div class="chat-avatar user-avatar">A</div>
+    <div class="chat-avatar user-avatar">${USER_INITIAL}</div>
     <div>
       <div class="chat-bubble user">${escHtml(text)}</div>
       <div class="chat-time" style="text-align:right">${getTime()}</div>
@@ -1765,268 +1611,72 @@ function removeTyping() {
   if (t) t.remove();
 }
 
-function askQuestion() {
-  if (currentQIndex >= sessionQuestions.length) {
-    endInterview();
-    return;
-  }
-  const q = sessionQuestions[currentQIndex];
-  const n = currentQIndex + 1;
-  const total = state.qCount;
-
-  document.getElementById('qCurrentLabel').textContent = n;
-
-  const tagHtml = (q.tags || []).map(t => `<span class="q-chip" style="background:rgba(255,107,53,0.1);color:var(--coral);border:1px solid rgba(255,107,53,0.2)">${t}</span>`).join('');
-
-  addAIMessage(`<div class="q-chips">${tagHtml}<span class="q-chip" style="background:var(--card-2);color:var(--text-3);border:1px solid var(--border)">Q${n}/${total}</span></div><strong>Question ${n}:</strong><br><br>${q.text}${q.hint ? `<br><br><span style="display:inline-block;margin-top:8px;padding:8px 12px;background:rgba(255,209,102,0.08);border:1px solid rgba(255,209,102,0.18);border-radius:8px;font-size:0.8rem;color:var(--text-2)">💡 Hint: ${q.hint}</span>` : ''}`);
-
-  // Update insights panel
-  document.getElementById('ins-qNum').textContent = n;
-  document.getElementById('ins-qText').textContent = q.text.replace(/<[^>]+>/g, '');
-
-  // Update progress steps and dots
-  updateProgressSteps();
-  updateQDots();
-
-  // Progress fill
-  const pct = (currentQIndex / state.qCount) * 100;
-  document.getElementById('progressFill').style.width = pct + '%';
-
-  startQuestionTimer();
-  document.getElementById('chatInput').focus();
-}
-
-function updateQDots() {
-  for (let i = 0; i < state.qCount; i++) {
-    const dot = document.getElementById('qdot-' + i);
-    if (!dot) continue;
-    if (i < currentQIndex) { dot.className = 'q-dot done'; }
-    else if (i === currentQIndex) { dot.className = 'q-dot active'; }
-    else { dot.className = 'q-dot pending'; }
-  }
-}
-
-function sendAnswer() {
-  const input = document.getElementById('chatInput');
-  const answer = input.value.trim();
-  if (!answer) { showToast('Please write your answer first!', '⚠️'); return; }
-
-  addUserMessage(answer);
-  state.answers.push({ q: currentQIndex, answer });
-  input.value = '';
-  document.getElementById('wordCounter').textContent = '0 words';
-  clearInterval(state.timerInterval);
-
-  showTyping();
-
-  // Simulate AI analysis
-  const delay = 1500 + Math.random() * 800;
-  setTimeout(() => {
-    removeTyping();
-
-    const comm = Math.floor(Math.random() * 22) + 65;
-    const tech = Math.floor(Math.random() * 22) + 62;
-    const conf = Math.floor(Math.random() * 25) + 60;
-    const overall = Math.round((comm + tech + conf) / 3);
-    state.scores.push({ comm, tech, conf, overall });
-
-    // Update rings
-    updateRing('ring-comm', 'ring-comm-val', comm, 'var(--coral)');
-    updateRing('ring-tech', 'ring-tech-val', tech, 'var(--sky)');
-    updateRing('ring-conf', 'ring-conf-val', conf, 'var(--emerald)');
-
-    // Update metric bars
-    const clarity = Math.floor(Math.random() * 30) + 60;
-    const examples = Math.floor(Math.random() * 40) + 40;
-    const depth = Math.floor(Math.random() * 28) + 58;
-    const words = answer.split(/\s+/).length;
-    const lengthScore = Math.min(100, Math.floor((words / 150) * 100));
-
-    setMetric('clarity', clarity);
-    setMetric('examples', examples);
-    setMetric('depth', depth);
-    setMetric('length', lengthScore);
-
-    // Update tip
-    const tips = [
-      "Great structure! Try adding a specific code example or project reference next time.",
-      "Your technical accuracy is strong. Work on wrapping answers with real-world context.",
-      "Good answer length. Try to mention trade-offs or edge cases to boost your depth score.",
-      "Use the STAR format (Situation→Task→Action→Result) to make behavioural answers more compelling.",
-      "Excellent clarity! Back up your claims with measurable outcomes from past projects.",
-    ];
-    document.getElementById('insightTipText').textContent = tips[Math.floor(Math.random() * tips.length)];
-
-    // AI feedback
-    const feedbacks = [
-      `✅ Score: <strong>${overall}/100</strong> — Good answer! Your technical depth is solid. To improve: add a concrete example (a specific project or scenario) and mention at least one trade-off or limitation of the approach you described.`,
-      `✅ Score: <strong>${overall}/100</strong> — Clear structure and correct terminology. However, your answer would benefit from a real code snippet or project reference. Try saying "In my [project name], I used this to..." next time.`,
-      `✅ Score: <strong>${overall}/100</strong> — Solid foundation. You covered the what and why well. Push further by discussing the when-not-to-use cases and performance implications. Interviewers love candidates who know limitations.`,
-    ];
-    addAIMessage(feedbacks[Math.floor(Math.random() * feedbacks.length)]);
-
-    currentQIndex++;
-    updateProgressSteps();
-    updateQDots();
-    document.getElementById('progressFill').style.width = ((currentQIndex / state.qCount) * 100) + '%';
-
-    if (currentQIndex >= sessionQuestions.length) {
-      setTimeout(() => {
-        addAIMessage("🎉 That's all the questions! You've completed the session. Let me compile your full results report...");
-        setTimeout(() => endInterview(), 1800);
-      }, 600);
-    } else {
-      setTimeout(() => {
-        showTyping();
-        setTimeout(() => { removeTyping(); askQuestion(); }, 900);
-      }, 800);
-    }
-  }, delay);
-}
-
-function skipQuestion() {
-  clearInterval(state.timerInterval);
-  state.answers.push({ q: currentQIndex, answer: '[SKIPPED]' });
-  state.scores.push({ comm: 0, tech: 0, conf: 0, overall: 0 });
-  addAIMessage("⏭ Question skipped. Moving on...");
-  currentQIndex++;
-  updateProgressSteps();
-  updateQDots();
-  document.getElementById('progressFill').style.width = ((currentQIndex / state.qCount) * 100) + '%';
-  if (currentQIndex >= sessionQuestions.length) { endInterview(); return; }
-  setTimeout(() => askQuestion(), 600);
-}
-
-function endInterview() {
-  clearInterval(state.timerInterval);
-  clearInterval(sessionTimerInterval);
-  document.getElementById('nav-session-badge').style.display = 'none';
-  buildResults();
-  showScreen('results');
-}
-
-// ===== RING HELPER =====
+// ── RING & METRIC HELPERS ─────────────────────────────────────
 function updateRing(ringId, valId, score, color) {
-  const circ = 169.6;
-  const offset = circ - (circ * score / 100);
+  const C    = 157.1;
   const ring = document.getElementById(ringId);
-  const val = document.getElementById(valId);
-  if (ring) { ring.style.strokeDashoffset = offset; ring.setAttribute('stroke', color); }
-  if (val) val.textContent = score;
+  const val  = document.getElementById(valId);
+  if (ring) { ring.style.strokeDashoffset = C - (C * score / 100); }
+  if (val)  { val.textContent = score; }
 }
 
 function setMetric(key, score) {
-  const bar = document.getElementById('mf-' + key);
-  const label = document.getElementById('m-' + key);
-  if (bar) bar.style.width = score + '%';
+  const bar   = document.getElementById('mf-' + key);
+  const label = document.getElementById('m-'  + key);
+  if (bar)   bar.style.width   = score + '%';
   if (label) label.textContent = score + '%';
 }
 
-// ===== BUILD RESULTS =====
-function buildResults() {
-  const answered = state.scores.filter(s => s.overall > 0);
-  if (answered.length === 0) {
-    // demo scores
-    state.scores = Array.from({length: 8}, () => ({
-      comm: Math.floor(Math.random()*22)+65,
-      tech: Math.floor(Math.random()*22)+62,
-      conf: Math.floor(Math.random()*25)+60,
-      overall: 0
-    }));
-    state.scores.forEach(s => s.overall = Math.round((s.comm+s.tech+s.conf)/3));
-  }
-
-  const sc = state.scores;
-  const avgComm = Math.round(sc.reduce((a,b)=>a+b.comm,0)/sc.length);
-  const avgTech = Math.round(sc.reduce((a,b)=>a+b.tech,0)/sc.length);
-  const avgConf = Math.round(sc.reduce((a,b)=>a+b.conf,0)/sc.length);
-  const overall = Math.round((avgComm+avgTech+avgConf)/3);
-
-  document.getElementById('score-comm').textContent = avgComm;
-  document.getElementById('score-tech').textContent = avgTech;
-  document.getElementById('score-conf').textContent = avgConf;
-
-  setTimeout(() => {
-    document.getElementById('bar-comm').style.width = avgComm + '%';
-    document.getElementById('bar-tech').style.width = avgTech + '%';
-    document.getElementById('bar-conf').style.width = avgConf + '%';
-  }, 300);
-
-  document.getElementById('bigScoreNum').innerHTML = `${overall}<span>/100</span>`;
-
-  const offset = 427.3 - (427.3 * overall / 100);
-  setTimeout(() => {
-    document.getElementById('bigScoreRing').style.strokeDashoffset = offset;
-  }, 400);
-
-  const grades = [
-    [90, 'EXCELLENT', 'Outstanding Performance', 'You are interview-ready. Your answers demonstrate expert-level knowledge, excellent communication, and real-world application. Apply with confidence.'],
-    [80, 'GREAT JOB', 'Strong Performance — Almost There', 'You demonstrated solid knowledge and good communication. A few more practice sessions focusing on real examples will push you over the top.'],
-    [65, 'GOOD EFFORT', 'Solid Foundation — Keep Practising', 'You showed good foundational understanding. Focus on adding concrete examples and improving depth of technical answers.'],
-    [0, 'KEEP GOING', 'Early Stage — Build Your Foundation', 'Good start! Use the improvement plan below to build your knowledge base. Consistent daily practice will show dramatic improvement.']
-  ];
-
-  const [, grade, title, sub] = grades.find(([t]) => overall >= t);
-  document.getElementById('bigScoreGrade').textContent = grade;
-  document.getElementById('bigScoreTitle').textContent = title;
-  document.getElementById('bigScoreSub').textContent = sub;
-
-  const mins = Math.floor(sessionDuration / 60);
-  const secs = sessionDuration % 60;
-  document.getElementById('res-duration').textContent = `${mins}m ${secs}s`;
-  document.getElementById('res-qcount').textContent = `${sc.length} / ${state.qCount}`;
-  document.getElementById('res-role').textContent = state.role;
-}
-
-// ===== RESULT ACTIONS =====
+// ── RESULT ACTION BUTTONS ─────────────────────────────────────
 function practiceAgain() {
+  activeSessionId  = null;
+  activeQuestions  = [];
+  currentQIndex    = 0;
+  sessionDuration  = 0;
   showScreen('setup');
-  showToast('Setup a new session! 🎯', '🎯');
+  showToast('Set up a new session! 🎯', '🎯');
 }
 
-function toggleHistory() {
-  const card = document.getElementById('historyCard');
-  card.classList.toggle('show');
-  if (card.classList.contains('show')) {
-    card.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-  }
-}
-
-function downloadReport() {
-  showToast('📄 Report downloaded as PDF', '📄');
-}
-
-function goHome() {
-  clearInterval(state.timerInterval);
-  clearInterval(sessionTimerInterval);
-  document.getElementById('nav-session-badge').style.display = 'none';
+function goSetup() {
   showScreen('setup');
 }
 
-function goDashboard() {
-  window.location.href = "{% url 'dashboard' %}";
+// ── ABANDON SESSION ───────────────────────────────────────────
+async function abandonSession() {
+  if (!activeSessionId) return;
+  try {
+    await postJSON(`${URLS.abandonSession}${activeSessionId}/`, {});
+  } catch(err) {}
+  activeSessionId = null;
 }
 
-// ===== WORD COUNT =====
+// ── UTILS ─────────────────────────────────────────────────────
+function getTime() {
+  return new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+}
+function escHtml(str) {
+  return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
 function updateWordCount(el) {
   const words = el.value.trim() ? el.value.trim().split(/\s+/).length : 0;
   document.getElementById('wordCounter').textContent = words + (words === 1 ? ' word' : ' words');
 }
 
-// ===== UTILS =====
-function getTime() {
-  const now = new Date();
-  return now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-}
-function escHtml(str) {
-  return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
-}
-
-// ===== ENTER KEY =====
+// ── ENTER KEY to send ─────────────────────────────────────────
 document.getElementById('chatInput').addEventListener('keydown', e => {
   if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendAnswer(); }
 });
-</script>
 
-</body>
-</html>
+// ── Handle page unload — abandon in-progress session ─────────
+window.addEventListener('beforeunload', () => {
+  if (activeSessionId) {
+    // Use sendBeacon so it fires even on page close
+    const data = JSON.stringify({});
+    navigator.sendBeacon(
+      `${URLS.abandonSession}${activeSessionId}/`,
+      new Blob([data], { type: 'application/json' })
+    );
+  }
+});
+</script>
+{% endblock %}

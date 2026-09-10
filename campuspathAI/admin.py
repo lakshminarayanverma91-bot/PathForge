@@ -87,7 +87,7 @@ class SkillGapAdmin(admin.ModelAdmin):
 
 @admin.register(SkillProgress)
 class SkillProgressAdmin(admin.ModelAdmin):
-    list_display  = ['roadmap', 'skill_name', 'percentage']
+    list_display  = ['roadmap', 'skill_name', 'target_percentage']
     search_fields = ['skill_name']
 
 

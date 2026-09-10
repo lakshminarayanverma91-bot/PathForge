@@ -181,7 +181,7 @@ def save_roadmap_to_db(user, data, skills, interests, experience, timeline, addi
         SkillProgress.objects.create(
             roadmap     = roadmap,
             skill_name  = sp.get('skill_name', ''),
-            percentage  = sp.get('percentage', 0),
+            target_percentage = sp.get('percentage', 0),   # renamed
             color_start = sp.get('color_start', 'var(--sky)'),
             color_end   = sp.get('color_end', '#8b5cf6'),
             order       = idx,
@@ -386,24 +386,17 @@ def toggle_week_complete(request, week_id):
     try:
         week = get_object_or_404(RoadmapWeek, id=week_id, roadmap__user=request.user)
 
-        if week.status == 'completed':
-            # Unmark complete
-            week.status = 'upcoming'
-            week.save()
-            week.roadmap.completed_weeks = max(0, week.roadmap.completed_weeks - 1)
-        else:
-            # Mark complete
-            week.status = 'completed'
-            week.save()
-            week.roadmap.completed_weeks += 1
+        week.status = 'upcoming' if week.status == 'completed' else 'completed'
+        week.save()
 
         week.roadmap.recalculate_progress()
+        week.roadmap.refresh_from_db()
 
         return JsonResponse({
-            'success':     True,
-            'new_status':  week.status,
-            'progress':    week.roadmap.progress_pct,
-            'completed':   week.roadmap.completed_weeks,
+            'success':    True,
+            'new_status': week.status,
+            'progress':   week.roadmap.progress_pct,
+            'completed':  week.roadmap.completed_weeks,
         })
     except Exception as e:
         return JsonResponse({'error': str(e)}, status=500)
@@ -495,7 +488,7 @@ def get_roadmap_json(request, roadmap_id):
         'skill_progress': [
             {
                 'skill_name':  sp.skill_name,
-                'percentage':  sp.percentage,
+                'percentage':  sp.current_percentage,   # ab dynamic value
                 'color_start': sp.color_start,
                 'color_end':   sp.color_end,
             }

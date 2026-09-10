@@ -63,9 +63,10 @@ class Roadmap(models.Model):
 
     def recalculate_progress(self):
         """Auto-update progress percentage from completed weeks."""
+        self.completed_weeks = self.weeks.filter(status='completed').count()
         if self.total_weeks > 0:
             self.progress_pct = round((self.completed_weeks / self.total_weeks) * 100, 1)
-            self.save(update_fields=['progress_pct'])
+        self.save(update_fields=['completed_weeks', 'progress_pct'])
 
 class RoadmapWeek(models.Model):
 
@@ -181,7 +182,7 @@ class SkillProgress(models.Model):
 
     roadmap      = models.ForeignKey(Roadmap, on_delete=models.CASCADE, related_name='skill_progress')
     skill_name   = models.CharField(max_length=100, help_text="e.g. React / Frontend")
-    percentage   = models.IntegerField(default=0, help_text="0–100")
+    target_percentage = models.IntegerField(default=0, help_text="Gemini's estimate once roadmap is fully completed")
     color_start  = models.CharField(max_length=30, default='var(--sky)',    help_text="CSS gradient start color")
     color_end    = models.CharField(max_length=30, default='#8b5cf6',       help_text="CSS gradient end color")
     order        = models.IntegerField(default=0)
@@ -189,8 +190,12 @@ class SkillProgress(models.Model):
     class Meta:
         ordering = ['order']
 
+    @property
+    def current_percentage(self):
+        return round(self.target_percentage * (self.roadmap.progress_pct / 100))
+    
     def __str__(self):
-        return f"{self.skill_name}: {self.percentage}%"
+        return f"{self.skill_name}: {self.current_percentage}% (target {self.target_percentage}%)"
 
 class AIInsight(models.Model):
 

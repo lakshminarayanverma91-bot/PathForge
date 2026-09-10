@@ -1144,6 +1144,11 @@ async function toggleTaskDone(taskId, el) {
 
 // ── Update roadmap (re-run Gemini) ────────────────────────
 async function updateRoadmap(roadmapId) {
+  const confirmed = confirm(
+    "⚠️ This will regenerate your entire roadmap with fresh AI data and RESET all progress (completed weeks & tasks will be lost).\n\nAre you sure you want to continue?"
+  );
+  if (!confirmed) return;
+
   showToast('Updating roadmap with latest data... 🔄', '🔄');
   try {
     const data = await postJSON(urlWithId(API_URLS.updateRoadmapTemplate, roadmapId), {});

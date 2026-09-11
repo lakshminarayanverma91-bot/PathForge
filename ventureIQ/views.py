@@ -16,6 +16,7 @@ from .models import (
     AIInsight,
     BusinessBrief,
 )
+from django.db import transaction
 
 genai.configure(api_key=settings.GEMINI_API_KEY)
 
@@ -150,82 +151,83 @@ Important rules:
 
     # Step 5: Database mein save karna
     try:
-        # 1. Parent - StartupIdea
-        idea_obj = StartupIdea.objects.create(
-            user            = request.user,
-            idea_text       = idea,
-            idea_name       = result['idea_name'],
-            industry        = industry,
-            market          = market,
-            stage           = stage,
-            ai_edge_insight = result['ai_edge_insight'],
-            is_saved        = True,
-        )
-
-        # 2. Viability Card
-        v = result['viability']
-        ViabilityData.objects.create(
-            analysis        = idea_obj,
-            score           = v['score'],
-            verdict         = v['verdict'],
-            market_pct      = v['market_pct'],
-            competitive_pct = v['competitive_pct'],
-            scalability_pct = v['scalability_pct'],
-            revenue_pct     = v['revenue_pct'],
-            geography       = v['geography'],
-            business_type   = v['business_type'],
-        )
-
-        # 3. SWOT Card
-        s = result['swot']
-        SWOTAnalysis.objects.create(
-            analysis      = idea_obj,
-            strengths     = s['strengths'],
-            weaknesses    = s['weaknesses'],
-            opportunities = s['opportunities'],
-            threats       = s['threats'],
-        )
-
-        # 4. Market Size Card
-        m = result['market']
-        MarketSize.objects.create(
-            analysis    = idea_obj,
-            tam         = m['tam'],
-            sam         = m['sam'],
-            som         = m['som'],
-            cagr        = m['cagr'],
-            description = m['description'],
-        )
-
-        # 5. Competitors Card (3 alag rows)
-        for i, comp in enumerate(result['competitors']):
-            Competitor.objects.create(
-                analysis     = idea_obj,
-                name         = comp['name'],
-                description  = comp['description'],
-                threat_level = comp['threat_level'],
-                order        = i,
+        with transaction.atomic():
+            # 1. Parent - StartupIdea
+            idea_obj = StartupIdea.objects.create(
+                user            = request.user,
+                idea_text       = idea,
+                idea_name       = result['idea_name'],
+                industry        = industry,
+                market          = market,
+                stage           = stage,
+                ai_edge_insight = result['ai_edge_insight'],
+                is_saved        = True,
             )
 
-        # 6. AI Insights Card (3 alag rows)
-        for insight in result['insights']:
-            AIInsight.objects.create(
-                analysis     = idea_obj,
-                insight_type = insight['type'],
-                content      = insight['content'],
+            # 2. Viability Card
+            v = result['viability']
+            ViabilityData.objects.create(
+                analysis        = idea_obj,
+                score           = v['score'],
+                verdict         = v['verdict'],
+                market_pct      = v['market_pct'],
+                competitive_pct = v['competitive_pct'],
+                scalability_pct = v['scalability_pct'],
+                revenue_pct     = v['revenue_pct'],
+                geography       = v['geography'],
+                business_type   = v['business_type'],
             )
 
-        # 7. Business Brief Card
-        b = result['brief']
-        BusinessBrief.objects.create(
-            analysis           = idea_obj,
-            problem_solution   = b['problem_solution'],
-            problem_highlight  = b['problem_highlight'],
-            business_model     = b['business_model'],
-            business_highlight = b['business_highlight'],
-            gtm_strategy       = b['gtm_strategy'],
-            gtm_highlight      = b['gtm_highlight'],
-        )
+            # 3. SWOT Card
+            s = result['swot']
+            SWOTAnalysis.objects.create(
+                analysis      = idea_obj,
+                strengths     = s['strengths'],
+                weaknesses    = s['weaknesses'],
+                opportunities = s['opportunities'],
+                threats       = s['threats'],
+            )
+
+            # 4. Market Size Card
+            m = result['market']
+            MarketSize.objects.create(
+                analysis    = idea_obj,
+                tam         = m['tam'],
+                sam         = m['sam'],
+                som         = m['som'],
+                cagr        = m['cagr'],
+                description = m['description'],
+            )
+
+            # 5. Competitors Card (3 alag rows)
+            for i, comp in enumerate(result['competitors']):
+                Competitor.objects.create(
+                    analysis     = idea_obj,
+                    name         = comp['name'],
+                    description  = comp['description'],
+                    threat_level = comp['threat_level'],
+                    order        = i,
+                )
+
+            # 6. AI Insights Card (3 alag rows)
+            for insight in result['insights']:
+                AIInsight.objects.create(
+                    analysis     = idea_obj,
+                    insight_type = insight['type'],
+                    content      = insight['content'],
+                )
+
+            # 7. Business Brief Card
+            b = result['brief']
+            BusinessBrief.objects.create(
+                analysis           = idea_obj,
+                problem_solution   = b['problem_solution'],
+                problem_highlight  = b['problem_highlight'],
+                business_model     = b['business_model'],
+                business_highlight = b['business_highlight'],
+                gtm_strategy       = b['gtm_strategy'],
+                gtm_highlight      = b['gtm_highlight'],
+            )
 
     except Exception as e:
         return JsonResponse(

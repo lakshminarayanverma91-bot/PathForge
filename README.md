@@ -22,7 +22,7 @@ PathForge is a Django-based platform for students, built around a set of AI-powe
 ### 1. Clone the repository
 ```bash
 git clone <repo-url>
-cd StudentVerse/pathforge
+cd pathforge
 ```
 
 ### 2. Create a virtual environment

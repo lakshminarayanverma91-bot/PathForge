@@ -7,6 +7,7 @@ from . import views
 app_name = 'crackai'
 
 urlpatterns = [
+    path('', views.crackai_home, name='home'),
     path('start/', views.start_session, name='start_session'),
     path('answer/<int:question_id>/', views.submit_answer, name='submit_answer'),
     path('end/<uuid:session_id>/', views.end_session, name='end_session'),

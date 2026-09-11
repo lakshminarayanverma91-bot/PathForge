@@ -11,7 +11,7 @@ from django.conf import settings
 
 # ── Configure Gemini ──────────────────────────────────────────
 genai.configure(api_key=settings.GEMINI_API_KEY)
-model = genai.GenerativeModel('gemini-2.0-flash')
+model = genai.GenerativeModel('gemini-3.6-flash')
 
 
 def _call_gemini(prompt: str) -> str:
@@ -78,11 +78,12 @@ Example format:
         # Fallback: return a generic question
         return [
             {
-                "question_text": f"Tell me about your experience as a {role}. Walk me through a recent challenging project.",
+                "question_text": f"Tell me about your experience as a {role}. Walk me through a recent challenging project (fallback question {i+1}).",
                 "tags": [role, interview_type, difficulty],
                 "hint": "Use the STAR method: Situation, Task, Action, Result."
             }
-        ] * count
+            for i in range(count)
+        ]
 
 
 # ──────────────────────────────────────────────────────────────

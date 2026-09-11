@@ -12,9 +12,9 @@ class Profile(User):
     university = models.CharField(max_length=20, null= True, blank= True)
 
     GENDER_CHOICE = (
-        ("MALE","Male", "male"),
-        ("Female", "Female", "female"),
-        ("Prefer not to say", "Prefer not to say", "Prefer not to say")
+        ("Male", "male"),
+        ("Female", "female"),
+        ("Prefer not to say", "Prefer not to say")
     )
 
     gender = models.CharField(max_length=20, choices= GENDER_CHOICE, null= True, blank= True)
